@@ -20,10 +20,6 @@ async def get_user(username: str) -> Optional[User]:
 async def authenticate_user(username: str, password: str) -> Optional[User]:
     """
     验证密码
-    :param session:
-    :param username:
-    :param password:
-    :return:
     """
     user = await get_user(username)
     if not user:

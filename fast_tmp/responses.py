@@ -1,10 +1,11 @@
 from typing import Any
-
-from fastapi.responses import UJSONResponse
+from starlette.responses import JSONResponse
 
 
 # fixme:考虑以后使用Ojson或ujson提速
-class AmisResponse(UJSONResponse):
+
+
+class AmisResponse(JSONResponse):
     media_type = "application/json"
 
     def render(self, content: Any) -> bytes:
