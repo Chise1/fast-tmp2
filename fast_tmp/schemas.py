@@ -25,6 +25,7 @@ class PermissionSchema(BaseModel):
     type: PermissionPageType = PermissionPageType.widget
     children: List[Union["PermissionSchema", "SiteSchema"]] = []
     url: str = ""  # 基础理由
+    has_view: bool = False
 
 
 class SiteSchema(PermissionSchema):

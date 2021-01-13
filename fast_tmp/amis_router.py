@@ -79,7 +79,7 @@ class AmisRouter(routing.Router):
         self.dependency_overrides_provider = dependency_overrides_provider
         self.route_class = route_class
         self.default_response_class = default_response_class
-        self.get(
+        self.post(
             "/schema_api",
         )(HtmlTemplate(self))
 
@@ -188,7 +188,11 @@ class AmisRouter(routing.Router):
             self.site_schema.children.append(permission_model)
         else:
             self.site_schema.children.append(
-                PermissionSchema(label=summary or path.replace("/", ""), url=path)
+                PermissionSchema(
+                    label=summary or path.replace("/", ""),
+                    url=path,
+                    has_view=(True if view else False),
+                )
             )
 
         def decorator(func: DecoratedCallable) -> DecoratedCallable:

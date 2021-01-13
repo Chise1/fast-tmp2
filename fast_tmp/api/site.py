@@ -1,5 +1,4 @@
 from fastapi import Depends, HTTPException
-from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 from starlette.requests import Request
 
@@ -24,15 +23,15 @@ async def get_site(user: User = Depends(get_current_user)):
     :return:
     """
     global INIT_PERMISSION
-    from example.main import app
+    app = settings.app
 
     # 初始化permission
     if not INIT_PERMISSION:
         await init_permission(app.site_schema, list(await Permission.all()))
         INIT_PERMISSION = True
     permissions = await user.perms
-    site = get_site_from_permissionschema(app.site_schema, permissions, settings.SERVER_URL, user)
-    return site
+    site = get_site_from_permissionschema(app.site_schema, permissions, "", user)
+    return {"pages": [site]}
 
 
 SECRET_KEY = settings.SECRET_KEY

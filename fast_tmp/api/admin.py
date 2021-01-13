@@ -22,7 +22,11 @@ def get_site_from_permissionschema(
     node: SiteSchema, user_codename: List[str], base_url: str, user: User
 ):
     if node.type == PermissionPageType.widget:
-        if not node.codename or node.codename in user_codename or user.is_superuser:
+        if (
+            not (node.codename and node.has_view)
+            or node.codename in user_codename
+            or user.is_superuser
+        ):
             # fixme:临时措施
             if node.url == "/schema_api":
                 return False
@@ -59,14 +63,14 @@ def get_site_from_permissionschema(
                             "label": node.label,
                             "icon": node.icon,
                             "url": base_url + node.url,
-                            "children": res,
+                            "children": [i for i in res if i],
                         }
                     else:
                         return {
                             "type": "route",
                             "label": node.label,
                             "icon": node.icon,
-                            "children": res,
+                            "children": [i for i in res if i],
                         }
             else:
                 return None
