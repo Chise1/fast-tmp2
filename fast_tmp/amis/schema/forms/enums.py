@@ -20,6 +20,7 @@ class ControlEnum(str, Enum):
     array = "array"
     date = "date"
     datetime = "datetime"
+    uuid = "uuid"
 
 
 class ItemModel(str, Enum):

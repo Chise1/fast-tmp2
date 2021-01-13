@@ -76,7 +76,7 @@ async def get_message():
             title="新增",
             body=Form(
                 name="message_create",
-                controls=get_coulmns_from_pmc(message_schema, add_type=True),
+                controls=get_columns_from_model(Message, add_type=True),
                 api="http://127.0.0.1:8000/amis/message",
             ),
         ),

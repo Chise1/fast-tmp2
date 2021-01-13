@@ -3,23 +3,36 @@ from typing import List, Tuple, Type
 from pydantic.main import BaseModel
 from pydantic.schema import schema
 from tortoise import Model
-from tortoise.fields import BigIntField, IntField, SmallIntField
-from tortoise.fields.data import (
-    CharEnumFieldInstance,
+from tortoise.fields import (
+    BigIntField,
+    BooleanField,
     CharField,
+    DateField,
     DatetimeField,
-    IntEnumFieldInstance,
+    DecimalField,
+    FloatField,
+    IntField,
+    JSONField,
+    SmallIntField,
+    TextField,
+    TimeDeltaField,
+    UUIDField,
 )
+from tortoise.fields.data import CharEnumFieldInstance, IntEnumFieldInstance
 
 from fast_tmp.amis.schema.forms import Column
 from fast_tmp.amis.schema.forms.enums import ControlEnum, FormWidgetSize, ItemModel
 from fast_tmp.amis.schema.forms.widgets import (
     Control,
+    DateItem,
     DatetimeItem,
     NumberItem,
     SelectItem,
     SelectOption,
+    SwitchItem,
     TextItem,
+    TimeItem,
+    UuidItem,
 )
 
 
@@ -130,7 +143,7 @@ def _get_base_attr(field_type) -> dict:
         label=field_type.kwargs.get("verbose_name", field_type.model_field_name),
         labelRemark=field_type.kwargs.get("labelRemark", None),
         description=field_type.kwargs.get("description", None),
-        placeholder=field_type.kwargs.get("placeholder", None),
+        placeholder=field_type.kwargs.get("placeholder", "请输入..."),
         inline=field_type.kwargs.get("placeholder", False),
         submitOnChange=field_type.kwargs.get("submitOnChange", False),
         disabled=field_type.kwargs.get("disabled", False),
@@ -224,9 +237,94 @@ def get_columns_from_model(
                         inputFormat=field_type.kwargs.get("inputFormat", "YYYY-MM-DD HH:mm:ss"),
                     )
                 )
-            elif isinstance(field_type, CharEnumFieldInstance):  # 静态枚举
+            elif isinstance(field_type, DateField):
+                res.append(
+                    DateItem(
+                        **_get_base_attr(field_type),
+                        format=field_type.kwargs.get("format", "YYYY-MM-DD"),
+                        inputFormat=field_type.kwargs.get("inputFormat", "YYYY-MM-DD"),
+                    )
+                )
+            elif isinstance(field_type, TimeDeltaField):
+                res.append(
+                    TimeItem(
+                        **_get_base_attr(field_type),
+                        format=field_type.kwargs.get("format", "HH:mm"),
+                        inputFormat=field_type.kwargs.get("inputFormat", "HH:mm"),
+                        # placeholder=field_type.kwargs.get('placeholder', "请选择时间"),
+                        timeConstrainst=field_type.kwargs.get("timeConstrainst", False),
+                    )
+                )
+            elif isinstance(field_type, CharEnumFieldInstance):
                 print(field_type.enum_type)
-            # 继续增加其他类型字段
+            elif isinstance(field_type, BooleanField):
+
+                res.append(
+                    SwitchItem(
+                        type="switch",
+                        # **_get_base_attr(field_type),
+                        name=field_type.model_field_name,
+                        label="开关",
+                        trueValue=field_type.kwargs.get("trueValue", True),
+                        falseValue=field_type.kwargs.get("falseValue", False),
+                    )
+                )
+            elif isinstance(field_type, FloatField):
+                validation = {}
+                if field_type.kwargs.get("min", None) or field_type.constraints.get("ge"):
+                    validation["minimum"] = field_type.kwargs.get(
+                        "min", None
+                    ) or field_type.constraints.get("ge")
+                if field_type.kwargs.get("max", None) or field_type.constraints.get("le"):
+                    validation["maximum"] = field_type.kwargs.get(
+                        "max", None
+                    ) or field_type.constraints.get("le")
+                res.append(
+                    NumberItem(
+                        min=field_type.kwargs.get("min", None) or field_type.constraints.get("ge"),
+                        max=field_type.kwargs.get("max", None) or field_type.constraints.get("le"),
+                        precision=field_type.kwargs.get("precision", None),
+                        step=field_type.kwargs.get("step", 1),
+                        showSteps=field_type.kwargs.get("showSteps", None),
+                        **_get_base_attr(field_type),
+                        validations=validation,
+                    )
+                )
+            elif isinstance(field_type, DecimalField):
+                validation = {}
+                if field_type.kwargs.get("min", None) or field_type.constraints.get("ge"):
+                    validation["minimum"] = field_type.kwargs.get(
+                        "min", None
+                    ) or field_type.constraints.get("ge")
+                if field_type.kwargs.get("max", None) or field_type.constraints.get("le"):
+                    validation["maximum"] = field_type.kwargs.get(
+                        "max", None
+                    ) or field_type.constraints.get("le")
+                res.append(
+                    NumberItem(
+                        min=field_type.kwargs.get("min", None) or field_type.constraints.get("ge"),
+                        max=field_type.kwargs.get("max", None) or field_type.constraints.get("le"),
+                        precision=field_type.kwargs.get("precision", 2),
+                        step=field_type.kwargs.get("step", 1),
+                        showSteps=field_type.kwargs.get("showSteps", None),
+                        **_get_base_attr(field_type),
+                        validations=validation,
+                    )
+                )
+            elif isinstance(field_type, JSONField):
+                pass
+            elif isinstance(field_type, TextField):
+                res.append(
+                    TextItem(
+                        **_get_base_attr(field_type),
+                    )
+                )
+            elif isinstance(field_type, UUIDField):
+                res.append(
+                    UuidItem(
+                        **_get_base_attr(field_type), length=field_type.kwargs.get("length", None)
+                    )
+                )
         else:
             res.append(Column(name=field, label=field_type.kwargs.get("verbose_name", field)))
     return res
