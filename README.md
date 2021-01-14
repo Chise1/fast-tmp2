@@ -8,6 +8,7 @@
 项目正在积极开发中，该项目主要是为之后的fastapi开发做准备。
 note:项目正在清理tortoise-orm中。
 
+以完成一个可以用来调试amis的版本，真不容易。
 # example启动方法
 
 1. 把.env_example改为.env
