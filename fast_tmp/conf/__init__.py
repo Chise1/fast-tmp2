@@ -22,9 +22,11 @@ class Settings:
         if not settings_module:
             work_path = os.getcwd()
             path_list = os.path.split(work_path)
-            if path_list[-1] == 'fast-tmp':
+            if path_list[-1] == "fast-tmp":
                 settings_module = "fast_tmp.settings"
-            elif not os.path.isfile(os.path.join(path_list[-1], path_list[-1].replate("-", "_"), 'settings.py')):
+            elif not os.path.isfile(
+                os.path.join(path_list[-1], path_list[-1].replate("-", "_"), "settings.py")
+            ):
                 raise ImportError(
                     "未找到settings.py"
                     f"你必须设置环境变量{FASTAPI_VARIABLE}=你的settings.py的位置"
