@@ -12,7 +12,7 @@ from fast_tmp.amis_router import AmisRouter
 from fast_tmp.depends import get_superuser
 from fast_tmp.models import Permission, User
 
-permission_router = AmisRouter(prefix="/permission")
+permission_router = AmisRouter(title="权限")
 permission_list_schema = pydantic_queryset_creator(Permission)
 
 
@@ -22,7 +22,7 @@ class PermissionList(BaseModel):
 
 
 @permission_router.get(
-    "/get",
+    "/permission",
     view=CRUD(
         api="/get",
         columns=get_coulmns_from_pqc(
