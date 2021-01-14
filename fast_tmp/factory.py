@@ -5,8 +5,8 @@ from fastapi.staticfiles import StaticFiles
 
 from fast_tmp.amis_app import AmisAPI
 from fast_tmp.api import app as b_app
-from fast_tmp.api.admin import admin_app
-from fast_tmp.api.site import router as site_app
+from fast_tmp.api.permission import permission_router
+from fast_tmp.api.site import router as site_router
 from fast_tmp.conf import settings
 
 paths = sys.path
@@ -35,8 +35,8 @@ def create_fast_tmp_app() -> AmisAPI:
             name="static",
         )
     fast_tmp_app.include_router(b_app)
-    fast_tmp_app.include_router(admin_app)
-    fast_tmp_app.include_router(site_app)
+    fast_tmp_app.include_router(site_router)
+    fast_tmp_app.include_router(permission_router)
     # fast_tmp_app.include_router(auth_router)
     # fast_tmp_app.include_router(auth2_router)
     # fast_tmp_app.add_exception_handler(
