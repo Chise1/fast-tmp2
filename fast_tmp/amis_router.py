@@ -1,5 +1,4 @@
-from typing import Any, Callable, Dict, List, Optional, Sequence, Set, \
-    Type, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Type, Union
 
 from fastapi import APIRouter, Depends, params, routing
 from fastapi.datastructures import Default, DefaultPlaceholder
@@ -18,8 +17,7 @@ from fast_tmp.amis.schema.abstract_schema import BaseAmisModel
 from fast_tmp.amis.schema.crud import CRUD
 from fast_tmp.amis.schema.page import Page
 from fast_tmp.responses import AmisResponse
-from fast_tmp.schemas import PermissionPageType, PermissionSchema, \
-    SiteSchema
+from fast_tmp.schemas import PermissionPageType, PermissionSchema, SiteSchema
 from fast_tmp.utils.urls import get_route_url
 
 
@@ -29,26 +27,25 @@ class AmisRouter(routing.Router):
     base_server_url: str = ""
 
     def __init__(
-            self,
-            *,
-            prefix: str = "",
-            title: Optional[str] = None,
-            tags: Optional[List[str]] = None,
-            site_schema: Optional[SiteSchema] = None,
-            dependencies: Optional[Sequence[params.Depends]] = None,
-            default_response_class: Type[Response] = AmisResponse,
-            responses: Optional[
-                Dict[Union[int, str], Dict[str, Any]]] = None,
-            callbacks: Optional[List[BaseRoute]] = None,
-            routes: Optional[List[routing.BaseRoute]] = None,
-            redirect_slashes: bool = True,
-            default: Optional[ASGIApp] = None,
-            dependency_overrides_provider: Optional[Any] = None,
-            route_class: Type[APIRoute] = APIRoute,
-            on_startup: Optional[Sequence[Callable[[], Any]]] = None,
-            on_shutdown: Optional[Sequence[Callable[[], Any]]] = None,
-            deprecated: Optional[bool] = None,
-            include_in_schema: bool = True,
+        self,
+        *,
+        prefix: str = "",
+        title: Optional[str] = None,
+        tags: Optional[List[str]] = None,
+        site_schema: Optional[SiteSchema] = None,
+        dependencies: Optional[Sequence[params.Depends]] = None,
+        default_response_class: Type[Response] = AmisResponse,
+        responses: Optional[Dict[Union[int, str], Dict[str, Any]]] = None,
+        callbacks: Optional[List[BaseRoute]] = None,
+        routes: Optional[List[routing.BaseRoute]] = None,
+        redirect_slashes: bool = True,
+        default: Optional[ASGIApp] = None,
+        dependency_overrides_provider: Optional[Any] = None,
+        route_class: Type[APIRoute] = APIRoute,
+        on_startup: Optional[Sequence[Callable[[], Any]]] = None,
+        on_shutdown: Optional[Sequence[Callable[[], Any]]] = None,
+        deprecated: Optional[bool] = None,
+        include_in_schema: bool = True,
     ) -> None:
         super().__init__(
             routes=routes,  # type: ignore # in Starlette
@@ -61,19 +58,17 @@ class AmisRouter(routing.Router):
             self.site_schema = site_schema
             prefix = site_schema.url
             if prefix:
-                assert prefix.startswith(
-                    "/"), "A path prefix must start with '/'"
+                assert prefix.startswith("/"), "A path prefix must start with '/'"
                 assert not prefix.endswith(
                     "/"
                 ), "A path prefix must not end with '/', as the routes will start with '/'"
         else:
-            if not title and not prefix:
-                raise ValueError("not title nor prefix is null!")
+            if not prefix:
+                raise ValueError("prefix不能为空！")
             if not title:
                 title = prefix[1:].replace("/", "")
             self.site_schema = SiteSchema(
-                label=title, codename=None,
-                type=PermissionPageType.page, url=prefix
+                label=title, codename=None, type=PermissionPageType.page, url=prefix
             )
         self.page = Page(body=[])
         self.prefix = prefix
@@ -92,42 +87,37 @@ class AmisRouter(routing.Router):
         )(HtmlTemplate(self))
 
     def add_api_route(
-            self,
-            path: str,
-            endpoint: Callable[..., Any],
-            *,
-            response_model: Optional[Type[Any]] = None,
-            status_code: int = 200,
-            tags: Optional[List[str]] = None,
-            dependencies: Optional[Sequence[params.Depends]] = None,
-            summary: Optional[str] = None,
-            description: Optional[str] = None,
-            response_description: str = "Successful Response",
-            responses: Optional[
-                Dict[Union[int, str], Dict[str, Any]]] = None,
-            deprecated: Optional[bool] = None,
-            methods: Optional[Union[Set[str], List[str]]] = None,
-            operation_id: Optional[str] = None,
-            response_model_include: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_exclude: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_by_alias: bool = True,
-            response_model_exclude_unset: bool = False,
-            response_model_exclude_defaults: bool = False,
-            response_model_exclude_none: bool = False,
-            include_in_schema: bool = True,
-            response_class: Union[
-                Type[Response], DefaultPlaceholder] = AmisResponse,
-            name: Optional[str] = None,
-            route_class_override: Optional[Type[APIRoute]] = None,
-            callbacks: Optional[List[BaseRoute]] = None,
+        self,
+        path: str,
+        endpoint: Callable[..., Any],
+        *,
+        response_model: Optional[Type[Any]] = None,
+        status_code: int = 200,
+        tags: Optional[List[str]] = None,
+        dependencies: Optional[Sequence[params.Depends]] = None,
+        summary: Optional[str] = None,
+        description: Optional[str] = None,
+        response_description: str = "Successful Response",
+        responses: Optional[Dict[Union[int, str], Dict[str, Any]]] = None,
+        deprecated: Optional[bool] = None,
+        methods: Optional[Union[Set[str], List[str]]] = None,
+        operation_id: Optional[str] = None,
+        response_model_include: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_exclude: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_by_alias: bool = True,
+        response_model_exclude_unset: bool = False,
+        response_model_exclude_defaults: bool = False,
+        response_model_exclude_none: bool = False,
+        include_in_schema: bool = True,
+        response_class: Union[Type[Response], DefaultPlaceholder] = AmisResponse,
+        name: Optional[str] = None,
+        route_class_override: Optional[Type[APIRoute]] = None,
+        callbacks: Optional[List[BaseRoute]] = None,
     ) -> None:
         route_class = route_class_override or self.route_class
         responses = responses or {}
         combined_responses = {**self.responses, **responses}
-        current_response_class = get_value_or_default(response_class,
-                                                      self.default_response_class)
+        current_response_class = get_value_or_default(response_class, self.default_response_class)
         current_tags = self.tags.copy()
         if tags:
             current_tags.extend(tags)
@@ -166,42 +156,40 @@ class AmisRouter(routing.Router):
         self.routes.append(route)
 
     def api_route(
-            self,
-            path: str,
-            summary: str,
-            *,
-            permission_model: Optional[PermissionSchema] = None,
-            view: Optional[BaseAmisModel] = None,
-            response_model: Optional[Type[Any]] = None,
-            status_code: int = 200,
-            tags: Optional[List[str]] = None,
-            dependencies: Optional[Sequence[params.Depends]] = None,
-            description: Optional[str] = None,
-            response_description: str = "Successful Response",
-            responses: Optional[
-                Dict[Union[int, str], Dict[str, Any]]] = None,
-            deprecated: Optional[bool] = None,
-            methods: Optional[List[str]] = None,
-            operation_id: Optional[str] = None,
-            response_model_include: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_exclude: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_by_alias: bool = True,
-            response_model_exclude_unset: bool = False,
-            response_model_exclude_defaults: bool = False,
-            response_model_exclude_none: bool = False,
-            include_in_schema: bool = True,
-            response_class: Type[Response] = Default(JSONResponse),
-            name: Optional[str] = None,
-            callbacks: Optional[List[BaseRoute]] = None,
+        self,
+        path: str,
+        summary: str,
+        *,
+        permission_model: Optional[PermissionSchema] = None,
+        view: Optional[BaseAmisModel] = None,
+        response_model: Optional[Type[Any]] = None,
+        status_code: int = 200,
+        tags: Optional[List[str]] = None,
+        dependencies: Optional[Sequence[params.Depends]] = None,
+        description: Optional[str] = None,
+        response_description: str = "Successful Response",
+        responses: Optional[Dict[Union[int, str], Dict[str, Any]]] = None,
+        deprecated: Optional[bool] = None,
+        methods: Optional[List[str]] = None,
+        operation_id: Optional[str] = None,
+        response_model_include: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_exclude: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_by_alias: bool = True,
+        response_model_exclude_unset: bool = False,
+        response_model_exclude_defaults: bool = False,
+        response_model_exclude_none: bool = False,
+        include_in_schema: bool = True,
+        response_class: Type[Response] = Default(JSONResponse),
+        name: Optional[str] = None,
+        callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
         if not path:
             raise ValueError("path can't be null or ''")
         if view:
             self.page.body.append(view)
             if isinstance(view, (CRUD,)):
-                view.api = path
+                if not view.api:
+                    view.api = path
         if permission_model:
             self.site_schema.children.append(permission_model)
         else:
@@ -244,8 +232,7 @@ class AmisRouter(routing.Router):
         return decorator
 
     def add_api_websocket_route(
-            self, path: str, endpoint: Callable[..., Any],
-            name: Optional[str] = None
+        self, path: str, endpoint: Callable[..., Any], name: Optional[str] = None
     ) -> None:
         route = APIWebSocketRoute(
             path,
@@ -256,7 +243,7 @@ class AmisRouter(routing.Router):
         self.routes.append(route)
 
     def websocket(
-            self, path: str, name: Optional[str] = None
+        self, path: str, name: Optional[str] = None
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
         def decorator(func: DecoratedCallable) -> DecoratedCallable:
             self.add_api_websocket_route(path, func, name=name)
@@ -265,22 +252,20 @@ class AmisRouter(routing.Router):
         return decorator
 
     def include_router(
-            self,
-            router: "APIRouter",
-            *,
-            prefix: str = "",
-            tags: Optional[List[str]] = None,
-            dependencies: Optional[Sequence[params.Depends]] = None,
-            default_response_class: Type[Response] = AmisResponse,
-            responses: Optional[
-                Dict[Union[int, str], Dict[str, Any]]] = None,
-            callbacks: Optional[List[BaseRoute]] = None,
-            deprecated: Optional[bool] = None,
-            include_in_schema: bool = True,
+        self,
+        router: "APIRouter",
+        *,
+        prefix: str = "",
+        tags: Optional[List[str]] = None,
+        dependencies: Optional[Sequence[params.Depends]] = None,
+        default_response_class: Type[Response] = AmisResponse,
+        responses: Optional[Dict[Union[int, str], Dict[str, Any]]] = None,
+        callbacks: Optional[List[BaseRoute]] = None,
+        deprecated: Optional[bool] = None,
+        include_in_schema: bool = True,
     ) -> None:
         if prefix:
-            assert prefix.startswith(
-                "/"), "A path prefix must start with '/'"
+            assert prefix.startswith("/"), "A path prefix must start with '/'"
             assert not prefix.endswith(
                 "/"
             ), "A path prefix must not end with '/', as the routes will start with '/'"
@@ -339,16 +324,15 @@ class AmisRouter(routing.Router):
                     response_model_exclude_defaults=route.response_model_exclude_defaults,
                     response_model_exclude_none=route.response_model_exclude_none,
                     include_in_schema=route.include_in_schema
-                                      and self.include_in_schema
-                                      and include_in_schema,
+                    and self.include_in_schema
+                    and include_in_schema,
                     response_class=use_response_class,
                     name=route.name,
                     route_class_override=type(route),
                     callbacks=current_callbacks,
                 )
             elif isinstance(route, routing.Route):
-                methods = list(
-                    route.methods or [])  # type: ignore # in Starlette
+                methods = list(route.methods or [])  # type: ignore # in Starlette
                 self.add_route(
                     prefix + route.path,
                     route.endpoint,
@@ -357,47 +341,40 @@ class AmisRouter(routing.Router):
                     name=route.name,
                 )
             elif isinstance(route, APIWebSocketRoute):
-                self.add_api_websocket_route(prefix + route.path,
-                                             route.endpoint,
-                                             name=route.name)
+                self.add_api_websocket_route(prefix + route.path, route.endpoint, name=route.name)
             elif isinstance(route, routing.WebSocketRoute):
-                self.add_websocket_route(prefix + route.path,
-                                         route.endpoint,
-                                         name=route.name)
+                self.add_websocket_route(prefix + route.path, route.endpoint, name=route.name)
         for handler in router.on_startup:
             self.add_event_handler("startup", handler)
         for handler in router.on_shutdown:
             self.add_event_handler("shutdown", handler)
 
     def get(
-            self,
-            path: str,
-            *,
-            view: Optional[BaseAmisModel] = None,
-            permission_model: Optional[PermissionSchema] = None,
-            response_model: Optional[Type[Any]] = None,
-            status_code: int = 200,
-            tags: Optional[List[str]] = None,
-            dependencies: Optional[Sequence[params.Depends]] = None,
-            summary: Optional[str] = None,
-            description: Optional[str] = None,
-            response_description: str = "Successful Response",
-            responses: Optional[
-                Dict[Union[int, str], Dict[str, Any]]] = None,
-            deprecated: Optional[bool] = None,
-            operation_id: Optional[str] = None,
-            response_model_include: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_exclude: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_by_alias: bool = True,
-            response_model_exclude_unset: bool = False,
-            response_model_exclude_defaults: bool = False,
-            response_model_exclude_none: bool = False,
-            include_in_schema: bool = True,
-            response_class: Type[Response] = AmisResponse,
-            name: Optional[str] = None,
-            callbacks: Optional[List[BaseRoute]] = None,
+        self,
+        path: str,
+        *,
+        view: Optional[BaseAmisModel] = None,
+        permission_model: Optional[PermissionSchema] = None,
+        response_model: Optional[Type[Any]] = None,
+        status_code: int = 200,
+        tags: Optional[List[str]] = None,
+        dependencies: Optional[Sequence[params.Depends]] = None,
+        summary: Optional[str] = None,
+        description: Optional[str] = None,
+        response_description: str = "Successful Response",
+        responses: Optional[Dict[Union[int, str], Dict[str, Any]]] = None,
+        deprecated: Optional[bool] = None,
+        operation_id: Optional[str] = None,
+        response_model_include: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_exclude: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_by_alias: bool = True,
+        response_model_exclude_unset: bool = False,
+        response_model_exclude_defaults: bool = False,
+        response_model_exclude_none: bool = False,
+        include_in_schema: bool = True,
+        response_class: Type[Response] = AmisResponse,
+        name: Optional[str] = None,
+        callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
         return self.api_route(
             path=path,
@@ -427,34 +404,31 @@ class AmisRouter(routing.Router):
         )
 
     def put(
-            self,
-            path: str,
-            *,
-            view: Optional[BaseAmisModel] = None,
-            permission_model: Optional[PermissionSchema] = None,
-            response_model: Optional[Type[Any]] = None,
-            status_code: int = 200,
-            tags: Optional[List[str]] = None,
-            dependencies: Optional[Sequence[params.Depends]] = None,
-            summary: Optional[str] = None,
-            description: Optional[str] = None,
-            response_description: str = "Successful Response",
-            responses: Optional[
-                Dict[Union[int, str], Dict[str, Any]]] = None,
-            deprecated: Optional[bool] = None,
-            operation_id: Optional[str] = None,
-            response_model_include: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_exclude: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_by_alias: bool = True,
-            response_model_exclude_unset: bool = False,
-            response_model_exclude_defaults: bool = False,
-            response_model_exclude_none: bool = False,
-            include_in_schema: bool = True,
-            response_class: Type[Response] = AmisResponse,
-            name: Optional[str] = None,
-            callbacks: Optional[List[BaseRoute]] = None,
+        self,
+        path: str,
+        *,
+        view: Optional[BaseAmisModel] = None,
+        permission_model: Optional[PermissionSchema] = None,
+        response_model: Optional[Type[Any]] = None,
+        status_code: int = 200,
+        tags: Optional[List[str]] = None,
+        dependencies: Optional[Sequence[params.Depends]] = None,
+        summary: Optional[str] = None,
+        description: Optional[str] = None,
+        response_description: str = "Successful Response",
+        responses: Optional[Dict[Union[int, str], Dict[str, Any]]] = None,
+        deprecated: Optional[bool] = None,
+        operation_id: Optional[str] = None,
+        response_model_include: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_exclude: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_by_alias: bool = True,
+        response_model_exclude_unset: bool = False,
+        response_model_exclude_defaults: bool = False,
+        response_model_exclude_none: bool = False,
+        include_in_schema: bool = True,
+        response_class: Type[Response] = AmisResponse,
+        name: Optional[str] = None,
+        callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
         return self.api_route(
             path=path,
@@ -484,34 +458,31 @@ class AmisRouter(routing.Router):
         )
 
     def post(
-            self,
-            path: str,
-            *,
-            view: Optional[BaseAmisModel] = None,
-            permission_model: Optional[PermissionSchema] = None,
-            response_model: Optional[Type[Any]] = None,
-            status_code: int = 200,
-            tags: Optional[List[str]] = None,
-            dependencies: Optional[Sequence[params.Depends]] = None,
-            summary: Optional[str] = None,
-            description: Optional[str] = None,
-            response_description: str = "Successful Response",
-            responses: Optional[
-                Dict[Union[int, str], Dict[str, Any]]] = None,
-            deprecated: Optional[bool] = None,
-            operation_id: Optional[str] = None,
-            response_model_include: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_exclude: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_by_alias: bool = True,
-            response_model_exclude_unset: bool = False,
-            response_model_exclude_defaults: bool = False,
-            response_model_exclude_none: bool = False,
-            include_in_schema: bool = True,
-            response_class: Type[Response] = AmisResponse,
-            name: Optional[str] = None,
-            callbacks: Optional[List[BaseRoute]] = None,
+        self,
+        path: str,
+        *,
+        view: Optional[BaseAmisModel] = None,
+        permission_model: Optional[PermissionSchema] = None,
+        response_model: Optional[Type[Any]] = None,
+        status_code: int = 200,
+        tags: Optional[List[str]] = None,
+        dependencies: Optional[Sequence[params.Depends]] = None,
+        summary: Optional[str] = None,
+        description: Optional[str] = None,
+        response_description: str = "Successful Response",
+        responses: Optional[Dict[Union[int, str], Dict[str, Any]]] = None,
+        deprecated: Optional[bool] = None,
+        operation_id: Optional[str] = None,
+        response_model_include: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_exclude: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_by_alias: bool = True,
+        response_model_exclude_unset: bool = False,
+        response_model_exclude_defaults: bool = False,
+        response_model_exclude_none: bool = False,
+        include_in_schema: bool = True,
+        response_class: Type[Response] = AmisResponse,
+        name: Optional[str] = None,
+        callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
         return self.api_route(
             path=path,
@@ -541,34 +512,31 @@ class AmisRouter(routing.Router):
         )
 
     def delete(
-            self,
-            path: str,
-            *,
-            view: Optional[BaseAmisModel] = None,
-            permission_model: Optional[PermissionSchema] = None,
-            response_model: Optional[Type[Any]] = None,
-            status_code: int = 200,
-            tags: Optional[List[str]] = None,
-            dependencies: Optional[Sequence[params.Depends]] = None,
-            summary: Optional[str] = None,
-            description: Optional[str] = None,
-            response_description: str = "Successful Response",
-            responses: Optional[
-                Dict[Union[int, str], Dict[str, Any]]] = None,
-            deprecated: Optional[bool] = None,
-            operation_id: Optional[str] = None,
-            response_model_include: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_exclude: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_by_alias: bool = True,
-            response_model_exclude_unset: bool = False,
-            response_model_exclude_defaults: bool = False,
-            response_model_exclude_none: bool = False,
-            include_in_schema: bool = True,
-            response_class: Type[Response] = AmisResponse,
-            name: Optional[str] = None,
-            callbacks: Optional[List[BaseRoute]] = None,
+        self,
+        path: str,
+        *,
+        view: Optional[BaseAmisModel] = None,
+        permission_model: Optional[PermissionSchema] = None,
+        response_model: Optional[Type[Any]] = None,
+        status_code: int = 200,
+        tags: Optional[List[str]] = None,
+        dependencies: Optional[Sequence[params.Depends]] = None,
+        summary: Optional[str] = None,
+        description: Optional[str] = None,
+        response_description: str = "Successful Response",
+        responses: Optional[Dict[Union[int, str], Dict[str, Any]]] = None,
+        deprecated: Optional[bool] = None,
+        operation_id: Optional[str] = None,
+        response_model_include: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_exclude: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_by_alias: bool = True,
+        response_model_exclude_unset: bool = False,
+        response_model_exclude_defaults: bool = False,
+        response_model_exclude_none: bool = False,
+        include_in_schema: bool = True,
+        response_class: Type[Response] = AmisResponse,
+        name: Optional[str] = None,
+        callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
         return self.api_route(
             path=path,
@@ -598,33 +566,30 @@ class AmisRouter(routing.Router):
         )
 
     def options(
-            self,
-            path: str,
-            view: Optional[BaseAmisModel] = None,
-            *,
-            response_model: Optional[Type[Any]] = None,
-            status_code: int = 200,
-            tags: Optional[List[str]] = None,
-            dependencies: Optional[Sequence[params.Depends]] = None,
-            summary: Optional[str] = None,
-            description: Optional[str] = None,
-            response_description: str = "Successful Response",
-            responses: Optional[
-                Dict[Union[int, str], Dict[str, Any]]] = None,
-            deprecated: Optional[bool] = None,
-            operation_id: Optional[str] = None,
-            response_model_include: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_exclude: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_by_alias: bool = True,
-            response_model_exclude_unset: bool = False,
-            response_model_exclude_defaults: bool = False,
-            response_model_exclude_none: bool = False,
-            include_in_schema: bool = True,
-            response_class: Type[Response] = AmisResponse,
-            name: Optional[str] = None,
-            callbacks: Optional[List[BaseRoute]] = None,
+        self,
+        path: str,
+        view: Optional[BaseAmisModel] = None,
+        *,
+        response_model: Optional[Type[Any]] = None,
+        status_code: int = 200,
+        tags: Optional[List[str]] = None,
+        dependencies: Optional[Sequence[params.Depends]] = None,
+        summary: Optional[str] = None,
+        description: Optional[str] = None,
+        response_description: str = "Successful Response",
+        responses: Optional[Dict[Union[int, str], Dict[str, Any]]] = None,
+        deprecated: Optional[bool] = None,
+        operation_id: Optional[str] = None,
+        response_model_include: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_exclude: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_by_alias: bool = True,
+        response_model_exclude_unset: bool = False,
+        response_model_exclude_defaults: bool = False,
+        response_model_exclude_none: bool = False,
+        include_in_schema: bool = True,
+        response_class: Type[Response] = AmisResponse,
+        name: Optional[str] = None,
+        callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
         return self.api_route(
             path=path,
@@ -653,34 +618,31 @@ class AmisRouter(routing.Router):
         )
 
     def head(
-            self,
-            path: str,
-            *,
-            view: Optional[BaseAmisModel] = None,
-            permission_model: Optional[PermissionSchema] = None,
-            response_model: Optional[Type[Any]] = None,
-            status_code: int = 200,
-            tags: Optional[List[str]] = None,
-            dependencies: Optional[Sequence[params.Depends]] = None,
-            summary: Optional[str] = None,
-            description: Optional[str] = None,
-            response_description: str = "Successful Response",
-            responses: Optional[
-                Dict[Union[int, str], Dict[str, Any]]] = None,
-            deprecated: Optional[bool] = None,
-            operation_id: Optional[str] = None,
-            response_model_include: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_exclude: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_by_alias: bool = True,
-            response_model_exclude_unset: bool = False,
-            response_model_exclude_defaults: bool = False,
-            response_model_exclude_none: bool = False,
-            include_in_schema: bool = True,
-            response_class: Type[Response] = AmisResponse,
-            name: Optional[str] = None,
-            callbacks: Optional[List[BaseRoute]] = None,
+        self,
+        path: str,
+        *,
+        view: Optional[BaseAmisModel] = None,
+        permission_model: Optional[PermissionSchema] = None,
+        response_model: Optional[Type[Any]] = None,
+        status_code: int = 200,
+        tags: Optional[List[str]] = None,
+        dependencies: Optional[Sequence[params.Depends]] = None,
+        summary: Optional[str] = None,
+        description: Optional[str] = None,
+        response_description: str = "Successful Response",
+        responses: Optional[Dict[Union[int, str], Dict[str, Any]]] = None,
+        deprecated: Optional[bool] = None,
+        operation_id: Optional[str] = None,
+        response_model_include: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_exclude: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_by_alias: bool = True,
+        response_model_exclude_unset: bool = False,
+        response_model_exclude_defaults: bool = False,
+        response_model_exclude_none: bool = False,
+        include_in_schema: bool = True,
+        response_class: Type[Response] = AmisResponse,
+        name: Optional[str] = None,
+        callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
         return self.api_route(
             path=path,
@@ -710,34 +672,31 @@ class AmisRouter(routing.Router):
         )
 
     def patch(
-            self,
-            path: str,
-            *,
-            view: Optional[BaseAmisModel] = None,
-            permission_model: Optional[PermissionSchema] = None,
-            response_model: Optional[Type[Any]] = None,
-            status_code: int = 200,
-            tags: Optional[List[str]] = None,
-            dependencies: Optional[Sequence[params.Depends]] = None,
-            summary: Optional[str] = None,
-            description: Optional[str] = None,
-            response_description: str = "Successful Response",
-            responses: Optional[
-                Dict[Union[int, str], Dict[str, Any]]] = None,
-            deprecated: Optional[bool] = None,
-            operation_id: Optional[str] = None,
-            response_model_include: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_exclude: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_by_alias: bool = True,
-            response_model_exclude_unset: bool = False,
-            response_model_exclude_defaults: bool = False,
-            response_model_exclude_none: bool = False,
-            include_in_schema: bool = True,
-            response_class: Type[Response] = AmisResponse,
-            name: Optional[str] = None,
-            callbacks: Optional[List[BaseRoute]] = None,
+        self,
+        path: str,
+        *,
+        view: Optional[BaseAmisModel] = None,
+        permission_model: Optional[PermissionSchema] = None,
+        response_model: Optional[Type[Any]] = None,
+        status_code: int = 200,
+        tags: Optional[List[str]] = None,
+        dependencies: Optional[Sequence[params.Depends]] = None,
+        summary: Optional[str] = None,
+        description: Optional[str] = None,
+        response_description: str = "Successful Response",
+        responses: Optional[Dict[Union[int, str], Dict[str, Any]]] = None,
+        deprecated: Optional[bool] = None,
+        operation_id: Optional[str] = None,
+        response_model_include: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_exclude: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_by_alias: bool = True,
+        response_model_exclude_unset: bool = False,
+        response_model_exclude_defaults: bool = False,
+        response_model_exclude_none: bool = False,
+        include_in_schema: bool = True,
+        response_class: Type[Response] = AmisResponse,
+        name: Optional[str] = None,
+        callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
         return self.api_route(
             path=path,
@@ -767,34 +726,31 @@ class AmisRouter(routing.Router):
         )
 
     def trace(
-            self,
-            path: str,
-            *,
-            view: Optional[BaseAmisModel] = None,
-            permission_model: Optional[PermissionSchema] = None,
-            response_model: Optional[Type[Any]] = None,
-            status_code: int = 200,
-            tags: Optional[List[str]] = None,
-            dependencies: Optional[Sequence[params.Depends]] = None,
-            summary: Optional[str] = None,
-            description: Optional[str] = None,
-            response_description: str = "Successful Response",
-            responses: Optional[
-                Dict[Union[int, str], Dict[str, Any]]] = None,
-            deprecated: Optional[bool] = None,
-            operation_id: Optional[str] = None,
-            response_model_include: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_exclude: Optional[
-                Union[SetIntStr, DictIntStrAny]] = None,
-            response_model_by_alias: bool = True,
-            response_model_exclude_unset: bool = False,
-            response_model_exclude_defaults: bool = False,
-            response_model_exclude_none: bool = False,
-            include_in_schema: bool = True,
-            response_class: Type[Response] = AmisResponse,
-            name: Optional[str] = None,
-            callbacks: Optional[List[BaseRoute]] = None,
+        self,
+        path: str,
+        *,
+        view: Optional[BaseAmisModel] = None,
+        permission_model: Optional[PermissionSchema] = None,
+        response_model: Optional[Type[Any]] = None,
+        status_code: int = 200,
+        tags: Optional[List[str]] = None,
+        dependencies: Optional[Sequence[params.Depends]] = None,
+        summary: Optional[str] = None,
+        description: Optional[str] = None,
+        response_description: str = "Successful Response",
+        responses: Optional[Dict[Union[int, str], Dict[str, Any]]] = None,
+        deprecated: Optional[bool] = None,
+        operation_id: Optional[str] = None,
+        response_model_include: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_exclude: Optional[Union[SetIntStr, DictIntStrAny]] = None,
+        response_model_by_alias: bool = True,
+        response_model_exclude_unset: bool = False,
+        response_model_exclude_defaults: bool = False,
+        response_model_exclude_none: bool = False,
+        include_in_schema: bool = True,
+        response_class: Type[Response] = AmisResponse,
+        name: Optional[str] = None,
+        callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
         return self.api_route(
             path=path,
@@ -835,12 +791,11 @@ class HtmlTemplate:
         self.router = router
 
     # fixme:考虑缓存
-    def __call__(self, request: Request,
-                 user=Depends(get_current_active_user)):
+    def __call__(self, request: Request, user=Depends(get_current_active_user)):
         if not self.init:
             for widget in self.router.page.body:
                 if isinstance(widget, CRUD):
-                    base_server_url = str(request.url).split("?")[0].replace("schema_api","")
+                    base_server_url = str(request.url).split("?")[0].replace("/schema_api", "")
                     widget.api = base_server_url + widget.api
             self.init = True
         return self.router.page.dict()

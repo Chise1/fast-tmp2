@@ -2,10 +2,8 @@ import asyncio
 import datetime
 
 import typer
-import sys
 
 app = typer.Typer()
-import os
 
 
 @app.command()
