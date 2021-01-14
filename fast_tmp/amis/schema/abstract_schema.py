@@ -27,3 +27,10 @@ class Message(BaseModel):
     fetchFailed: Optional[str]
     saveSuccess: Optional[str]
     saveFailed: Optional[str]
+
+
+class RelativePath(BaseModel):
+    path = ""
+
+    def __init__(self, path: str):
+        super().__init__(path=path)

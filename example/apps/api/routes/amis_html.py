@@ -13,9 +13,8 @@ from fast_tmp.amis.schema.crud import CRUD
 from fast_tmp.amis.schema.enums import ButtonLevelEnum
 from fast_tmp.amis.schema.forms import Form
 from fast_tmp.amis.schema.frame import Dialog, Drawer
-from fast_tmp.amis.utils import get_coulmns_from_pmc, get_coulmns_from_pqc, get_columns_from_model
+from fast_tmp.amis.utils import get_coulmns_from_pqc, get_columns_from_model
 from fast_tmp.amis_router import AmisRouter
-from fast_tmp.conf import settings
 from example.models import Message
 from example.schemas import ResMessageList, message_list_schema, message_schema
 
@@ -25,7 +24,7 @@ router = AmisRouter(prefix="/amis")
 @router.get(
     "/message",
     view=CRUD(
-        api=settings.SERVER_URL + router.prefix + "/message",
+        api="/message",
         columns=get_coulmns_from_pqc(
             message_list_schema,
             add_type=False,
@@ -39,11 +38,9 @@ router = AmisRouter(prefix="/amis")
                                 title="修改数据",
                                 body=Form(
                                     name="message_update",
-                                    api="put:"
-                                        + settings.SERVER_URL
-                                        + router.prefix
+                                    api="put:"      + router.prefix
                                         + "/message/${id}",
-                                    initApi=settings.SERVER_URL + router.prefix + "/message/${id}",
+                                    initApi=router.prefix + "/message/${id}",
                                     controls=get_columns_from_model(Message, add_type=True),  # 测试这里
                                 ),
                             ),
@@ -52,7 +49,7 @@ router = AmisRouter(prefix="/amis")
                             label="删除",
                             level=ButtonLevelEnum.danger,
                             confirmText="确认要删除？",
-                            api="delete:http://127.0.0.1:8000/amis/message/${id}",
+                            api="delete:/amis/message/${id}",
                         ),
                     ],
                 )

@@ -12,11 +12,13 @@ from fast_tmp.amis_router import AmisRouter
 from fast_tmp.depends import get_superuser
 from fast_tmp.models import Permission, User
 
-permission_router = AmisRouter(title="权限", prefix="/permission")
-permission_list_schema = pydantic_queryset_creator(Permission)
+permission_router = AmisRouter(title="权限")
+permission_list_schema = pydantic_queryset_creator(Permission, exclude=("groups",))
 
 
-class PermissionList(BaseModel):
+class PermissionList(
+    BaseModel,
+):
     items: permission_list_schema
     total: int
 
@@ -55,6 +57,7 @@ class PermissionList(BaseModel):
             #     )
             # ],
         ),
+        api="/permission",
     ),
     response_model=PermissionList,
 )

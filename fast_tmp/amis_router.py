@@ -1,20 +1,18 @@
 from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Type, Union
 
-from fastapi import APIRouter, Depends, params, routing
+from fastapi import APIRouter, params, routing
 from fastapi.datastructures import Default, DefaultPlaceholder
 from fastapi.encoders import DictIntStrAny, SetIntStr
 from fastapi.routing import APIRoute, APIWebSocketRoute
 from fastapi.types import DecoratedCallable
 from fastapi.utils import get_value_or_default
 from starlette import routing
-from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 from starlette.routing import Mount  # noqa
 from starlette.routing import BaseRoute
 from starlette.types import ASGIApp
 
 from fast_tmp.amis.schema.abstract_schema import BaseAmisModel
-from fast_tmp.amis.schema.crud import CRUD
 from fast_tmp.amis.schema.page import Page
 from fast_tmp.responses import AmisResponse
 from fast_tmp.schemas import PermissionPageType, PermissionSchema, SiteSchema
@@ -22,7 +20,6 @@ from fast_tmp.utils.urls import get_route_url
 
 
 class AmisRouter(routing.Router):
-    page: Page
     site_schema: SiteSchema
     base_server_url: str = ""
 
@@ -63,14 +60,11 @@ class AmisRouter(routing.Router):
                     "/"
                 ), "A path prefix must not end with '/', as the routes will start with '/'"
         else:
-            if not prefix:
-                raise ValueError("prefix不能为空！")
             if not title:
                 title = prefix[1:].replace("/", "")
             self.site_schema = SiteSchema(
-                label=title, codename=None, type=PermissionPageType.page, url=prefix
+                label=title, codename=None, type=PermissionPageType.page, url=prefix, page=Page()
             )
-        self.page = Page(body=[])
         self.prefix = prefix
         self.route_url = get_route_url(prefix)
         self.tags: List[str] = tags or []
@@ -82,9 +76,6 @@ class AmisRouter(routing.Router):
         self.dependency_overrides_provider = dependency_overrides_provider
         self.route_class = route_class
         self.default_response_class = default_response_class
-        self.post(
-            "/schema_api",
-        )(HtmlTemplate(self))
 
     def add_api_route(
         self,
@@ -185,19 +176,17 @@ class AmisRouter(routing.Router):
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
         if not path:
             raise ValueError("path can't be null or ''")
-        if view:
-            self.page.body.append(view)
-            if isinstance(view, (CRUD,)):
-                if not view.api:
-                    view.api = path
         if permission_model:
+            if view and not permission_model.view:
+                permission_model.view = view
+            permission_model.url = path
             self.site_schema.children.append(permission_model)
         else:
             self.site_schema.children.append(
                 PermissionSchema(
                     label=summary or path.replace("/", ""),
                     url=path,
-                    has_view=(True if view else False),
+                    view=view,
                 )
             )
 
@@ -778,24 +767,3 @@ class AmisRouter(routing.Router):
             name=name,
             callbacks=callbacks,
         )
-
-
-from fast_tmp.depends import get_current_active_user
-
-
-# todo:需要增加权限判定
-class HtmlTemplate:
-    init = False
-
-    def __init__(self, router: AmisRouter):
-        self.router = router
-
-    # fixme:考虑缓存
-    def __call__(self, request: Request, user=Depends(get_current_active_user)):
-        if not self.init:
-            for widget in self.router.page.body:
-                if isinstance(widget, CRUD):
-                    base_server_url = str(request.url).split("?")[0].replace("/schema_api", "")
-                    widget.api = base_server_url + widget.api
-            self.init = True
-        return self.router.page.dict()

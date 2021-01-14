@@ -19,13 +19,15 @@ class PermissionPageType(str, Enum):
     route = "route"
 
 
+from fast_tmp.amis.schema.page import Page
+
+
 class PermissionSchema(BaseModel):
     label: str
-    codename: str = None
+    codename: Optional[List[str]]
     type: PermissionPageType = PermissionPageType.widget
-    children: List[Union["PermissionSchema", "SiteSchema"]] = []
     url: str = ""  # 基础理由
-    has_view: bool = False
+    view: Optional[BaseModel]
 
 
 class SiteSchema(PermissionSchema):
@@ -35,3 +37,5 @@ class SiteSchema(PermissionSchema):
     redirect: Optional[str]
     rewrite: bool = False
     visable: bool = True
+    page: Optional[Page]
+    children: List[Union[PermissionSchema, "SiteSchema"]] = []
