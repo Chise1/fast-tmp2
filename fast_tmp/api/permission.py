@@ -24,7 +24,7 @@ class PermissionList(BaseModel):
 @permission_router.get(
     "/permission",
     view=CRUD(
-        api="/get",
+        api="/permission",
         columns=get_coulmns_from_pqc(
             permission_list_schema,
             add_type=False,  # extra_fields=[
