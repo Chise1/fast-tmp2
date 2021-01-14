@@ -4,9 +4,9 @@ from starlette.requests import Request
 
 from fast_tmp.amis.schema.app import AppSchema
 from fast_tmp.amis_router import AmisRouter
-from fast_tmp.api.admin import get_site_from_permissionschema, init_permission
 from fast_tmp.conf import settings
 from fast_tmp.depends import authenticate_user, get_current_user
+from fast_tmp.func import get_site_from_permissionschema, init_permission
 from fast_tmp.models import Permission, User
 from fast_tmp.templates_app import templates
 from fast_tmp.utils.token import create_access_token
@@ -30,8 +30,11 @@ async def get_site(user: User = Depends(get_current_user)):
         await init_permission(app.site_schema, list(await Permission.all()))
         INIT_PERMISSION = True
     permissions = await user.perms
-    site = get_site_from_permissionschema(app.site_schema, permissions, "", user)
-    return {"pages": [site]}
+    site = get_site_from_permissionschema(app.site_schema, permissions, settings.SERVER_URL, user)
+    if site:
+        return {"pages": [site]}
+    else:
+        return {"pages": []}
 
 
 SECRET_KEY = settings.SECRET_KEY
@@ -61,7 +64,6 @@ async def index(request: Request, username: str, password: str):
         await init_permission(app.site_schema, list(await Permission.all()))
         INIT_PERMISSION = True
     permissions = await user.perms
-    x = get_site_from_permissionschema(app.site_schema, permissions, "", user)
     page = AppSchema(
         brandName="项目测试",
         pages=[get_site_from_permissionschema(app.site_schema, permissions, "", user)],

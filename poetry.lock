@@ -179,7 +179,7 @@ reference = "aliyun"
 name = "certifi"
 version = "2020.12.5"
 description = "Python package for providing Mozilla's CA Bundle."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -807,7 +807,7 @@ reference = "aliyun"
 name = "python-dotenv"
 version = "0.15.0"
 description = "Add .env support to your django/flask apps in development and deployments"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -953,7 +953,7 @@ reference = "aliyun"
 name = "sentry-sdk"
 version = "0.19.5"
 description = "Python client for Sentry (https://sentry.io)"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1131,7 +1131,7 @@ reference = "aliyun"
 name = "urllib3"
 version = "1.26.2"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
 
@@ -1198,12 +1198,12 @@ reference = "aliyun"
 
 [extras]
 dbdrivers = []
-sentry = ["sentry-sdk"]
+sentry = []
 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "f62c6bdf037b5c91615e17b0dbd15c0015d50a0ae8003146c64cf5ea9d0e9fc7"
+content-hash = "faa25205aa31b7132b368b394ccab13b3a4ec92bbf9f9e2d06c6deee41a1aba7"
 
 [metadata.files]
 aiofiles = [
