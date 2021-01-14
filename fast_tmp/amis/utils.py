@@ -1,4 +1,4 @@
-from typing import List, Tuple, Type
+from typing import List, Optional, Tuple, Type
 
 from pydantic.main import BaseModel
 from pydantic.schema import schema
@@ -124,9 +124,8 @@ def get_coulmns_from_pmc(
     return res
 
 
-# fixme:等待修复
-def get_columns_from_str(
-    fields: List[str], include: List[str] = None, exclude: List[str] = None, add_type: bool = False
+def get_columns_from_list(
+    fields: List[str],
 ) -> List[Column]:
     res = []
     for field in fields:
@@ -162,7 +161,7 @@ def get_columns_from_model(
     include: List[str] = None,
     exclude: List[str] = None,
     add_type: bool = False,
-    extra_fields=None,
+    extra_fields: Optional[List[Column]] = None,
     exclude_readonly: bool = False,
 ) -> List[Column]:
     """
@@ -173,6 +172,8 @@ def get_columns_from_model(
 
     res = []
     for field, field_type in fields.items():
+        if include and field not in include or exclude and field in exclude:
+            continue
         if add_type:
             if exclude_readonly and field_type.pk:
                 continue
@@ -327,4 +328,6 @@ def get_columns_from_model(
                 )
         else:
             res.append(Column(name=field, label=field_type.kwargs.get("verbose_name", field)))
+    if extra_fields:
+        res.extend(extra_fields)
     return res
