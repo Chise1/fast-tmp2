@@ -1,8 +1,6 @@
-from typing import List, Optional, Union
+from typing import List, Union
 
-from pydantic import HttpUrl
-
-from fast_tmp.amis.schema.abstract_schema import BaseAmisModel, RelativePath, _Action
+from fast_tmp.amis.schema.abstract_schema import BaseAmisModel, _Action, ApiUrl
 from fast_tmp.amis.schema.buttons import Operation
 from fast_tmp.amis.schema.enums import TypeEnum
 from fast_tmp.amis.schema.forms import Column
@@ -15,3 +13,6 @@ class CRUD(BaseAmisModel):
     # 参考：https://baidu.gitee.io/amis/docs/components/dialog?page=1
     columns: List[Union[Column, _Action, Operation]]
     affixHeader: bool = False
+
+    class Config:
+        arbitrary_types_allowed = True

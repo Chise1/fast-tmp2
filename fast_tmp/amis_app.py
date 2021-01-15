@@ -58,7 +58,7 @@ class AmisAPI(FastAPI):
         if site_schema:
             self.site_schema = site_schema
         else:
-            self.site_schema = SiteSchema(label=title, codename=None, type=PermissionPageType.route)
+            self.site_schema = SiteSchema(label=title, type=PermissionPageType.route)
 
     def include_router(
         self,

@@ -7,55 +7,20 @@
 @Software: PyCharm
 @info    :
 """
-from fast_tmp.amis.schema.actions import AjaxAction, DialogAction, DrawerAction
-from fast_tmp.amis.schema.buttons import Operation
-from fast_tmp.amis.schema.crud import CRUD
-from fast_tmp.amis.schema.enums import ButtonLevelEnum
-from fast_tmp.amis.schema.forms import Form
-from fast_tmp.amis.schema.frame import Dialog, Drawer
-from fast_tmp.amis.utils import get_coulmns_from_pqc, get_columns_from_model
+from fast_tmp.amis.tpl import CRUD_TPL
+from fast_tmp.amis.utils import get_columns_from_model
 from fast_tmp.amis_router import AmisRouter
 from example.models import Message
 from example.schemas import ResMessageList, message_list_schema, message_schema
 
 router = AmisRouter(prefix="/amis")
+tpl = CRUD_TPL('message', 'get:/message', get_columns_from_model(Message, ), )
+router.registe_tpl(tpl)
 
 
 @router.get(
     "/message",
-    view=CRUD(
-        api="/message",
-        columns=get_coulmns_from_pqc(
-            message_list_schema,
-            add_type=False,
-            extra_fields=[
-                Operation(
-                    label="修改",
-                    buttons=[
-                        DrawerAction(
-                            label="修改",
-                            drawer=Drawer(
-                                title="修改数据",
-                                body=Form(
-                                    name="message_update",
-                                    api="put:"      + router.prefix
-                                        + "/message/${id}",
-                                    initApi=router.prefix + "/message/${id}",
-                                    controls=get_columns_from_model(Message, add_type=True),  # 测试这里
-                                ),
-                            ),
-                        ),
-                        AjaxAction(
-                            label="删除",
-                            level=ButtonLevelEnum.danger,
-                            confirmText="确认要删除？",
-                            api="delete:/amis/message/${id}",
-                        ),
-                    ],
-                )
-            ],
-        ),
-    ),
+
     response_model=ResMessageList,
 )
 async def get_message():
@@ -67,17 +32,7 @@ async def get_message():
 
 @router.post(
     "/message",
-    view=DialogAction(
-        label="新增",
-        dialog=Dialog(
-            title="新增",
-            body=Form(
-                name="message_create",
-                controls=get_columns_from_model(Message, add_type=True),
-                api="http://127.0.0.1:8000/amis/message",
-            ),
-        ),
-    ),
+
     response_model=message_schema,
 )
 async def create_message(message: message_schema):

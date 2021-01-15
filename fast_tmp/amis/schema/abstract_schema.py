@@ -1,4 +1,5 @@
-from typing import Optional, TypeVar
+from io import StringIO
+from typing import Optional, TypeVar, Any
 
 from pydantic.main import BaseModel
 
@@ -29,8 +30,5 @@ class Message(BaseModel):
     saveFailed: Optional[str]
 
 
-class RelativePath(BaseModel):
-    path = ""
-
-    def __init__(self, path: str):
-        super().__init__(path=path)
+class ApiUrl(object):
+    pass

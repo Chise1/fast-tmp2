@@ -1,8 +1,6 @@
-from typing import Any, Dict, List, Optional, Union
-
+from typing import Dict, List, Optional, Union
 from pydantic import BaseModel
-
-from fast_tmp.amis.schema.abstract_schema import BaseAmisModel
+from fast_tmp.amis.schema.abstract_schema import BaseAmisModel, ApiUrl
 from fast_tmp.amis.schema.enums import TypeEnum
 from fast_tmp.amis.schema.forms.enums import ControlEnum, FormWidgetSize, ItemModel
 
@@ -31,13 +29,14 @@ class Form(BaseAmisModel):
     # actions: Optional[List[_Action]]
     # messages: Optional[Message]#自定义返回信息加这个字段
     wrapWithPanel: bool = True
-    api: str
+    api: ApiUrl
     initApi: Optional[str]
     # interval: int = 3000??
     primaryField: str = "id"  # 设置主键
 
+    class Config:
+        arbitrary_types_allowed = True
 
-# todo:等待完成
 class Control(AbstractControl):
     """
     用户form表单等写入

@@ -23,43 +23,7 @@ class PermissionList(
     total: int
 
 
-@permission_router.get(
-    "/permission",
-    view=CRUD(
-        columns=get_coulmns_from_pqc(
-            permission_list_schema,
-            add_type=False,  # extra_fields=[
-            #     Operation(
-            #         label="修改",
-            #         buttons=[
-            #             DrawerAction(
-            #                 label="修改",
-            #                 drawer=Drawer(
-            #                     title="修改数据",
-            #                     body=Form(
-            #                         name="message_update",
-            #                         api="put:"
-            #                             + settings.SERVER_URL
-            #                             + router.prefix
-            #                             + "/message/${id}",
-            #                         initApi=settings.SERVER_URL + router.prefix + "/message/${id}",
-            #                         controls=get_columns_from_model(Message, add_type=True),  # 测试这里
-            #                     ),
-            #                 ),
-            #             ),
-            #             AjaxAction(
-            #                 label="删除",
-            #                 level=ButtonLevelEnum.danger,
-            #                 confirmText="确认要删除？",
-            #                 api="delete:http://127.0.0.1:8000/amis/message/${id}",
-            #             ),
-            #         ],
-            #     )
-            # ],
-        ),
-        api="/permission",
-    ),
-    response_model=PermissionList,
+@permission_router.get(    "/permission",       response_model=PermissionList,
 )
 async def get_permissions(user: User = Depends(get_superuser)):
     return {"items": await Permission.all(), "total": await Permission.all().count()}

@@ -5,8 +5,8 @@ from pydantic.main import BaseModel
 
 # from fast_tmp.amis.schema.abstract_schema import Action
 from fast_tmp.amis.schema.abstract_schema import _Action
-from fast_tmp.amis.schema.forms import AbstractControl, Column, Control  # , Limit
-from fast_tmp.amis.schema.forms.enums import ControlEnum, FormWidgetSize, ItemModel
+from fast_tmp.amis.schema.forms import AbstractControl, Control  # , Limit
+from fast_tmp.amis.schema.forms.enums import ControlEnum
 
 
 class AddControl(BaseModel):
@@ -51,9 +51,9 @@ class SelectItem(Control):
     multiple: bool = False  # 是否多选
     joinValues: Optional[bool]
     extractValue: Optional[bool]
-    value: Optional[
-        str
-    ]  # 注意分割符保持一致,多选也可以配置返回数组格式，具体参考https://baidu.gitee.io/amis/docs/components/form/options#%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE
+    value: Optional[str]  # 注意分割符保持一致,多选也可以
+    # 配置返回数组格式，具体参考https://baidu.gitee.io/amis/docs/components/form/
+    # options#%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE
     searchable: bool = False  # 前端对选项是否启动搜索功能
     autoComplete: bool = True  # 是否对选项启动自动补全
 
@@ -83,7 +83,8 @@ class ArrayItem(Control):
     items: str = "text"  # 这个到时候改为枚举
     addable: bool = True  # 是否可新增
     removable: bool = True  # 是否可删除
-    draggable: bool = False  # 是否可拖动排序，是否可以拖动排序, 需要注意的是当启用拖动排序的时候，会多一个$id 字段，具体请参考：https://baidu.gitee.io/amis/docs/components/form/array
+    draggable: bool = False  # 是否可拖动排序，是否可以拖动排序, 需要注意的是当启用拖动排序的时候，
+    # 会多一个$id 字段，具体请参考：https://baidu.gitee.io/amis/docs/components/form/array
     draggableTip: Optional[str]
     addButtonText: Optional[str]  # 新增按钮的文字
     minLength: Optional[int]  # 最短长度
@@ -93,13 +94,11 @@ class ArrayItem(Control):
 class DatetimeItem(Control):
     type = ControlEnum.datetime
     value: Optional[str]
-    format: str = "YYYY-MM-DD HH:mm:ss"  # 'X'为时间戳格式,参考文档：https://baidu.gitee.io/amis/zh-CN/docs/components/form/datetime
+    format: str = "YYYY-MM-DD HH:mm:ss"  # 'X'为时间戳格式,参考文档：
+    # https://baidu.gitee.io/amis/zh-CN/docs/components/form/datetime
     inputFormat: str = "YYYY-MM-DD HH:mm:ss"  # 'X'为时间戳格式
-    shortcuts: List[
-        str
-    ] = (
-        []
-    )  # "yesterday" ,"today", "tomorrow",now,{n}hoursago : n 小时前，例如：1daysago，下面用法相同,{n}hourslater : n 小时前，例如：1daysago
+    shortcuts: List[str] = ([])  # "yesterday" ,"today", "tomorrow",now,{n}hoursago : n 小时前，例
+    # 如：1daysago，下面用法相同,{n}hourslater : n 小时前，例如：1daysago
     utc: bool = False
     clearable: bool = True
     embed: bool = False  # fixme:学习内联如何使用
@@ -110,8 +109,8 @@ class DateItem(Control):
     type = ControlEnum.date
     value: Optional[str]
     format: str = (
-        "YYYY-MM-DD"  # 'X'为时间戳格式,参考文档：https://baidu.gitee.io/amis/zh-CN/docs/components/form/date
-    )
+        "YYYY-MM-DD"  # 格式请参考文档：https://baidu.gitee.io/amis/zh-CN/docs/components/form/date
+    )  # 'X'为时间戳格式
     inputFormat: str = "YYYY-MM-DD"  # 'X'为时间戳格式
     shortcuts: List[str] = []  # "yesterday" ,"today", "tomorrow"
     utc: bool = False
@@ -212,9 +211,8 @@ class ComboItem(AbstractControl):
     typeSwitchable: bool = False  # 是否可切换条件，配合conditions使用
     noBorder: bool = False  # 单组表单项是否显示边框
     strictMode: bool = True  # 默认为严格模式，设置为 false 时，当其他表单项更新是，里面的表单项也可以及时获取，否则不会。
-    syncFields: Optional[
-        str
-    ]  # 配置同步字段。只有 strictMode 为 false 时有效。如果 combo 层级比较深，底层的获取外层的数据可能不同步。但是给 combo 配置这个属性就能同步下来。输入格式：["os"]
+    syncFields: Optional[str]  # 配置同步字段。只有 strictMode 为 false 时有效。如果 combo 层级比较深，
+    # 底层的获取外层的数据可能不同步。但是给 combo 配置这个属性就能同步下来。输入格式：["os"]
 
 
 class DiffEditorItem(AbstractControl):

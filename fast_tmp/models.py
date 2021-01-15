@@ -87,7 +87,7 @@ class User(Model):
     async def perms(self):
         if not hasattr(self, "__perms"):
             permission_instances = await Permission.filter(groups__users=self.pk)
-            self.__perms = permission_instances
+            self.__perms = [permission.codename for permission in permission_instances]
         return self.__perms
 
     async def has_perm(self, perm: Union[Permission, str]) -> bool:

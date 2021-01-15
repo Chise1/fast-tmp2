@@ -41,6 +41,17 @@ def get_schema_from_page(
     return None
 
 
+# fixme:增加缓存
+def get_schema_from_page_v2(
+    node: SiteSchema,
+    user_codename: List[str],
+    url,
+    user: User,
+):
+    res = node.get_view_dict(user_codename, user.is_superuser, url)
+    return res
+
+
 def get_site_from_permissionschema(
     node: SiteSchema, user_codename: List[str], base_url: str, user: User
 ):
@@ -144,6 +155,106 @@ def get_site_from_permissionschema_v2(
             for child_node in node.children:
                 x = get_site_from_permissionschema_v2(
                     child_node, user_codename, base_url + node.url, user
+                )
+                if x:
+                    if res.get("children"):
+                        res["children"].append(x)
+                    else:
+                        res["children"] = []
+                        res["children"].append(x)
+        return res
+    else:
+        return None
+
+
+def get_site_from_permissionschema_v3(
+    node: SiteSchema, user_codename: List[str], base_url: str, user: User
+):
+    if node.type == PermissionPageType.route:
+        res = {
+            "label": node.label,
+            "icon": node.icon,
+        }
+        if not node.children:
+            return None
+        for child_node in node.children:
+            x = get_site_from_permissionschema_v3(
+                child_node, user_codename, base_url + node.url, user
+            )
+            if x:
+                if res.get("children"):
+                    res["children"].append(x)
+                else:
+                    res['children']=[x]
+        if not res.get("children"):
+            return None
+        return res
+    elif node.type == PermissionPageType.page:
+        url = base_url + node.url
+        schema = node.get_view_dict(user_codename, user.is_superuser, base_url)
+        if not schema:
+            return None
+        res = {
+            "label": node.label,
+            "icon": node.icon,
+            "url": url,
+            "schema": schema,
+            # "rewrite":url,
+            # "redirect":base_url + node.url,
+        }
+        if node.children:
+            for child_node in node.children:
+                x = get_site_from_permissionschema_v3(
+                    child_node, user_codename, base_url + node.url, user
+                )
+                if x:
+                    if res.get("children"):
+                        res["children"].append(x)
+                    else:
+                        res["children"] = []
+                        res["children"].append(x)
+        return res
+    else:
+        return None
+def get_site_from_permissionschema_v4(
+    node: SiteSchema, user_codename: List[str], base_url: str, is_superuser:bool
+):
+    if node.type == PermissionPageType.route:
+        res = {
+            "label": node.label,
+            "icon": node.icon,
+        }
+        if not node.children:
+            return None
+        for child_node in node.children:
+            x = get_site_from_permissionschema_v4(
+                child_node, user_codename, base_url + node.url, is_superuser
+            )
+            if x:
+                if res.get("children"):
+                    res["children"].append(x)
+                else:
+                    res['children']=[x]
+        if not res.get("children"):
+            return None
+        return res
+    elif node.type == PermissionPageType.page:
+        url = base_url + node.url
+        schema = node.get_view_dict(user_codename, is_superuser, base_url)
+        if not schema:
+            return None
+        res = {
+            "label": node.label,
+            "icon": node.icon,
+            "url": url,
+            "schema": schema,
+            # "rewrite":url,
+            # "redirect":base_url + node.url,
+        }
+        if node.children:
+            for child_node in node.children:
+                x = get_site_from_permissionschema_v4(
+                    child_node, user_codename, base_url + node.url, is_superuser
                 )
                 if x:
                     if res.get("children"):

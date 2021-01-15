@@ -9,7 +9,7 @@ from fast_tmp.depends import authenticate_user, get_current_user
 from fast_tmp.func import (
     get_site_from_permissionschema,
     get_site_from_permissionschema_v2,
-    init_permission,
+    init_permission, get_site_from_permissionschema_v3, get_site_from_permissionschema_v4,
 )
 from fast_tmp.models import Permission, User
 from fast_tmp.templates_app import templates
@@ -19,8 +19,29 @@ router = AmisRouter(prefix="/base")
 INIT_PERMISSION = False
 
 
+# @router.get("/site_v2")
+# async def get_site_v2(user: User = Depends(get_current_user)):
+#     """
+#     获取左侧导航栏
+#     :param user:
+#     :return:
+#     """
+#     global INIT_PERMISSION
+#     app = settings.app
+#
+#     # 初始化permission
+#     if not INIT_PERMISSION:
+#         await init_permission(app.site_schema, list(await Permission.all()))
+#         INIT_PERMISSION = True
+#     permissions = await user.perms
+#     site = get_site_from_permissionschema_v2(app.site_schema, permissions, "", user)
+#     if site:
+#         return {"pages": [site]}
+#     else:
+#         return {"pages": []}
+
 @router.get("/site_v2")
-async def get_site_v2(user: User = Depends(get_current_user)):
+async def get_site_v4(user: User = Depends(get_current_user)):
     """
     获取左侧导航栏
     :param user:
@@ -34,12 +55,11 @@ async def get_site_v2(user: User = Depends(get_current_user)):
         await init_permission(app.site_schema, list(await Permission.all()))
         INIT_PERMISSION = True
     permissions = await user.perms
-    site = get_site_from_permissionschema_v2(app.site_schema, permissions, "", user)
+    site = get_site_from_permissionschema_v4(app.site_schema, permissions, "", user.is_superuser)
     if site:
         return {"pages": [site]}
     else:
         return {"pages": []}
-
 
 @router.get("/site")
 async def get_site(user: User = Depends(get_current_user)):

@@ -331,3 +331,11 @@ def get_columns_from_model(
     if extra_fields:
         res.extend(extra_fields)
     return res
+def has_perms(view, codenames: List[str]):
+    for codename in view.codenames:
+        for u_c in codenames:
+            if u_c == codename:
+                break
+        else:
+            return False
+    return True
