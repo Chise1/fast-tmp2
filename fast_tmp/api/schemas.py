@@ -18,7 +18,7 @@ group_schema = pydantic_model_creator(Group, exclude_readonly=True)
 
 class GroupS(group_schema):
     permissions: str  # 增加额外的权限字段
-
+    users:str
 
 permission_list_schema = pydantic_queryset_creator(Permission, exclude=("groups",))
 

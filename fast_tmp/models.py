@@ -125,7 +125,7 @@ class User(Model):
 class Group(Model):
     label = fields.CharField(max_length=128, unique=True)
     permissions = fields.ManyToManyField("fast_tmp.Permission", related_name="groups")
-
+    users:fields.ManyToManyRelation[User]
     def __str__(self):
         return self.label
 
