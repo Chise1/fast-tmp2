@@ -1,9 +1,9 @@
-from io import StringIO
-from typing import Optional, TypeVar, Any
+from typing import Optional, TypeVar
 
 from pydantic.main import BaseModel
 
 from fast_tmp.amis.schema.enums import ActionTypeEnum, ButtonLevelEnum, ButtonSize, TypeEnum
+from fast_tmp.choices import Method
 
 
 class BaseAmisModel(BaseModel):
@@ -30,5 +30,6 @@ class Message(BaseModel):
     saveFailed: Optional[str]
 
 
-class ApiUrl(object):
-    pass
+class ApiUrl(BaseModel):
+    method: Method
+    url: str

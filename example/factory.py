@@ -1,3 +1,4 @@
+from fastapi.exceptions import RequestValidationError
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 from starlette.applications import Starlette
 
@@ -6,6 +7,8 @@ from fast_tmp.amis_app import AmisAPI
 from fast_tmp.conf import settings
 from starlette.middleware.cors import CORSMiddleware
 from tortoise import Tortoise
+
+from fast_tmp.exception_handler import validation_exception_handler
 from fast_tmp.redis import AsyncRedisUtil
 
 
@@ -55,6 +58,8 @@ def create_app() -> AmisAPI:
     )
     # Sentry的插件
     # app.add_middleware(SentryAsgiMiddleware)
-
+    app.add_exception_handler(
+        RequestValidationError, validation_exception_handler
+    )
     init_app(app)
     return app

@@ -3,11 +3,7 @@ from fastapi import Depends
 from starlette.requests import Request
 
 from fast_tmp.amis_router import AmisRouter
-from fast_tmp.models import User
-from fast_tmp.schemas import PermissionSchema
-from fast_tmp.depends import get_user_has_perms
 from fast_tmp.templates_app import templates
-from fastapi.responses import HTMLResponse
 auth_router = AmisRouter(prefix="/auth")
 @auth_router.get("/login",)
 async def xlogin(request: Request,):

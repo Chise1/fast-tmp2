@@ -65,7 +65,7 @@ class User(Model):
     password = fields.CharField(max_length=255)
     is_active = fields.BooleanField(default=True)
     is_superuser = fields.BooleanField(default=False)
-    groups: fields.ManyToManyRelation["Group"]
+    groups = fields.ManyToManyField("fast_tmp.Group", related_name='users')
 
     def set_password(self, raw_password: str):
         """
@@ -125,7 +125,6 @@ class User(Model):
 class Group(Model):
     label = fields.CharField(max_length=128, unique=True)
     permissions = fields.ManyToManyField("fast_tmp.Permission", related_name="groups")
-    users = fields.ManyToManyField("fast_tmp.User", related_name="groups")
 
     def __str__(self):
         return self.label

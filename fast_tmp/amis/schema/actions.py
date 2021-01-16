@@ -66,6 +66,7 @@ class CopyAction(_Action):
 
 
 class DialogAction(_Action):
+    type = TypeEnum.button
     actionType = ActionTypeEnum.dialog
     dialog: Dialog
 

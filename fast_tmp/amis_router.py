@@ -173,11 +173,13 @@ class AmisRouter(routing.Router):
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
         if not path:
             raise ValueError("path can't be null or ''")
+        # if path.find("$") != path.find("${"):#fixme:以后解决$符号的问题
         for method in methods:
             if self.site_schema.request_codename.get(path):
-                self.site_schema.request_codename[path][method] = codenames
+                self.site_schema.request_codename[path][method.lower()] = codenames
             else:
-                self.site_schema.request_codename[path] = {method: codenames}
+                self.site_schema.request_codename[path] = {method.lower(): codenames}
+        path = path.replace("$", "")
 
         def decorator(func: DecoratedCallable) -> DecoratedCallable:
             self.add_api_route(
@@ -231,7 +233,7 @@ class AmisRouter(routing.Router):
 
     def include_router(
         self,
-        router: "APIRouter",
+        router: "AmisRouter",
         *,
         prefix: str = "",
         tags: Optional[List[str]] = None,
@@ -247,6 +249,7 @@ class AmisRouter(routing.Router):
             assert not prefix.endswith(
                 "/"
             ), "A path prefix must not end with '/', as the routes will start with '/'"
+            router.site_schema.url = prefix + router.site_schema.url
         else:
             for r in router.routes:
                 path = getattr(r, "path")

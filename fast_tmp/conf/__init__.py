@@ -23,7 +23,7 @@ class Settings:
             work_path = os.getcwd()
             path_list = os.path.split(work_path)
             if path_list[-1] == "fast-tmp":
-                settings_module = "fast_tmp.settings"
+                settings_module = "example.settings"
             elif not os.path.isfile(
                 os.path.join(path_list[-1], path_list[-1].replate("-", "_"), "settings.py")
             ):

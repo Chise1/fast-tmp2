@@ -10,9 +10,17 @@ class Column(BaseModel):
     """
     用于列表等的显示
     """
-
+    type: ControlEnum = ControlEnum.text  # 把这个和schema获取的参数进行融合，保证schema获取的值可以使用
     name: str
     label: str
+
+
+class Mapping(Column):
+    """
+    专门用来作为枚举显示用的
+    """
+    type = ControlEnum.mapping
+    map: Dict[Union[int, str], str]  # map的值可以是html片段
 
 
 class AbstractControl(Column):
@@ -21,30 +29,22 @@ class AbstractControl(Column):
 
 class Form(BaseAmisModel):
     type = TypeEnum.form
-    controls: List[AbstractControl]
     name: str
-    title: str = "表单"
-    submitText: str = "提交"
-    # className:str
-    # actions: Optional[List[_Action]]
-    # messages: Optional[Message]#自定义返回信息加这个字段
-    wrapWithPanel: bool = True
-    api: ApiUrl
+    title: Optional[str]
+    submitText: Optional[str]
+    wrapWithPanel: Optional[bool]
+    api: Union[str, ApiUrl]
     initApi: Optional[str]
     # interval: int = 3000??
-    primaryField: str = "id"  # 设置主键
+    primaryField: Optional[str]  # 设置主键"id"
+    controls: List[AbstractControl]
 
-    class Config:
-        arbitrary_types_allowed = True
 
 class Control(AbstractControl):
     """
     用户form表单等写入
     """
 
-    type: ControlEnum  # 把这个和schema获取的参数进行融合，保证schema获取的值可以使用
-    name: str
-    label: Optional[str]  # 表单项标签
     labelRemark: Optional[str]  # 表单项标签描述
     description: Optional[str]  # 描述
     placeholder: Optional[str]  # 描述
@@ -52,11 +52,11 @@ class Control(AbstractControl):
     submitOnChange: bool = False  # 是否该表单项值发生变化时就提交当前表单。
     disabled: bool = False
     disableOn: Optional[str]  # 配置规则查看https://baidu.gitee.io/amis/docs/components/form/formitem
-    visible: bool = True
+    visible: Optional[bool]
     visibleOn: Optional[str]  # 配置规则查看https://baidu.gitee.io/amis/docs/components/form/formitem
     required: bool = True
     requiredOn: Optional[str]
-    hidden: bool = False  # 可使用条件配置如 this.number>1
+    hidden: Optional[bool]  # 可使用条件配置如 this.number>1
     hiddenOn: Optional[str]  # 配置判定逻辑
     validations: Optional[Dict[str, Union[int, str]]]  # 注意，键值对请参考ValidateEnum
     validationErrors: Optional[

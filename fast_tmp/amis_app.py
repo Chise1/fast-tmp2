@@ -10,11 +10,10 @@ from starlette.routing import BaseRoute
 from starlette.types import ASGIApp
 
 from fast_tmp.amis_router import AmisRouter
-from fast_tmp.schemas import PermissionPageType, PermissionSchema, SiteSchema
+from fast_tmp.schemas import PermissionPageType, SiteSchema
 
 
 class AmisAPI(FastAPI):
-    permission: PermissionSchema
 
     def __init__(
         self,
@@ -75,7 +74,7 @@ class AmisAPI(FastAPI):
     ) -> None:
         if isinstance(router, AmisRouter):
             self.site_schema.children.append(router.site_schema)
-            router.site_schema.url += prefix
+            router.site_schema.url = prefix+router.site_schema.url
         self.router.include_router(
             router,
             prefix=prefix,

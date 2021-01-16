@@ -7,12 +7,11 @@ class MessageUser(Model):
 
 
 class Message(Model):
-    info = fields.CharField(max_length=32, description="信息")
+    info = fields.CharField(max_length=32, description="信息", verbose_name="信息")
     error_info = fields.IntEnumField(Status)
     error_info_str = fields.CharEnumField(Status2)
-    message_user = fields.ForeignKeyField("fast_tmp.MessageUser")
-    t1 = fields.JSONField()
-
+    # message_user = fields.ForeignKeyField("fast_tmp.MessageUser")
+    # t1 = fields.JSONField()
 
 
 class Tournament(Model):

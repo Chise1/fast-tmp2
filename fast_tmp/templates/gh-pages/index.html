@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="{{ static(path='public/amis/sdk/helper.css') }}"/>
     <script src="{{ static(path='public/amis/sdk/sdk.js') }}"></script>
     <script src="{{ static(path='public/vue2.js') }}"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.21.0/axios.min.js"></script>
+    <script src="{{ static(path='public/amis/axios.js') }}"></script>
     <style>
         html,
         body,
@@ -46,7 +46,7 @@
             // footer: '<div class="p-2 text-center bg-light">底部区域</div>',
             // asideBefore: '<div class="p-2 text-center">菜单前面区域</div>',
             // asideAfter: '<div class="p-2 text-center">菜单后面区域</div>',
-            api: "/fast/base/site_v2",
+            api: "/fast/auth/site",
         };
 
         function normalizeLink(to, location = window.location) {
