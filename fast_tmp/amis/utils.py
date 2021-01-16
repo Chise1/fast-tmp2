@@ -29,7 +29,7 @@ from fast_tmp.amis.schema.forms.widgets import (
     SwitchItem,
     TextItem,
     TimeItem,
-    UuidItem,
+    UuidItem, TransferItem,
 )
 
 
@@ -194,7 +194,6 @@ def get_controls_from_model(
         elif isinstance(field_type, CharEnumFieldInstance):  # fixme:需要修复
             print(field_type.enum_type)
         elif isinstance(field_type, BooleanField):
-
             res.append(
                 SwitchItem(
                     type="switch",
@@ -247,7 +246,7 @@ def get_controls_from_model(
                     validations=validation,
                 )
             )
-        elif isinstance(field_type, JSONField):
+        elif isinstance(field_type, JSONField):  # fixme:需要解决tortoise-orm字段问题
             pass
         elif isinstance(field_type, TextField):
             res.append(
@@ -261,8 +260,13 @@ def get_controls_from_model(
                     **_get_base_attr(field_type), length=field_type.kwargs.get("length", None)
                 )
             )
-        # elif isinstance(field_type, ManyToManyFieldInstance):  # 多对多字段
-
+        elif isinstance(field_type, ManyToManyFieldInstance):  # 多对多字段
+            res.append(
+                TransferItem(
+                    **_get_base_attr(field_type),
+                    source=f"get:/{field_type.model_field_name}-selects"
+                )
+            )
         else:
             raise ValueError("未找到对应的字段类型或该字段尚不支持!")
     if extra_fields:

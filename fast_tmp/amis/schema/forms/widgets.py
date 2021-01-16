@@ -164,18 +164,18 @@ class UuidItem(Control):
 class TransferItem(Control):
     # Transfer 穿梭器
     type = ControlEnum.transfer
-    options: List[Union[dict, str]]  # 选项组
+    options: Optional[List[Union[dict, str]]]  # 选项组
     source: Optional[str]  # 动态选项组#fixme:路由替换需要支持source
     delimeter: Optional[str]  # 拼接符
     joinValues: Optional[bool]  # 拼接值
     extractValue: Optional[bool]  # 提取值
-    labelField: str = "label"  # 选项标签字段
-    valueField: str = "value"  # 选项值字段
+    labelField: Optional[str]  # 选项标签字段
+    valueField: Optional[str]  # 选项值字段
     searchable: bool = False  # 当设置为 true 时表示可以通过输入部分内容检索出选项。
     searchApi: Optional[HttpUrl]  # 如果想通过接口检索，可以设置个 api。
     statistics: bool = True  # 是否显示统计数据
-    selectTitle: str = "请选择"  # 左侧的标题文字
-    resultTitle: str = "当前选择"  # 右侧结果的标题文字
+    selectTitle: Optional[str]  # 左侧的标题文字
+    resultTitle: Optional[str]  # 右侧结果的标题文字
     sortable: bool = False  # 结果可以进行拖拽排序
     selectMode: str = "list"  # 可选：list、table、tree、chained、associated。分别为：列表形式、表格形式、树形选择形式、级联选择形式，关联选择形式（与级联选择的区别在于，级联是无限极，而关联只有一级，关联左边可以是个 tree）。
     searchResultMode: Optional[str]  # 如果不设置将采用 selectMode 的值，可以单独配置，参考 selectMode，决定搜索结果的展示形式。

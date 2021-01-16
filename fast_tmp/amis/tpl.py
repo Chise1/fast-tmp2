@@ -33,6 +33,31 @@ def check_perms(user_codenames, need_codenames):
     return True
 
 
+def get_path_method(v):
+    assert len(v) > 1, "请输入路由"
+    if len(v) < 3:
+        path = v
+        method = "get"
+    elif v[0:3] == 'get':
+        path = v[4:]
+        method = "get"
+    elif v[0:3].lower() == 'pos':
+        path = v[5:]
+        method = "post"
+    elif v[0:3].lower() == 'put':
+        path = v[4:]
+        method = "put"
+    elif v[0:3].lower() == "pat":
+        path = v[6:]
+        method = "patch"
+    elif v[0:3].lower() == 'del':
+        path = v[7:]
+        method = 'delete'
+    else:
+        raise ValueError(f"路由错误:{v}")
+    return path, method
+
+
 def update_route(
     request_codename: Dict[str, Dict[str, List[str]]],
     view: dict,
@@ -48,33 +73,17 @@ def update_route(
                 path = v['url']
                 method = v['method']
             else:
-                assert len(v) > 1, "请输入路由"
-                if len(v) < 3:
-                    path = v
-                    method = "get"
-                elif v[0:3] == 'get':
-                    path = v[4:]
-                    method = "get"
-                elif v[0:3].lower() == 'pos':
-                    path = v[5:]
-                    method = "post"
-                elif v[0:3].lower() == 'put':
-                    path = v[4:]
-                    method = "put"
-                elif v[0:3].lower() == "pat":
-                    path = v[6:]
-                    method = "patch"
-                elif v[0:3].lower() == 'del':
-                    path = v[7:]
-                    method = 'delete'
-                else:
-                    raise ValueError(f"路由错误:{v}")
+                path, method = get_path_method(v)
             if request_codename.get(path):
                 codenames = request_codename.get(path).get(method)
                 if codenames:
                     if not is_superuser and not check_perms(user_codenames, codenames):
                         return None
             view[k] = method + ":" + base_url + path
+        elif k == 'type' and v == 'transfer':  # 穿梭器
+            if view.get('source'):
+                path, method = get_path_method(view['source'])
+                view['source'] = method + ":" + base_url + path
         elif k in ['body', 'controls', 'dialog']:
             if isinstance(v, list):
                 body_l = []
@@ -194,7 +203,8 @@ class CRUD_TPL(TPL):
         if self.heads:
             x = self.__get_widget_dict(
                 self.heads, user_codenames, is_superuser, server_url,
-                request_codename)
+                request_codename
+            )
             if x:
                 body.append(x)
         crud_view = self.crud.dict(exclude_none=True)
