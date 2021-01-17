@@ -13,7 +13,7 @@ from fast_tmp.amis_router import AmisRouter
 from example.models import Message
 from example.schemas import ResMessageList, message_list_schema, message_schema
 
-router = AmisRouter(title="信息记录")
+router = AmisRouter(title="信息记录",prefix="/m")
 tpl = CRUD_TPL('信息记录表', 'get:/message', get_columns_from_model(Message), )
 tpl.add_create_button('post:/message',
                       get_controls_from_model(Message, exclude_readonly=True), )

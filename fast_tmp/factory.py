@@ -8,6 +8,7 @@ from fast_tmp.amis_app import AmisAPI
 from fast_tmp.api import app as b_app
 from fast_tmp.api.group import group_router
 from fast_tmp.api.permission import permission_router
+from fast_tmp.api.user import user_router
 from fast_tmp.conf import settings
 from fast_tmp.exception_handler import validation_exception_handler
 
@@ -39,6 +40,7 @@ def create_fast_tmp_app() -> AmisAPI:
     fast_tmp_app.include_router(b_app)
     fast_tmp_app.include_router(permission_router)
     fast_tmp_app.include_router(group_router)
+    fast_tmp_app.include_router(user_router)
     # fast_tmp_app.include_router(auth_router)
     # fast_tmp_app.include_router(auth2_router)
     # fast_tmp_app.add_exception_handler(

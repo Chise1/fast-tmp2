@@ -10,7 +10,7 @@ from fast_tmp.models import User, Group, Permission
 from fast_tmp.amis.utils import get_columns_from_model, get_controls_from_model
 from fast_tmp.depends import get_user_has_perms
 
-group_router = AmisRouter(title="用户组")
+group_router = AmisRouter(title="用户组",prefix="/u")
 
 tpl = CRUD_TPL('用户组', "get:/group", columns=get_columns_from_model(Group))
 tpl.add_create_button("post:/group", get_controls_from_model(Group, exclude=("id",)))

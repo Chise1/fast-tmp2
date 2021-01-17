@@ -55,6 +55,8 @@ class AmisRouter(routing.Router):
             assert not prefix.endswith(
                 "/"
             ), "A path prefix must not end with '/', as the routes will start with '/'"
+        else:
+            raise ValueError("prefix不能为空")
         if site_schema:
             self.site_schema = site_schema
             self.site_schema.url = prefix
