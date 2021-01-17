@@ -1,14 +1,24 @@
 # fast-tmp
 
 ## 概述
+
 本项目基于fastapi+tortoise-orm+amis构建，主要功能为构建通用服务端渲染页面的包。
 只需要导入相关的模块，并使用AmisRouter替换APIRouter，在写路由的时候增加view_schema即可实现自定义页面的生成。
 整体功能和django-admin类似，但是更加强大。得益于百度的AMIS项目，能够通过json生成页面，才有本项目的效果。
 
-项目正在积极开发中，该项目主要是为之后的fastapi开发做准备。
-note:项目正在清理tortoise-orm中。
+项目正在积极开发中，该项目主要是为之后的fastapi开发做准备。 note:项目正在清理tortoise-orm中。
 
-以完成一个可以用来调试amis的版本，真不容易。
+已完成一个可以用来调试amis的版本，真不容易。
+
+### 多对多字段的处理
+
+多对多字段处理目前非常的不友好，使用流程如下：
+
+1. 需要对多对多字段定义响应的字段名-selects请求接口，返回用户可选的字段
+2. get的时候暂时没有合适的控件显示多对多字段，用户需要手动把字段拼接为字符串返回（当然我建议不要在list显示）
+3. 创建的时候，pydantic_model_creator无法增加多对多字段，所以得自己继承然后增加```List[int]```字段，
+4. 修改的时候，也需要注意上述字段。参考Group的增删改查。
+
 # example启动方法
 
 1. 把.env_example改为.env
@@ -22,10 +32,9 @@ note:项目正在清理tortoise-orm中。
 3. 基于fastapi重新开发了AmisRouter和AmisApi。
 
 ## 路由设计逻辑
-AmisApi：定义一个app，一般为一个项目的根节点，再通过mount加载fast_tmp等其他子项目
-AmisRouter:定义一个页面app，每一个router都是一个路由节点或者页面。
-Widget:每一个页面上的控件（大多数时候为对应接口提供）
-site接口根据路由树生成对应的路由，前端可根据路由加载导航和页面的视图。
+
+AmisApi：定义一个app，一般为一个项目的根节点，再通过mount加载fast_tmp等其他子项目 AmisRouter:定义一个页面app，每一个router都是一个路由节点或者页面。
+Widget:每一个页面上的控件（大多数时候为对应接口提供） site接口根据路由树生成对应的路由，前端可根据路由加载导航和页面的视图。
 
 ## 目标
 
@@ -36,8 +45,9 @@ site接口根据路由树生成对应的路由，前端可根据路由加载导�
 ## 使用说明
 
 1. 配置环境变量 SETTINGS_MODULE=src.settings
-2. 在tortoise-orm的models列表里面增加fast_tmp.models
-示例(请参考项目：fastapi-t，目前主要是用fastapi-t编写和测试，成熟之后再迁移到fast_tmp)
+2. 在tortoise-orm的models列表里面增加fast_tmp.models 示例(
+   请参考项目：fastapi-t，目前主要是用fastapi-t编写和测试，成熟之后再迁移到fast_tmp)
+
 ```python
 
 from pydantic import BaseModel
@@ -76,6 +86,7 @@ async def users():
         "items": await users_schema.from_queryset(User.all()),
     }
 ```
+
 效果：
 
 ![图片](docs/image/example.png)

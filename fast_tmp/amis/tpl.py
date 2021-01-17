@@ -68,7 +68,7 @@ def update_route(
     if not view:
         return None
     for k, v in view.items():
-        if (k.find("api") >= 0 or k.find("initApi") >= 0) and v:  # todo:需要兼容所有的路由格式
+        if (k.find("api") >= 0 or k.find("Api") >= 0 or k == 'source') and v:  # todo:需要兼容所有的路由格式
             if isinstance(v, dict):
                 path = v['url']
                 method = v['method']
@@ -80,10 +80,6 @@ def update_route(
                     if not is_superuser and not check_perms(user_codenames, codenames):
                         return None
             view[k] = method + ":" + base_url + path
-        elif k == 'type' and v == 'transfer':  # 穿梭器
-            if view.get('source'):
-                path, method = get_path_method(view['source'])
-                view['source'] = method + ":" + base_url + path
         elif k in ['body', 'controls', 'dialog']:
             if isinstance(v, list):
                 body_l = []

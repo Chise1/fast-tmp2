@@ -7,18 +7,19 @@
 @Software: PyCharm
 @info    :
 """
+from typing import Optional, List, Union
+
 from pydantic.main import BaseModel
 from tortoise.contrib.pydantic import pydantic_queryset_creator, pydantic_model_creator
 
 from fast_tmp.models import Group, Permission
 
-group_list_schema = pydantic_queryset_creator(Group)
-group_schema = pydantic_model_creator(Group, exclude_readonly=True)
-
+group_list_schema = pydantic_queryset_creator(Group, exclude=("permissions", "users"))
+group_schema = pydantic_model_creator(Group,name='group_schema', exclude_readonly=True)
 
 class GroupS(group_schema):
-    permissions: str  # 增加额外的权限字段
-    users:str
+    permissions: Optional[List[int]]  # 增加额外的权限字段
+    users: Optional[List[int]]
 
 permission_list_schema = pydantic_queryset_creator(Permission, exclude=("groups",))
 

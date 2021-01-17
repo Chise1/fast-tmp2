@@ -4,7 +4,7 @@ from pydantic import HttpUrl
 from pydantic.main import BaseModel
 
 # from fast_tmp.amis.schema.abstract_schema import Action
-from fast_tmp.amis.schema.abstract_schema import _Action
+from fast_tmp.amis.schema.abstract_schema import _Action, ApiUrl
 from fast_tmp.amis.schema.forms import AbstractControl, Control  # , Limit
 from fast_tmp.amis.schema.forms.enums import ControlEnum
 
@@ -46,12 +46,18 @@ class SelectOption(BaseModel):
 class SelectItem(Control):
     type: ControlEnum = ControlEnum.select
     options: Optional[List[Union[SelectOption, str, int]]]
-    children: Optional[List[Union[SelectOption, str, int]]]  # 这个在树结构在考虑
     source: Optional[str]  # 通过数据源里面获取，也可以配置地址从远程获取，值格式为:options:[{label:..,value:...,}]
+
+    # children: Optional[List[Union[SelectOption, str, int]]]  # 这个在树结构在考虑
     multiple: bool = False  # 是否多选
+    delimeter:Optional[str]
+    labelField:Optional[str]
+    valueField:Optional[str]
     joinValues: Optional[bool]
     extractValue: Optional[bool]
-    value: Optional[str]  # 注意分割符保持一致,多选也可以
+    checkAll:Optional[bool]#是否支持全选
+    checkAllLabel:Optional[str]#全选的文字，默认为‘全选’
+    defaultCheckAll:Optional[bool]#是否默认全选
     # 配置返回数组格式，具体参考https://baidu.gitee.io/amis/docs/components/form/
     # options#%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE
     searchable: bool = False  # 前端对选项是否启动搜索功能
@@ -161,6 +167,38 @@ class UuidItem(Control):
     length: Optional[int]
 
 
+class CheckboxesItem(Control):
+    """
+     复选框
+    """
+    type = ControlEnum.checkboxes
+    optional: Optional[Union[List[Dict[str, str]]]]  # 选项组
+    source: Union[str, ApiUrl]  # 动态选项组
+    delimeter: bool = False  # 拼接符
+    labelField: str = "label"  # 选项标签字段
+    valueField: str = "value"  # 选项值字符
+    joinValues: bool = False  # 拼接值
+    extractValue: bool = True  # 提取值
+    columnsCount: int = 1  # 选项按几列显示，默认为一列
+    checkAll: bool = False  # 是否支持全选
+    defaultCheckAll: bool = False  # 默认是否全选
+
+
+class DynaticCheckboxesItem(CheckboxesItem):
+    """
+    可变值复选框
+    """
+    creatable: bool = False  # 新增选项
+    createBtnLabel: Optional[str]  # 新增选项
+    addControls: Optional[List[str]]  # 自定义新增单项
+    addApi: Optional[HttpUrl]  # 配置新增选项接口
+    editable: bool = False  # 编辑选项
+    editControls: Optional[List[str]]  # 自定义编辑表单项
+    editApi: Optional[HttpUrl]  # 配置编辑选项接口
+    removable: bool = False  # 删除选项
+    deleteApi: Optional[HttpUrl]  # 配置删除选项接口
+
+
 class TransferItem(Control):
     # Transfer 穿梭器
     type = ControlEnum.transfer
@@ -184,6 +222,22 @@ class TransferItem(Control):
     leftMode: Optional[str]  # 当展示形式为 associated 时用来配置左边的选择形式，支持 list 或者 tree。默认为 list。
     rightMode: Optional[str]  # 当展示形式为 associated 时用来配置右边的选择形式，可选：list、table、tree、chained。
 
+
+class PickerItem(Control):
+    # 列表选取，在功能上和 Select 类似，但它能显示更复杂的信息。默认和 Select 很像，但请看后面的 pickerSchema 设置。
+    type = ControlEnum.picker
+    options : Optional[List[Dict[str, str]]]  # 动态选项组
+    source : Optional[Union[str, ApiUrl]]
+    multiple: bool = False
+    delimeter: bool = False  # 拼接符
+    labelField: str = "label"  # 选项标签字段
+    valueField: str = "value"  # 选项值字符
+    joinValues: bool = False  # 拼接值
+    extractValue: bool = True  # 提取值
+    autoFill: Optional[Dict[str, str]]  # 自动填充到某个位置
+    modalMode: Optional[str]  # 配置弹出方式，默认为dialog，也可以配置drawer
+    pickerSchema: Optional[Dict]  # 即用 List 类型的渲染，来展示列表信息。更多配置参考 CRUD
+    embed: Optional[bool]  # 是否使用内嵌模式
 # class ButtonToolbarItem(Control):
 #     """
 #     按钮组
@@ -207,29 +261,7 @@ class TransferItem(Control):
 #     falseValue: bool = False
 #
 #
-# class CheckboxesItem(Control):
-#     # 复选框
-#     type = "checkboxes"
-#     optional: Union[List[dict], List[str]]  # 选项组
-#     source: Union[str, HttpUrl]  # 动态选项组
-#     delimeter: Optional[str] = "false"  # 拼接符
-#     labelField: str = "label"  # 选项标签字段
-#     valueField: str = "value"  # 选项值字符
-#     joinValues: bool = True  # 拼接值
-#     extractValue: bool = False  # 提取值
-#     columnsCount: int = 1  # 选项按几列显示，默认为一列
-#     checkAll: bool = False  # 是否支持全选
-#     defaultCheckAll: bool = False  # 默认是否全选
-#     creatable: bool = False  # 新增选项
-#     createBtnLabel: str = "新增选项"  # 新增选项
-#     addControls: Optional[List[str]]  # 自定义新增单项
-#     addApi: Optional[HttpUrl]  # 配置新增选项接口
-#     editable: bool = False  # 编辑选项
-#     editControls: Optional[List[str]]  # 自定义编辑表单项
-#     editApi: Optional[HttpUrl]  # 配置编辑选项接口
-#     removable: bool = False  # 删除选项
-#     deleteApi: Optional[HttpUrl]  # 配置删除选项接口
-#
+
 #
 # class CityItem(Control):
 #     # 城市选择器
@@ -411,9 +443,7 @@ class TransferItem(Control):
 #     type = "page"
 #
 #
-# class PickerItem(Control):
-#     # 列表选取，在功能上和 Select 类似，但它能显示更复杂的信息。默认和 Select 很像，但请看后面的 pickerSchema 设置。
-#     type = "page"
+
 #
 #
 # class RadiosItem(Control):

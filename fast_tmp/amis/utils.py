@@ -1,4 +1,4 @@
-from typing import List, Optional, Type
+from typing import List, Optional, Type, Dict
 
 from tortoise import Model, ManyToManyFieldInstance
 from tortoise.fields import (
@@ -29,12 +29,12 @@ from fast_tmp.amis.schema.forms.widgets import (
     SwitchItem,
     TextItem,
     TimeItem,
-    UuidItem, TransferItem,
+    UuidItem, TransferItem, CheckboxesItem, PickerItem,
 )
 
 
-def _get_base_attr(field_type) -> dict:
-    return dict(
+def _get_base_attr(field_type, **kwargs) -> dict:
+    res = dict(
         className=field_type.kwargs.get("className", None),
         inputClassName=field_type.kwargs.get("inputClassName", None),
         labelClassName=field_type.kwargs.get("labelClassName", None),
@@ -54,6 +54,8 @@ def _get_base_attr(field_type) -> dict:
         size=field_type.kwargs.get("size", FormWidgetSize.md),
         value=getattr(field_type, "default", field_type.kwargs.get("default", None)),
     )
+    res.update(kwargs)
+    return res
 
 
 def get_columns_from_model(
@@ -91,6 +93,10 @@ def get_columns_from_model(
                 )
             )
     return res
+
+
+# fixme:增加对所有输入参数进行排序并hash存储，如果调用过则读取缓存
+# from typing import Set
 
 
 def get_controls_from_model(
@@ -262,9 +268,12 @@ def get_controls_from_model(
             )
         elif isinstance(field_type, ManyToManyFieldInstance):  # 多对多字段
             res.append(
-                TransferItem(
-                    **_get_base_attr(field_type),
-                    source=f"get:/{field_type.model_field_name}-selects"
+                SelectItem(
+                    **_get_base_attr(field_type, required=False),
+                    source=f"get:/{field_type.model_field_name}-selects",
+                    multiple=True,
+                    extractValue=True,
+                    joinValues=False,
                 )
             )
         else:
