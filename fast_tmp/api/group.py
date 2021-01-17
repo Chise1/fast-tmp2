@@ -17,6 +17,7 @@ tpl.add_create_button("post:/group", get_controls_from_model(Group, exclude=("id
 tpl.add_modify_button(
     get_api="get:/group/?id=${id}", put_api="put:/group/${id}",
     controls=get_controls_from_model(Group, exclude=("id",)))
+tpl.add_delete_button("delete:/group/${id}")
 group_router.registe_tpl(tpl)
 
 
@@ -56,6 +57,11 @@ async def put_group(group: GroupS, id: int,
             await g.users.add(*await User.filter(id__in=group.users))
         if group.permissions:
             await g.permissions.add(*await Permission.filter(id__in=group.permissions))
+@group_router.delete("/group/${id}")
+async def put_group(id: int,
+                    user: User = Depends(get_user_has_perms(['group_can_read'])), ):
+    g = await Group.get(id=id)
+    await g.delete()
 
 
 @group_router.get("/permissions-selects")
