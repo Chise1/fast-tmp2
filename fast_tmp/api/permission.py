@@ -7,7 +7,7 @@ from fast_tmp.amis.tpl import CRUD_TPL
 from fast_tmp.amis.utils import get_columns_from_model, get_controls_from_model
 from fast_tmp.amis_router import AmisRouter
 from fast_tmp.api.schemas import permission_list_schema, permission_schema, permission_create_schema
-from fast_tmp.depends import get_superuser
+from fast_tmp.depends import get_superuser, PageDepend, page_depend
 from fast_tmp.models import Permission, User
 
 permission_router = AmisRouter(title="权限", prefix="/p")
@@ -28,7 +28,9 @@ class PermissionList(BaseModel, ):
 
 
 @permission_router.get("/permission", )
-async def get_permissions(id: Optional[int] = None, user: User = Depends(get_superuser)):
+async def get_permissions(
+    id: Optional[int] = None, user: User = Depends(get_superuser),
+    page_info: PageDepend = Depends(page_depend), ):
     if id:
         x = permission_schema.from_orm(await Permission.get(id=id))
         res = x.dict()
@@ -36,7 +38,9 @@ async def get_permissions(id: Optional[int] = None, user: User = Depends(get_sup
         return res
     return {
         "total": await Permission.all().count(),
-        "items": await permission_list_schema.from_queryset(Permission.all())
+        "items": await permission_list_schema.from_queryset(
+            Permission.all().limit(page_info.perPage).offset(
+                page_info.perPage * (page_info.page - 1)).order_by('id'))
     }
 
 

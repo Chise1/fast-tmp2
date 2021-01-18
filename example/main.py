@@ -4,4 +4,4 @@ app=create_app()
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run("example.main:app",debug=True, reload=True, lifespan="on" )
+    uvicorn.run(app,debug=True, lifespan="on" )

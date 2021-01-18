@@ -4,7 +4,7 @@ from fastapi import Depends, HTTPException
 from starlette import status
 from starlette.requests import Request
 
-from fast_tmp.depends import get_current_user
+from fast_tmp.depends import get_current_active_user
 from fast_tmp.func import get_site_from_permissionschema, init_permission
 from fast_tmp.models import Permission, User
 
@@ -74,7 +74,7 @@ async def login(
 
 
 @app.get("/site", summary="获取目录")
-async def get_site(user: User = Depends(get_current_user)):
+async def get_site(user: User = Depends(get_current_active_user)):
     """
     获取左侧导航栏
     :param user:
@@ -90,7 +90,6 @@ async def get_site(user: User = Depends(get_current_user)):
     permissions = await user.perms
     site = get_site_from_permissionschema(app.site_schema, permissions, "", user.is_superuser)
 
-    # fixme:test
     if site:
         return {"pages": [site]}
     else:
