@@ -21,9 +21,10 @@ from fast_tmp.models import User
 
 user_router = AmisRouter(title="用户", prefix="/user")
 tpl = CRUD_TPL('用户', "get:/get", columns=get_columns_from_model(User))
-tpl.add_create_button("post:/post",
-                      get_controls_from_model(User, exclude=("id", "groups"))
-                      )
+tpl.add_create_button(
+    "post:/post",
+    get_controls_from_model(User, exclude=("id", "groups"))
+)
 tpl.add_modify_button(
     get_api="get:/get/?id=${id}", put_api="put:/put/${id}",
     controls=get_controls_from_model(User, exclude=("id", "groups")))
