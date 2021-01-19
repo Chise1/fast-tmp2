@@ -1,12 +1,13 @@
 [tool.poetry]
 name = "fast-tmp"
-version = "0.2.0"
+version = "0.2.1"
 description = "为fastapi项目开发做准备"
 authors = ["chise <chise123@live.com>"]
 license = "Apache-2.0"
 repository = "https://github.com/Chise1/fast-tmp"
 packages = [
-    { include = "fast_tmp" }
+    { include = "fast_tmp" },
+    {include = "fast_cli"}
 ]
 include = ["LICENSE", "README.md"]
 
@@ -24,6 +25,7 @@ aiofiles = "^0.6.0"
 jinja2 = "^2.11.2"
 rearq = "^0.1.4"
 tortoise-orm = "^0.16.19"
+typer = "^0.3.2"
 
 [tool.poetry.dev-dependencies]
 sentry-sdk = "^0.19.5"
@@ -55,4 +57,4 @@ default = true
 #启动脚本
 
 [tool.poetry.scripts]
-fast-tmp = "fast_tmp.cli:main"
+fast-tmp = "fast_cli:main"
