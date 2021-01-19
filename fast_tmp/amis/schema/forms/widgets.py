@@ -47,24 +47,23 @@ class SelectItem(Control):
     type: ControlEnum = ControlEnum.select
     options: Optional[List[Union[SelectOption, str, int]]]
     source: Optional[str]  # 通过数据源里面获取，也可以配置地址从远程获取，值格式为:options:[{label:..,value:...,}]
-
     # children: Optional[List[Union[SelectOption, str, int]]]  # 这个在树结构在考虑
     multiple: bool = False  # 是否多选
-    delimeter:Optional[str]
-    labelField:Optional[str]
-    valueField:Optional[str]
+    delimeter: Optional[str]
+    labelField: Optional[str]
+    valueField: Optional[str]
     joinValues: Optional[bool]
     extractValue: Optional[bool]
-    checkAll:Optional[bool]#是否支持全选
-    checkAllLabel:Optional[str]#全选的文字，默认为‘全选’
-    defaultCheckAll:Optional[bool]#是否默认全选
+    checkAll: Optional[bool]  # 是否支持全选
+    checkAllLabel: Optional[str]  # 全选的文字，默认为‘全选’
+    defaultCheckAll: Optional[bool]  # 是否默认全选
     # 配置返回数组格式，具体参考https://baidu.gitee.io/amis/docs/components/form/
     # options#%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE
     searchable: bool = False  # 前端对选项是否启动搜索功能
     autoComplete: bool = True  # 是否对选项启动自动补全
 
 
-class SelectItemCanModify(SelectItem):
+class SelectItemCanModifyItem(SelectItem):
     """
     可以修改选项值的选择器
     """
@@ -226,8 +225,8 @@ class TransferItem(Control):
 class PickerItem(Control):
     # 列表选取，在功能上和 Select 类似，但它能显示更复杂的信息。默认和 Select 很像，但请看后面的 pickerSchema 设置。
     type = ControlEnum.picker
-    options : Optional[List[Dict[str, str]]]  # 动态选项组
-    source : Optional[Union[str, ApiUrl]]
+    options: Optional[List[Dict[str, str]]]  # 动态选项组
+    source: Optional[Union[str, ApiUrl]]
     multiple: bool = False
     delimeter: bool = False  # 拼接符
     labelField: str = "label"  # 选项标签字段

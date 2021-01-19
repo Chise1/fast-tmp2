@@ -25,7 +25,7 @@ class Settings:
             if path_list[-1] == "fast-tmp":
                 settings_module = "example.settings"
             elif not os.path.isfile(
-                os.path.join(path_list[-1], path_list[-1].replate("-", "_"), "settings.py")
+                os.path.join(path_list[-1], path_list[-1].replace("-", "_"), "settings.py")
             ):
                 raise ImportError(
                     "未找到settings.py"

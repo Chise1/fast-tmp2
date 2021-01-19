@@ -69,7 +69,8 @@ async def post_users(
 @user_router.put("/put/${id}")
 async def put_user(
     userinfo: user_create_schema, id: int,
-    user: User = Depends(get_superuser)):
+    user: User = Depends(get_superuser)
+):
     await User.filter(id=id).update(**userinfo.dict())
 
 

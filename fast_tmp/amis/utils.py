@@ -1,6 +1,6 @@
 from typing import List, Optional, Type, Dict
 
-from tortoise import Model, ManyToManyFieldInstance
+from tortoise import Model, ManyToManyFieldInstance, BackwardFKRelation
 from tortoise.fields import (
     BigIntField,
     BooleanField,
@@ -29,7 +29,7 @@ from fast_tmp.amis.schema.forms.widgets import (
     SwitchItem,
     TextItem,
     TimeItem,
-    UuidItem, TransferItem, CheckboxesItem, PickerItem,
+    UuidItem, TransferItem, CheckboxesItem, PickerItem, SelectItemCanModifyItem,
 )
 
 
@@ -274,6 +274,13 @@ def get_controls_from_model(
                     multiple=True,
                     extractValue=True,
                     joinValues=False,
+                )
+            )
+        elif isinstance(field_type, BackwardFKRelation):
+            res.append(
+                SelectItem(
+                    **_get_base_attr(field_type, required=False),
+                    source=f'get:/{field_type.model_field_name}-selects',
                 )
             )
         else:
