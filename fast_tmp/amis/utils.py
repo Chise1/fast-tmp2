@@ -1,6 +1,6 @@
 from typing import List, Optional, Type, Dict
 
-from tortoise import Model, ManyToManyFieldInstance, BackwardFKRelation
+from tortoise import Model, ManyToManyFieldInstance, BackwardFKRelation, ForeignKeyFieldInstance
 from tortoise.fields import (
     BigIntField,
     BooleanField,
@@ -111,7 +111,6 @@ def get_controls_from_model(
     extra_field:额外的自定义字段
     """
     fields = model._meta.fields_map
-
     res = []
     for field, field_type in fields.items():
         if include and field not in include or exclude and field in exclude:
@@ -283,6 +282,13 @@ def get_controls_from_model(
                     source=f'get:/{field_type.model_field_name}-selects',
                 )
             )
+        elif isinstance(field_type, ForeignKeyFieldInstance):
+            res.append(
+                SelectItem(
+                    **_get_base_attr(field_type, required=False),
+                    source=f'get:/{field_type.model_field_name}-selects',
+                )
+            )
         else:
             raise ValueError("未找到对应的字段类型或该字段尚不支持!")
     if extra_fields:
@@ -298,3 +304,4 @@ def has_perms(view, codenames: List[str]):
         else:
             return False
     return True
+# fixme:增加从basemodel获取字段的columns的能力

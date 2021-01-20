@@ -7,6 +7,7 @@
 @Software: PyCharm
 @info    :
 """
+import json
 from typing import List, Dict
 
 from pydantic import BaseModel
@@ -94,10 +95,45 @@ def update_route(
 
 
 class TPL():
-    def get_view_dict(self, codenames: List[str], is_superuser: bool, server_url,
-                      request_codename: Dict[
-                          str, Dict[str, List[str]]]):
-        raise Exception("尚未实现")
+    def get_view_dict(
+        self, user_codenames: List[str], is_superuser: bool, server_url: str,
+        request_codename: Dict[str, Dict[str, List[str]]]
+    ):
+        assert getattr(self, "json_view"), "请先设置json文件"
+        body = []
+        x = self.__get_widget_dict(
+            [self.json_view],
+            user_codenames,
+            is_superuser,
+            server_url,
+            request_codename
+        )
+        if x:
+            body.append(x)
+
+    def use_json_file(self, path: str):
+        """
+        导入json文件来实现
+        :param path:
+        :return:
+        """
+        with open(path, )  as f:
+            self.json_view = json.load(f)
+
+    def __get_widget_dict(
+        self, view: List[BaseModel], user_codenames: List[str],
+        is_superuser: bool, server_url: str,
+        request_codename: Dict[str, Dict[str, List[str]]]
+    ):
+        x = []
+        for view in view:
+            view_dict = update_route(
+                request_codename, view.dict(exclude_none=True),
+                is_superuser,
+                user_codenames, server_url)
+            if view_dict:
+                x.append(view_dict)
+        return x
 
 
 class CRUD_TPL(TPL):
@@ -192,6 +228,14 @@ class CRUD_TPL(TPL):
         self, user_codenames: List[str], is_superuser: bool, server_url: str,
         request_codename: Dict[str, Dict[str, List[str]]]
     ):
+        """
+        把模型转为字典
+        :param user_codenames:用户拥有的权限
+        :param is_superuser: 用户是否为超管
+        :param server_url: 基本路由
+        :param request_codename: 从router获取到的权限
+        :return:
+        """
         # 先获取字典，再轮询字典所有子类，检查是否具有api，
         # 如果有api，判定是否符合权限，符合权限则返回，不符合则删除该节点
         page = self.page.dict(exclude_none=True)
@@ -226,18 +270,3 @@ class CRUD_TPL(TPL):
                 body.append(x)
         page['body'] = body
         return page
-
-    def __get_widget_dict(
-        self, view: List[BaseModel], user_codenames: List[str],
-        is_superuser: bool, server_url: str,
-        request_codename: Dict[str, Dict[str, List[str]]]
-    ):
-        x = []
-        for view in view:
-            view_dict = update_route(
-                request_codename, view.dict(exclude_none=True),
-                is_superuser,
-                user_codenames, server_url)
-            if view_dict:
-                x.append(view_dict)
-        return x
