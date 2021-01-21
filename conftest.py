@@ -4,7 +4,7 @@ import pytest
 from tortoise import Tortoise, generate_schema_for_client
 
 
-@pytest.fixture(scope="session")#配置全局默认线程，注意这个千万不能省
+@pytest.fixture(scope="session")  # 配置全局默认线程，注意这个千万不能省
 def event_loop():
     return asyncio.get_event_loop()
 

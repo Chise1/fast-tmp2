@@ -84,7 +84,7 @@ class User(Model):
         return verify_password(raw_password, self.password)
 
     @property
-    async def perms(self):
+    async def perms(self)->List[str]:
         if not hasattr(self, "__perms"):
             permission_instances = await Permission.filter(groups__users=self.pk)
             self.__perms = [permission.codename for permission in permission_instances]
@@ -108,8 +108,8 @@ class User(Model):
         if self.is_superuser:
             return True
         for perm in perms:
-            for perm_instance in self.perms:
-                if perm == perm_instance.codename:
+            for perm_instance_codename in await self.perms:
+                if perm == perm_instance_codename:
                     continue
             else:
                 return False

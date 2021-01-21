@@ -101,7 +101,7 @@ class TPL():
     ):
         assert getattr(self, "json_view"), "请先设置json文件"
         body = []
-        x = self.__get_widget_dict(
+        x = self._get_widget_dict(
             [self.json_view],
             user_codenames,
             is_superuser,
@@ -120,7 +120,7 @@ class TPL():
         with open(path, )  as f:
             self.json_view = json.load(f)
 
-    def __get_widget_dict(
+    def _get_widget_dict(
         self, view: List[BaseModel], user_codenames: List[str],
         is_superuser: bool, server_url: str,
         request_codename: Dict[str, Dict[str, List[str]]]
@@ -241,7 +241,7 @@ class CRUD_TPL(TPL):
         page = self.page.dict(exclude_none=True)
         body = []
         if self.heads:
-            x = self.__get_widget_dict(
+            x = self._get_widget_dict(
                 self.heads, user_codenames, is_superuser, server_url,
                 request_codename
             )
@@ -255,7 +255,7 @@ class CRUD_TPL(TPL):
             if r:
                 if self.operation_actions:
                     operation = Operation().dict()
-                    operation_actions = self.__get_widget_dict(
+                    operation_actions = self._get_widget_dict(
                         self.operation_actions, user_codenames, is_superuser, server_url,
                         request_codename
                     )
@@ -264,7 +264,7 @@ class CRUD_TPL(TPL):
                         r['columns'].append(operation)
                 body.append(r)
         if self.views:
-            x = self.__get_widget_dict(self.views, user_codenames, is_superuser, server_url,
+            x = self._get_widget_dict(self.views, user_codenames, is_superuser, server_url,
                                        request_codename)
             if x:
                 body.append(x)

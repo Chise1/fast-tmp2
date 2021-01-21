@@ -57,8 +57,8 @@ def get_site_from_permissionschema(
             "icon": node.icon,
             "url": url,
             "schema": schema,
-            # "rewrite":url,
-            # "redirect":base_url + node.url,
+            "rewrite":url,
+            "redirect":url,
         }
         if node.children:
             for child_node in node.children:
