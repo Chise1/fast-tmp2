@@ -1,4 +1,4 @@
-from collections import Iterable
+from typing import Iterable
 from typing import List, Union
 
 from fast_tmp.models import Permission, User

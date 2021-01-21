@@ -2,7 +2,6 @@ import asyncio
 import datetime
 import dotenv
 import typer
-import os
 
 from tortoise import Tortoise
 

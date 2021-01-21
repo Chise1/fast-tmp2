@@ -41,5 +41,3 @@ class Admin(metaclass=MediaMetaClass):
     def get_queryset(self):
         return "queryset"
 
-
-a = Admin()
