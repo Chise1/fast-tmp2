@@ -5,10 +5,10 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
 
 from fast_tmp.amis_app import AmisAPI
-from fast_tmp.api import app as b_app
-from fast_tmp.api.group import group_router
-from fast_tmp.api.permission import permission_router
-from fast_tmp.api.user import user_router
+from fast_tmp.apps.api import app as b_app
+from fast_tmp.apps.api.routes.group import group_router
+from fast_tmp.apps.api.routes.permission import permission_router
+from fast_tmp.apps.api.routes.user import user_router
 from fast_tmp.conf import settings
 from fast_tmp.exception_handler import validation_exception_handler
 

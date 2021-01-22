@@ -6,7 +6,9 @@ from pydantic.main import BaseModel
 from fast_tmp.amis.tpl import CRUD_TPL
 from fast_tmp.amis.utils import get_columns_from_model, get_controls_from_model
 from fast_tmp.amis_router import AmisRouter
-from fast_tmp.api.schemas import permission_list_schema, permission_schema, permission_create_schema
+from fast_tmp.apps.api.schemas import permission_list_schema, permission_schema, \
+    permission_create_schema
+from fast_tmp.apps.responses import Success
 from fast_tmp.depends import get_superuser, PageDepend, page_depend
 from fast_tmp.models import Permission, User
 
@@ -35,13 +37,13 @@ async def get_permissions(
         x = permission_schema.from_orm(await Permission.get(id=id))
         res = x.dict()
         res.pop("id")
-        return res
-    return {
+        return Success(data=res)
+    return Success(data={
         "total": await Permission.all().count(),
         "items": await permission_list_schema.from_queryset(
             Permission.all().limit(page_info.perPage).offset(
                 page_info.perPage * (page_info.page - 1)).order_by('id'))
-    }
+    })
 
 
 @permission_router.post("/permission")
@@ -50,6 +52,7 @@ async def post_permissions(
     user: User = Depends(get_superuser)
 ):
     await Permission.create(**permission_schema.dict())
+    return Success()
 
 
 @permission_router.put("/permission/${id}")
@@ -57,8 +60,10 @@ async def put_permission(
     permission_schema: permission_create_schema, id: int,
     user: User = Depends(get_superuser)):
     await Permission.filter(id=id).update(**permission_schema.dict())
+    return Success()
 
 
 @permission_router.delete("/permission/${id}")
 async def delete_permission(id: int, user: User = Depends(get_superuser)):
-    p = await Permission.filter(id=id).delete()
+    await Permission.filter(id=id).delete()
+    return Success()

@@ -11,7 +11,6 @@ from starlette.routing import Mount  # noqa
 from starlette.routing import BaseRoute
 from starlette.types import ASGIApp
 from fast_tmp.amis.tpl import TPL
-from fast_tmp.responses import AmisResponse
 from fast_tmp.schemas import PermissionPageType, SiteSchema
 from fast_tmp.utils.urls import get_route_url
 
@@ -30,7 +29,7 @@ class AmisRouter(routing.Router):
         tags: Optional[List[str]] = None,
         site_schema: Optional[SiteSchema] = None,
         dependencies: Optional[Sequence[params.Depends]] = None,
-        default_response_class: Type[Response] = AmisResponse,
+        default_response_class: Type[Response] = Default(JSONResponse),
         responses: Optional[Dict[Union[int, str], Dict[str, Any]]] = None,
         callbacks: Optional[List[BaseRoute]] = None,
         routes: Optional[List[routing.BaseRoute]] = None,
@@ -100,7 +99,7 @@ class AmisRouter(routing.Router):
         response_model_exclude_defaults: bool = False,
         response_model_exclude_none: bool = False,
         include_in_schema: bool = True,
-        response_class: Union[Type[Response], DefaultPlaceholder] = AmisResponse,
+        response_class: Union[Type[Response], DefaultPlaceholder] = Default(JSONResponse),
         name: Optional[str] = None,
         route_class_override: Optional[Type[APIRoute]] = None,
         callbacks: Optional[List[BaseRoute]] = None,
@@ -240,7 +239,7 @@ class AmisRouter(routing.Router):
         prefix: str = "",
         tags: Optional[List[str]] = None,
         dependencies: Optional[Sequence[params.Depends]] = None,
-        default_response_class: Type[Response] = AmisResponse,
+        default_response_class: Type[Response] = Default(JSONResponse),
         responses: Optional[Dict[Union[int, str], Dict[str, Any]]] = None,
         callbacks: Optional[List[BaseRoute]] = None,
         deprecated: Optional[bool] = None,
@@ -353,7 +352,7 @@ class AmisRouter(routing.Router):
         response_model_exclude_defaults: bool = False,
         response_model_exclude_none: bool = False,
         include_in_schema: bool = True,
-        response_class: Type[Response] = AmisResponse,
+        response_class: Type[Response] = Default(JSONResponse),
         name: Optional[str] = None,
         callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
@@ -405,7 +404,7 @@ class AmisRouter(routing.Router):
         response_model_exclude_defaults: bool = False,
         response_model_exclude_none: bool = False,
         include_in_schema: bool = True,
-        response_class: Type[Response] = AmisResponse,
+        response_class: Type[Response] = Default(JSONResponse),
         name: Optional[str] = None,
         callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
@@ -457,7 +456,7 @@ class AmisRouter(routing.Router):
         response_model_exclude_defaults: bool = False,
         response_model_exclude_none: bool = False,
         include_in_schema: bool = True,
-        response_class: Type[Response] = AmisResponse,
+        response_class: Type[Response] = Default(JSONResponse),
         name: Optional[str] = None,
         callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
@@ -509,7 +508,7 @@ class AmisRouter(routing.Router):
         response_model_exclude_defaults: bool = False,
         response_model_exclude_none: bool = False,
         include_in_schema: bool = True,
-        response_class: Type[Response] = AmisResponse,
+        response_class: Type[Response] = Default(JSONResponse),
         name: Optional[str] = None,
         callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
@@ -561,7 +560,7 @@ class AmisRouter(routing.Router):
         response_model_exclude_defaults: bool = False,
         response_model_exclude_none: bool = False,
         include_in_schema: bool = True,
-        response_class: Type[Response] = AmisResponse,
+        response_class: Type[Response] = Default(JSONResponse),
         name: Optional[str] = None,
         callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
@@ -613,7 +612,7 @@ class AmisRouter(routing.Router):
         response_model_exclude_defaults: bool = False,
         response_model_exclude_none: bool = False,
         include_in_schema: bool = True,
-        response_class: Type[Response] = AmisResponse,
+        response_class: Type[Response] = Default(JSONResponse),
         name: Optional[str] = None,
         callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
@@ -665,7 +664,7 @@ class AmisRouter(routing.Router):
         response_model_exclude_defaults: bool = False,
         response_model_exclude_none: bool = False,
         include_in_schema: bool = True,
-        response_class: Type[Response] = AmisResponse,
+        response_class: Type[Response] = Default(JSONResponse),
         name: Optional[str] = None,
         callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:
@@ -717,7 +716,7 @@ class AmisRouter(routing.Router):
         response_model_exclude_defaults: bool = False,
         response_model_exclude_none: bool = False,
         include_in_schema: bool = True,
-        response_class: Type[Response] = AmisResponse,
+        response_class: Type[Response] = Default(JSONResponse),
         name: Optional[str] = None,
         callbacks: Optional[List[BaseRoute]] = None,
     ) -> Callable[[DecoratedCallable], DecoratedCallable]:

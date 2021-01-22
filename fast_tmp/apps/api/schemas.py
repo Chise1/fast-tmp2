@@ -7,12 +7,18 @@
 @Software: PyCharm
 @info    :
 """
-from typing import Optional, List, Union
+from typing import Optional, List
 
 from pydantic.main import BaseModel
 from tortoise.contrib.pydantic import pydantic_queryset_creator, pydantic_model_creator
 
 from fast_tmp.models import Group, Permission, User
+
+
+class LoginR(BaseModel):
+    username: str
+    password: str
+
 
 group_list_schema = pydantic_queryset_creator(Group, exclude=("permissions", "users"))
 group_schema = pydantic_model_creator(Group, name='group_schema', exclude_readonly=True)

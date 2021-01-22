@@ -4,6 +4,7 @@ from fastapi import Depends, HTTPException
 from starlette import status
 from starlette.requests import Request
 
+from fast_tmp.apps.api.schemas import LoginR
 from fast_tmp.depends import get_current_active_user
 from fast_tmp.func import get_site_from_permissionschema, init_permission
 from fast_tmp.models import Permission, User
@@ -35,7 +36,24 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         )
     access_token_expires = ACCESS_TOKEN_EXPIRE_MINUTES
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": user.username, "id": user.pk}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+@app.post("/get-token")
+async def login(form_data: LoginR):
+    """
+    标准的请求接口
+    """
+    user = await authenticate_user(form_data.username, form_data.password)
+    if not user:
+        return {
+
+        }
+    access_token_expires = ACCESS_TOKEN_EXPIRE_MINUTES
+    access_token = create_access_token(
+        data={"sub": user.username, "id": user.pk}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
