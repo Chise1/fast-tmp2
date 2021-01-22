@@ -29,7 +29,7 @@ async def get_group(id: Optional[int] = None, page_info: PageDepend = Depends(pa
     if id:
         x: Group = await Group.get(id=id).prefetch_related("permissions", "users")
         return Success(data=GroupS(label=x.label, permissions=[i.id for i in x.permissions],
-                      users=[i.id for i in x.users]).dict())
+                                   users=[i.pk for i in x.users]).dict())
     return Success(data={
         "total": await Group.all().count(),
         "items": await group_list_schema.from_queryset(Group.all().limit(page_info.perPage).offset(
@@ -46,7 +46,6 @@ async def post_group(group: GroupS,  # fixme:无法直接获取多对多字段
     # fixme:tortoise-orm的多对多字段很难用，需要访问多次数据库，以后考虑更换为sqlalchemy
     await cr_g.permissions.add(*permissions)
     await cr_g.users.add(*users)
-    return Success()
 
 
 @group_router.put("/group/${id}")
@@ -60,15 +59,15 @@ async def put_group(group: GroupS, id: int,
             await g.users.add(*await User.filter(id__in=group.users))
         if group.permissions:
             await g.permissions.add(*await Permission.filter(id__in=group.permissions))
-    return Success()
 
 
 @group_router.delete("/group/${id}")
-async def put_group(id: int,
-                    user: User = Depends(get_user_has_perms(['group_can_read'])), ):
+async def put_group(
+    id: int,
+    user: User = Depends(get_user_has_perms(['group_can_read'])),
+):
     g = await Group.get(id=id)
     await g.delete()
-    return Success()
 
 
 @group_router.get("/permissions-selects")
