@@ -14,6 +14,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 
+# RequestValidationError
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=status.HTTP_200_OK,
@@ -23,8 +24,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
                 "errors": {error["loc"][1]: error["msg"] for error in exc.errors()},
                 "msg": "",
                 "status": 422,
-                "detail": exc.errors(),
-                "body": exc.body,
             }
         ),
     )

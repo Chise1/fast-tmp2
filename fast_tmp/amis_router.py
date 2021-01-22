@@ -1,5 +1,5 @@
 from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Type, Union
-from fastapi import APIRouter, params, routing
+from fastapi import params, routing
 from fastapi.datastructures import Default, DefaultPlaceholder
 from fastapi.encoders import DictIntStrAny, SetIntStr
 from fastapi.routing import APIRoute, APIWebSocketRoute

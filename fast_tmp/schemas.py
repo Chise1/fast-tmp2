@@ -8,7 +8,7 @@
 @info    :
 """
 from enum import Enum
-from typing import List, Optional, Union, Any, Dict
+from typing import List, Optional, Any, Dict
 
 from pydantic.main import BaseModel
 
