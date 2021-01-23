@@ -3,6 +3,7 @@ from datetime import timedelta
 from fastapi import Form
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import Depends, HTTPException
+from pydantic import BaseModel
 from starlette import status
 from starlette.requests import Request
 
@@ -14,6 +15,7 @@ from fast_tmp.models import Permission, User
 from fast_tmp.amis_router import AmisRouter
 from fast_tmp.conf import settings
 from fast_tmp.depends import authenticate_user
+from fast_tmp.responses import Success
 from fast_tmp.templates_app import templates
 from fast_tmp.utils.token import create_access_token
 from fastapi.responses import JSONResponse
@@ -60,46 +62,7 @@ async def login(form_data: LoginR):
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@app.get("/login")
-async def get_login(request: Request):
-    return templates.TemplateResponse(
-        "gh-pages/login.html",
-        {
-            "request": request,
-        },
-    )
-
-
-# fixme:需要修改登录页面并改为json页面
-@app.post("/login")
-async def login(
-    request: Request,
-    username: str = Form(..., ),
-    password: str = Form(..., ),
-):
-    user = await authenticate_user(username, password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=timedelta(minutes=settings.EXPIRES_DELTA)
-    )
-    return templates.TemplateResponse(
-        "gh-pages/index.html",
-        {"request": request, "access_token": access_token},
-    )
-
-
-@app.get("/site", summary="获取目录")
-async def get_site(user: User = Depends(get_current_active_user)):
-    """
-    获取左侧导航栏
-    :param user:
-    :return:
-    """
+async def get_pages(user: User):
     global INIT_PERMISSION
     app = settings.app
 
@@ -109,8 +72,35 @@ async def get_site(user: User = Depends(get_current_active_user)):
         INIT_PERMISSION = True
     permissions = await user.perms
     site = get_site_from_permissionschema(app.site_schema, permissions, "", user.is_superuser)
-
     if site:
-        return {"pages": [site]}
+        return [site]
     else:
-        return {"pages": []}
+        return []
+
+
+@app.get("/index", summary="主页面")
+async def index(request: Request):
+    return templates.TemplateResponse(
+        "gh-pages/index.html",
+        {"request": request, },
+    )
+
+
+class L(BaseModel):
+    username: str
+    password: str
+
+
+@app.post("/index", summary="登录")
+async def index(request: Request, u: L):
+    user = await authenticate_user(u.username, u.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=timedelta(minutes=settings.EXPIRES_DELTA)
+    )
+    return Success(data={"access_token": access_token, "pages": await get_pages(user)})
