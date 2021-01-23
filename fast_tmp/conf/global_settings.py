@@ -7,12 +7,11 @@
 @Software: PyCharm
 @info    :
 """
-import datetime
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 DEFAULT_AUTH = True
-EXPIRES_DELTA = datetime.timedelta(minutes=30)
+EXPIRES_DELTA = 30
 AUTH_USER_MODEL = "models.User"
 STATIC_URL = "static"
 FAST_TMP_URL = "/fast"

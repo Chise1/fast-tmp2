@@ -6,7 +6,7 @@ from tortoise.transactions import in_transaction
 from fast_tmp.amis.tpl import CRUD_TPL
 from fast_tmp.amis_router import AmisRouter
 from fast_tmp.apps.api.schemas import group_list_schema, GroupS
-from fast_tmp.apps.responses import Success
+from fast_tmp.responses import Success
 from fast_tmp.depends import PageDepend, page_depend
 from fast_tmp.models import User, Group, Permission
 from fast_tmp.amis.utils import get_columns_from_model, get_controls_from_model
@@ -23,7 +23,7 @@ tpl.add_delete_button("delete:/group/${id}")
 group_router.registe_tpl(tpl)
 
 
-@group_router.get("/group", )
+@group_router.get("/group")
 async def get_group(id: Optional[int] = None, page_info: PageDepend = Depends(page_depend),
                     user: User = Depends(get_user_has_perms(['group_can_read'])), ):
     if id:

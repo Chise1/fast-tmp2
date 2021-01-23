@@ -16,7 +16,7 @@ from fast_tmp.amis.tpl import CRUD_TPL
 from fast_tmp.amis.utils import get_columns_from_model, get_controls_from_model
 from fast_tmp.amis_router import AmisRouter
 from fast_tmp.apps.api.schemas import user_list_schema, user_schema, user_create_schema
-from fast_tmp.apps.responses import Success
+from fast_tmp.responses import Success
 from fast_tmp.depends import get_superuser, PageDepend, page_depend
 from fast_tmp.models import User
 

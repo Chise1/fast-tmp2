@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from fastapi import Form
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import Depends, HTTPException
@@ -34,7 +36,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token_expires = ACCESS_TOKEN_EXPIRE_MINUTES
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username, "id": user.pk}, expires_delta=access_token_expires
     )
@@ -51,7 +53,7 @@ async def login(form_data: LoginR):
         return {
 
         }
-    access_token_expires = ACCESS_TOKEN_EXPIRE_MINUTES
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username, "id": user.pk}, expires_delta=access_token_expires
     )
@@ -83,7 +85,7 @@ async def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=settings.EXPIRES_DELTA
+        data={"sub": user.username}, expires_delta=timedelta(minutes=settings.EXPIRES_DELTA)
     )
     return templates.TemplateResponse(
         "gh-pages/index.html",
