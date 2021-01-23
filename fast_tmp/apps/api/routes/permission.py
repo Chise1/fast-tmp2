@@ -14,9 +14,10 @@ from fast_tmp.models import Permission, User
 
 permission_router = AmisRouter(title="权限", prefix="/p")
 tpl = CRUD_TPL('权限', "get:/permission", columns=get_columns_from_model(Permission))
-tpl.add_create_button("post:/permission",
-                      get_controls_from_model(Permission, exclude=("id", "groups"))
-                      )
+tpl.add_create_button(
+    "post:/permission",
+    get_controls_from_model(Permission, exclude=("id", "groups"))
+)
 tpl.add_modify_button(
     get_api="get:/permission/?id=${id}", put_api="put:/permission/${id}",
     controls=get_controls_from_model(Permission, exclude=("id", "groups")))

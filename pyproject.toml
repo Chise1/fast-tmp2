@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fast-tmp"
-version = "0.2.3"
+version = "0.2.4"
 description = "为fastapi项目开发做准备"
 authors = ["chise <chise123@live.com>"]
 license = "Apache-2.0"
