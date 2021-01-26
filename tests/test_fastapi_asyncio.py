@@ -10,7 +10,7 @@
 import pytest
 from httpx import AsyncClient
 
-from example.main import app
+from src.main import app
 
 from fast_tmp.models import User
 

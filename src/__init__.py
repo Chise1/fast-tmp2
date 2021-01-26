@@ -9,6 +9,6 @@
 """
 from rearq import ReArq
 
-from example import settings
+from src import settings
 
 rearq = ReArq(**settings.REARQ,)

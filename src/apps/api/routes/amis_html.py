@@ -10,8 +10,8 @@
 from fast_tmp.amis.tpl import CRUD_TPL
 from fast_tmp.amis.utils import get_columns_from_model, get_controls_from_model
 from fast_tmp.amis_router import AmisRouter
-from example.models import Message
-from example.schemas import ResMessageList, message_list_schema, message_schema
+from src.models import Message
+from src.schemas import ResMessageList, message_list_schema, message_schema
 
 router = AmisRouter(title="信息记录",prefix="/m")
 tpl = CRUD_TPL('信息记录表', 'get:/message', get_columns_from_model(Message), )

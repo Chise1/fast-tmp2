@@ -2,7 +2,7 @@ from fastapi.exceptions import RequestValidationError
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 from starlette.applications import Starlette
 
-from example import rearq
+from src import rearq
 from fast_tmp.amis_app import AmisAPI
 from fast_tmp.conf import settings
 from starlette.middleware.cors import CORSMiddleware
@@ -44,7 +44,7 @@ def create_app() -> AmisAPI:
     Tortoise.init_models(settings.TORTOISE_ORM["apps"]["fast_tmp"]["models"], "fast_tmp")
     from fast_tmp import factory
     from .apps.api.routes.amis_html import router as amis_test_router
-    from example.apps.api import app as example_app
+    from src.apps.api import app as example_app
     r_app = factory.create_fast_tmp_app()
     app.mount(settings.FAST_TMP_URL, r_app)
     app.mount("/example", example_app)

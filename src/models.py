@@ -1,5 +1,5 @@
 from tortoise import Model, fields
-from example.enums import Status, Status2
+from src.enums import Status, Status2
 
 
 class MessageUser(Model):

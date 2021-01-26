@@ -8,7 +8,6 @@
 @info    :
 """
 import os
-import sys
 
 from . import global_settings
 
