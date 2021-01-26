@@ -22,7 +22,7 @@ class Settings:
             work_path = os.getcwd()
             path_list = os.path.split(work_path)
             if not os.path.isfile(
-                os.path.join(path_list[-1], 'src', "settings.py")
+                os.path.join('src', "settings.py")
             ):
                 raise ImportError(
                     "未找到settings.py"

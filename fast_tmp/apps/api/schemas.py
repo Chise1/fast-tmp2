@@ -32,16 +32,17 @@ class GroupS(group_schema):
 permission_list_schema = pydantic_queryset_creator(Permission, exclude=("groups",))
 permission_schema = pydantic_model_creator(
     Permission, name="permission_schema",
-    exclude=("groups",))
+    include=("id", "label", "codename"))
 permission_create_schema = pydantic_model_creator(
     Permission, exclude_readonly=True,
     name='permission_create_schema')
 user_list_schema = pydantic_model_creator(User, exclude=("groups",))
 user_schema = pydantic_model_creator(
-    User, name='user_schema', exclude=("groups",)
+    User, name='user_schema', include=("id", "username", "password", "is_active", "is_superuser")
 )
 user_create_schema = pydantic_model_creator(
-    User, exclude_readonly=True, name='user_create_schema'
+    User, include=("username", "password", "is_active", "is_superuser"),
+    name='user_create_schema'
 )
 
 

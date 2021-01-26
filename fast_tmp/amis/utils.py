@@ -290,7 +290,7 @@ def get_controls_from_model(
                 )
             )
         else:
-            raise ValueError("未找到对应的字段类型或该字段尚不支持!")
+            raise ValueError(f"{field}字段的字段类型尚不支持!")
     if extra_fields:
         res.extend(extra_fields)
     return res

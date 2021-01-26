@@ -103,4 +103,26 @@ async def index(request: Request, u: L):
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=timedelta(minutes=settings.EXPIRES_DELTA)
     )
-    return Success(data={"access_token": access_token, "pages": await get_pages(user)})
+    return Success(data={"access_token": access_token})
+
+@app.get("/site", summary="获取目录")
+async def get_site(user: User = Depends(get_current_active_user)):
+    """
+    获取左侧导航栏
+    :param user:
+    :return:
+    """
+    global INIT_PERMISSION
+    app = settings.app
+
+    # 初始化permission
+    if not INIT_PERMISSION:
+        await init_permission(app.site_schema, list(await Permission.all()))
+        INIT_PERMISSION = True
+    permissions = await user.perms
+    site = get_site_from_permissionschema(app.site_schema, permissions, "", user.is_superuser)
+
+    if site:
+        return {"pages": [site]}
+    else:
+        return {"pages": []}

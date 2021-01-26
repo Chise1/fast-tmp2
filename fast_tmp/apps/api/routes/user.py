@@ -65,6 +65,7 @@ async def post_users(
     u = User(**user_info.dict())
     u.set_password(user_info.password)
     await u.save()
+    return Success()
 
 
 @user_router.put("/put/${id}")
@@ -73,7 +74,7 @@ async def put_user(
     user: User = Depends(get_superuser)
 ):
     await User.filter(id=id).update(**userinfo.dict())
-
+    return Success()
 
 @user_router.delete("/delete/${id}")
 async def delete_user(id: int, user: User = Depends(get_superuser)):
