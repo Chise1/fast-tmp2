@@ -13,5 +13,5 @@ async def base():
     await close()
 
 
-def test_cache():
-    asyncio.run(base())
+# def test_cache():
+#     asyncio.run(base())

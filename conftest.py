@@ -36,7 +36,13 @@ TORTOISE_ORM = {
 
 @pytest.fixture(scope="session", autouse=True)
 async def initialize_tests():
-    await Tortoise.init(config=TORTOISE_ORM, _create_db=True)  # 注意，这里的配置是测试数据库
+    # await Tortoise.init(config=TORTOISE_ORM, _create_db=True)  # 注意，这里的配置是测试数据库
+    await Tortoise.init(
+        db_url="sqlite://:memory:", modules={
+            "fast_tmp": ["fast_tmp.models", "aerich.models", "src.models"]
+        }
+    )
+
     # 创建数据库
     await generate_schema_for_client(Tortoise.get_connection("default"), safe=True)
     # 尝试删除所有数据库，在所有的数据操作完毕之后回调该方法删除数据库

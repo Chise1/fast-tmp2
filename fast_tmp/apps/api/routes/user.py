@@ -79,3 +79,4 @@ async def put_user(
 @user_router.delete("/delete/${id}")
 async def delete_user(id: int, user: User = Depends(get_superuser)):
     await User.filter(id=id).delete()
+    return Success()

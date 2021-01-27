@@ -11,13 +11,14 @@ import pytest
 
 from fast_tmp.models import User
 
-
-@pytest.mark.asyncio
-async def test_user():
-    print("test user")
-    assert await User.all().count() == 0
-
-
-@pytest.mark.asyncio
-async def test_user2():
-    assert await User.create(username='test', password='mininet')
+async def test():
+    pass
+# @pytest.mark.asyncio
+# async def test_user():
+#     print("test user")
+#     assert await User.all().count() == 0
+#
+#
+# @pytest.mark.asyncio
+# async def test_user2():
+#     assert await User.create(username='test', password='mininet')
