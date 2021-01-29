@@ -9,6 +9,12 @@
 项目正在积极开发中，该项目主要是为之后的fastapi开发做准备。 note:项目正在清理tortoise-orm中。
 
 已完成一个可以用来调试amis的版本，真不容易。
+另：使用的tortoise-orm不是官方的版本，需要通过代码仓库进行加载：
+```toml
+[tool.poetry.dependencies]
+tortoise-orm = { git = "https://github.com/Chise1/tortoise-orm.git" , branch = "master"}
+
+```
 
 ### 多对多字段的处理
 
