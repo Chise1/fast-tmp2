@@ -24,7 +24,7 @@ passlib = "^1.7.4"
 aiofiles = "^0.6.0"
 jinja2 = "^2.11.2"
 rearq = "^0.1.4"
-tortoise-orm = "^0.16.19"
+tortoise-orm = { git = "https://github.com/Chise1/tortoise-orm.git" , branch = "master"}
 typer = "^0.3.2"
 
 [tool.poetry.dev-dependencies]
