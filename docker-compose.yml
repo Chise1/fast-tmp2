@@ -3,7 +3,7 @@ services:
   fast-tmp:
     build: .
     environment:
-      FASTAPI_SETTINGS_MODULE : example.settings
+      FASTAPI_SETTINGS_MODULE : src.settings
     env_file:
       - .rancher_env
     ports:
@@ -12,7 +12,7 @@ services:
       - redis
       - postgres
     image: fast-tmp
-    command: uvicorn example.main:app --port 8000 --host 0.0.0.0
+    command: uvicorn src.main:app --port 8000 --host 0.0.0.0
   redis:
     hostname: redis
     image: redis
