@@ -27,7 +27,7 @@ def create_fast_tmp_app() -> AmisAPI:
         title="fast_tmp_bk",
         debug=settings.DEBUG,
     )
-    if settings.DEBUG:
+    if settings.DEBUG == "True":
         fast_tmp_app.mount(
             "/static", StaticFiles(directory=os.path.join(DIR, "static")), name="static"
         )

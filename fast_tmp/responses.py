@@ -15,3 +15,11 @@ class TokenOut(Success):
         token_type: str = "bearer"
 
     data: TokenDataModel
+
+class BaseError(BaseModel):
+    error: int
+    msg: str
+
+class LoginError(BaseError):
+    status = 1
+    msg: str = "账户或密码错误"
