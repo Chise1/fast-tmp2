@@ -14,7 +14,7 @@ def check_perms(user_codename: List[str], codenames: List[str]):
     return True
 
 
-# fixme:增加缓存
+# fixme:增加缓存d
 def get_schema_from_page(
     node: SiteSchema,
     user_codename: List[str],
