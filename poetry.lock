@@ -32,7 +32,7 @@ reference = "aliyun"
 name = "aiosqlite"
 version = "0.16.1"
 description = "asyncio bridge to the standard sqlite3 module"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -485,7 +485,7 @@ reference = "aliyun"
 name = "iso8601"
 version = "0.1.13"
 description = "Simple module to parse ISO 8601 dates"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -758,7 +758,7 @@ reference = "aliyun"
 name = "pypika"
 version = "0.44.1"
 description = "A SQL query builder API for Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -932,7 +932,7 @@ reference = "aliyun"
 name = "pytz"
 version = "2020.5"
 description = "World timezone definitions, modern and historical"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -1182,7 +1182,7 @@ reference = "aliyun"
 name = "tortoise-orm"
 version = "0.16.20"
 description = "Easy async ORM for python, built with relations in mind"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "^3.7"
 develop = false
@@ -1329,7 +1329,7 @@ sentry = []
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "a1b23cdf601a670f5bba4ca4ca44ffe843f2b7a19643c63b06928bf3638bc9e2"
+content-hash = "f36c35f2dc3f6ac404865a58a75aad50d5e52fe15dfff179ccae586734e98293"
 
 [metadata.files]
 aiofiles = [

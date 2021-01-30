@@ -7,7 +7,7 @@ license = "Apache-2.0"
 repository = "https://github.com/Chise1/fast-tmp"
 packages = [
     { include = "fast_tmp" },
-    {include = "fast_cli"}
+    { include = "fast_cli" }
 ]
 include = ["LICENSE", "README.md"]
 
@@ -24,7 +24,6 @@ passlib = "^1.7.4"
 aiofiles = "^0.6.0"
 jinja2 = "^2.11.2"
 rearq = "^0.1.4"
-#tortoise-orm = { git = "https://github.com/Chise1/tortoise-orm.git" , branch = "master"}
 typer = "^0.3.2"
 
 [tool.poetry.dev-dependencies]
@@ -42,6 +41,7 @@ bandit = "*"
 mypy = "*"
 httpx = "^0.16.1"
 requests = "^2.25.1"
+tortoise-orm = { git = "https://github.com/Chise1/tortoise-orm.git", branch = "master" }
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
