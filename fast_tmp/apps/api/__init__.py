@@ -40,7 +40,8 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.username, "id": user.pk}, expires_delta=access_token_expires
+        data={"sub": user.username, "id": user.pk},
+        expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -52,12 +53,15 @@ async def login(form_data: LoginR):
     """
     user = await authenticate_user(form_data.username, form_data.password)
     if not user:
-        return {
-
-        }
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.username, "id": user.pk}, expires_delta=access_token_expires
+        data={"sub": user.username, "id": user.pk},
+        expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -71,7 +75,8 @@ async def get_pages(user: User):
         await init_permission(app.site_schema, list(await Permission.all()))
         INIT_PERMISSION = True
     permissions = await user.perms
-    site = get_site_from_permissionschema(app.site_schema, permissions, "", user.is_superuser)
+    site = get_site_from_permissionschema(app.site_schema, permissions, "",
+                                          user.is_superuser)
     if site:
         return [site]
     else:
@@ -101,9 +106,11 @@ async def index(request: Request, u: L):
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=timedelta(minutes=settings.EXPIRES_DELTA)
+        data={"sub": user.username},
+        expires_delta=timedelta(minutes=settings.EXPIRES_DELTA)
     )
     return Success(data={"access_token": access_token})
+
 
 @app.get("/site", summary="获取目录")
 async def get_site(user: User = Depends(get_current_active_user)):
@@ -120,7 +127,8 @@ async def get_site(user: User = Depends(get_current_active_user)):
         await init_permission(app.site_schema, list(await Permission.all()))
         INIT_PERMISSION = True
     permissions = await user.perms
-    site = get_site_from_permissionschema(app.site_schema, permissions, "", user.is_superuser)
+    site = get_site_from_permissionschema(app.site_schema, permissions, "",
+                                          user.is_superuser)
 
     if site:
         return {"pages": [site]}
