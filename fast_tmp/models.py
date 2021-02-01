@@ -49,7 +49,8 @@ class Permission(Model):
         )
 
     def __eq__(self, other) -> bool:
-        if other == self.codename or getattr(other, "codename", None) == self.codename:
+        if other == self.codename or getattr(other, "codename",
+                                             None) == self.codename:
             return True
         return False
 
@@ -84,10 +85,12 @@ class User(Model):
         return verify_password(raw_password, self.password)
 
     @property
-    async def perms(self)->List[str]:
+    async def perms(self) -> List[str]:
         if not hasattr(self, "__perms"):
-            permission_instances = await Permission.filter(groups__users=self.pk)
-            self.__perms = [permission.codename for permission in permission_instances]
+            permission_instances = await Permission.filter(
+                groups__users=self.pk)
+            self.__perms = [permission.codename for permission in
+                            permission_instances]
         return self.__perms
 
     async def has_perm(self, perm: Union[Permission, str]) -> bool:
@@ -124,7 +127,8 @@ class User(Model):
 
 class Group(Model):
     label = fields.CharField(max_length=128, unique=True)
-    permissions = fields.ManyToManyField("fast_tmp.Permission", related_name="groups")
+    permissions = fields.ManyToManyField("fast_tmp.Permission",
+                                         related_name="groups")
     users: fields.ManyToManyRelation[User]
 
     def __str__(self):
@@ -135,3 +139,10 @@ class Config(Model):
     name = fields.CharField(max_length=64)
     key = fields.CharField(max_length=64, unique=True)
     value = fields.JSONField()
+
+    @classmethod
+    async def get_value(cls, key: str):
+        conf = await cls.filter(key=key).first()
+        if not conf:
+            return None
+        return conf.value

@@ -41,7 +41,7 @@ bandit = "*"
 mypy = "*"
 httpx = "^0.16.1"
 requests = "^2.25.1"
-#tortoise-orm = { git = "http://10.42.117.217/yuxiaofei/tortoise-orm.git", branch = "master" }
+tortoise-orm = { git = "http://10.42.117.217/yuxiaofei/tortoise-orm.git", branch = "master" }
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
