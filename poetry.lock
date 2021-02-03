@@ -150,7 +150,7 @@ reference = "aliyun"
 
 [[package]]
 name = "black"
-version = "20.8b1"
+version = "19.10b0"
 description = "The uncompromising code formatter."
 category = "dev"
 optional = false
@@ -158,16 +158,14 @@ python-versions = ">=3.6"
 
 [package.dependencies]
 appdirs = "*"
-click = ">=7.1.2"
-mypy_extensions = ">=0.4.3"
+attrs = ">=18.1.0"
+click = ">=6.5"
 pathspec = ">=0.6,<1"
-regex = ">=2020.1.8"
-toml = ">=0.10.1"
+regex = "*"
+toml = ">=0.9.4"
 typed-ast = ">=1.4.0"
-typing_extensions = ">=3.7.4"
 
 [package.extras]
-colorama = ["colorama (>=0.4.3)"]
 d = ["aiohttp (>=3.3.2)", "aiohttp-cors"]
 
 [package.source]
@@ -1180,7 +1178,7 @@ reference = "aliyun"
 
 [[package]]
 name = "tortoise-orm"
-version = "0.16.20"
+version = "0.16.21"
 description = "Easy async ORM for python, built with relations in mind"
 category = "dev"
 optional = false
@@ -1203,7 +1201,7 @@ docs = ["sphinx", "cloud-sptheme", "pygments", "docutils"]
 type = "git"
 url = "http://10.42.117.217/yuxiaofei/tortoise-orm.git"
 reference = "master"
-resolved_reference = "1c5d557a0d6103f90ffce0ba9633a897fc7cb4f9"
+resolved_reference = "352b7503e40f7146f2d6c7bc2d5a80348d167da2"
 
 [[package]]
 name = "typed-ast"
@@ -1329,7 +1327,7 @@ sentry = []
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "8a8bf935055082af82474b884180114c87c3b4e9d93d16ae028e4fdced8a98e6"
+content-hash = "dedec860d04e7267d0da4bef3028c7479913deb9bec0e9c362f9796655b4bc48"
 
 [metadata.files]
 aiofiles = [
@@ -1373,7 +1371,8 @@ bandit = [
     {file = "bandit-1.7.0.tar.gz", hash = "sha256:8a4c7415254d75df8ff3c3b15cfe9042ecee628a1e40b44c15a98890fbfc2608"},
 ]
 black = [
-    {file = "black-20.8b1.tar.gz", hash = "sha256:1c02557aa099101b9d21496f8a914e9ed2222ef70336404eeeac8edba836fbea"},
+    {file = "black-19.10b0-py36-none-any.whl", hash = "sha256:1b30e59be925fafc1ee4565e5e08abef6b03fe455102883820fe5ee2e4734e0b"},
+    {file = "black-19.10b0.tar.gz", hash = "sha256:c2edb73a08e9e0e6f65a0e6af18b059b8b1cdd5bef997d7a0b181df93dc81539"},
 ]
 certifi = [
     {file = "certifi-2020.12.5-py2.py3-none-any.whl", hash = "sha256:719a74fb9e33b9bd44cc7f3a8d94bc35e4049deebe19ba7d8e108280cfd59830"},

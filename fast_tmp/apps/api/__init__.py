@@ -15,7 +15,7 @@ from fast_tmp.models import Permission, User
 from fast_tmp.amis_router import AmisRouter
 from fast_tmp.conf import settings
 from fast_tmp.depends import authenticate_user
-from fast_tmp.responses import Success
+from fast_tmp.responses import Success, LoginError
 from fast_tmp.templates_app import templates
 from fast_tmp.utils.token import create_access_token
 from fastapi.responses import JSONResponse
@@ -53,11 +53,7 @@ async def login(form_data: LoginR):
     """
     user = await authenticate_user(form_data.username, form_data.password)
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise LoginError()
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username, "id": user.pk},
