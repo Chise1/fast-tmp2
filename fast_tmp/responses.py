@@ -1,24 +1,9 @@
 from typing import Any, Dict, List
 
 from fastapi import HTTPException
-from pydantic import BaseModel
 
 
-class Success(BaseModel):
-    status: int = 0
-    msg: str = ""
-    data: Any = None
-
-
-class TokenOut(Success):
-    class TokenDataModel(BaseModel):
-        access_token: str
-        token_type: str = "bearer"
-
-    data: TokenDataModel
-
-
-class BaseError(BaseModel):
+class BaseError(HTTPException):
     error: int
     msg: str
 
@@ -27,10 +12,6 @@ class LoginError(HTTPException):
     def __init__(self):
         super().__init__(
             status_code=400,
-            detail={
-                "code": 1,
-                "msg": "账户或密码错误",
-                "detail": ""
-            },
+            detail={"code": 1, "msg": "账户或密码错误", "detail": ""},
             headers={"WWW-Authenticate": "Bearer"},
         )

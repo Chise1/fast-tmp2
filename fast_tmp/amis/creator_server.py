@@ -7,6 +7,4 @@
 @Software: PyCharm
 @info    :
 """
-controls=[
-
-]
+controls = []

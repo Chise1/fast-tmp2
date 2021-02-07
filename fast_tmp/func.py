@@ -1,8 +1,8 @@
-from typing import Iterable
-from typing import List, Union
+from typing import Iterable, List, Union
 
-from fast_tmp.models import Permission, User
+from fast_tmp.models import User
 from fast_tmp.schemas import PermissionPageType, PermissionSchema, SiteSchema
+
 
 def check_perms(user_codename: List[str], codenames: List[str]):
     for c in codenames:
@@ -26,7 +26,7 @@ def get_schema_from_page(
 
 
 def get_site_from_permissionschema(
-    node: SiteSchema, user_codename: List[str], base_url: str, is_superuser:bool
+    node: SiteSchema, user_codename: List[str], base_url: str, is_superuser: bool
 ):
     if node.type == PermissionPageType.route:
         res = {
@@ -43,7 +43,7 @@ def get_site_from_permissionschema(
                 if res.get("children"):
                     res["children"].append(x)
                 else:
-                    res['children']=[x]
+                    res["children"] = [x]
         if not res.get("children"):
             return None
         return res
@@ -57,8 +57,8 @@ def get_site_from_permissionschema(
             "icon": node.icon,
             "url": url,
             "schema": schema,
-            "rewrite":url,
-            "redirect":url,
+            "rewrite": url,
+            "redirect": url,
         }
         if node.children:
             for child_node in node.children:
@@ -77,15 +77,23 @@ def get_site_from_permissionschema(
 
 
 async def create_perm(codename, label, permissions):
-    for permission in permissions:
-        if permission.codename == codename:
-            return
-    else:
-        p = await Permission.get_or_create(codename=codename, defaults={"label": label})
-        permissions.append(p)
+    """
+
+    :param codename:
+    :param label:
+    :param permissions:
+    :return:
+    """
+    raise Exception("尚未实现")
+    # for permission in permissions:
+    #     if permission.codename == codename:
+    #         return
+    # else:
+    #     p = await Permission.get_or_create(codename=codename, defaults={"label": label})
+    #     permissions.append(p)
 
 
-async def init_permission(node: Union[SiteSchema, PermissionSchema], permissions: List[Permission]):
+async def init_permission(node: Union[SiteSchema, PermissionSchema], permissions):
     if node.codename:
         if not isinstance(node.codename, Iterable):
             await create_perm(node.codename, node.label, permissions)

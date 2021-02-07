@@ -1,6 +1,6 @@
-from typing import List, Optional, Type, Dict
+from typing import Dict, List, Optional, Type
 
-from tortoise import Model, ManyToManyFieldInstance, BackwardFKRelation, ForeignKeyFieldInstance
+from tortoise import BackwardFKRelation, ForeignKeyFieldInstance, ManyToManyFieldInstance, Model
 from tortoise.fields import (
     BigIntField,
     BooleanField,
@@ -21,15 +21,19 @@ from tortoise.fields.data import CharEnumFieldInstance, IntEnumFieldInstance
 from fast_tmp.amis.schema.forms import Column, Mapping
 from fast_tmp.amis.schema.forms.enums import FormWidgetSize, ItemModel
 from fast_tmp.amis.schema.forms.widgets import (
+    CheckboxesItem,
     DateItem,
     DatetimeItem,
     NumberItem,
+    PickerItem,
     SelectItem,
+    SelectItemCanModifyItem,
     SelectOption,
     SwitchItem,
     TextItem,
     TimeItem,
-    UuidItem, TransferItem, CheckboxesItem, PickerItem, SelectItemCanModifyItem,
+    TransferItem,
+    UuidItem,
 )
 
 
@@ -76,10 +80,9 @@ def get_columns_from_model(
         if isinstance(field_type, (IntEnumFieldInstance, CharEnumFieldInstance)):
             res.append(
                 Mapping(
-                    name=field, label=field_type.kwargs.get("verbose_name", field),
-                    map={
-                        k: v for k, v in field_type.enum_type.choices.items()
-                    }
+                    name=field,
+                    label=field_type.kwargs.get("verbose_name", field),
+                    map={k: v for k, v in field_type.enum_type.choices.items()},
                 )
             )
             # fixme:处理开关字段
@@ -87,11 +90,7 @@ def get_columns_from_model(
         elif isinstance(field_type, ManyToManyFieldInstance):
             continue
         else:
-            res.append(
-                Column(
-                    name=field, label=field_type.kwargs.get("verbose_name", field)
-                )
-            )
+            res.append(Column(name=field, label=field_type.kwargs.get("verbose_name", field)))
     return res
 
 
@@ -132,18 +131,16 @@ def get_controls_from_model(
             else:
                 res.append(
                     NumberItem(
-                        min=field_type.kwargs.get("min", None)
-                            or field_type.constraints.get("ge"),
-                        max=field_type.kwargs.get("max", None)
-                            or field_type.constraints.get("le"),
+                        min=field_type.kwargs.get("min", None) or field_type.constraints.get("ge"),
+                        max=field_type.kwargs.get("max", None) or field_type.constraints.get("le"),
                         precision=field_type.kwargs.get("precision", 0),
                         step=field_type.kwargs.get("step", 1),
                         **_get_base_attr(field_type),
                         validations={
                             "minimum": field_type.kwargs.get("min", None)
-                                       or field_type.constraints.get("ge"),
+                            or field_type.constraints.get("ge"),
                             "maximum": field_type.kwargs.get("max", None)
-                                       or field_type.constraints.get("le"),
+                            or field_type.constraints.get("le"),
                         },
                     ),
                 )
@@ -165,7 +162,7 @@ def get_controls_from_model(
                         **_get_base_attr(field_type),
                         validations={
                             "maxLength": field_type.kwargs.get("maxLength", None)
-                                         or field_type.max_length,
+                            or field_type.max_length,
                         },
                     )
                 )
@@ -261,9 +258,7 @@ def get_controls_from_model(
             )
         elif isinstance(field_type, UUIDField):
             res.append(
-                UuidItem(
-                    **_get_base_attr(field_type), length=field_type.kwargs.get("length", None)
-                )
+                UuidItem(**_get_base_attr(field_type), length=field_type.kwargs.get("length", None))
             )
         elif isinstance(field_type, ManyToManyFieldInstance):  # 多对多字段
             res.append(
@@ -279,14 +274,14 @@ def get_controls_from_model(
             res.append(
                 SelectItem(
                     **_get_base_attr(field_type, required=False),
-                    source=f'get:/{field_type.model_field_name}-selects',
+                    source=f"get:/{field_type.model_field_name}-selects",
                 )
             )
         elif isinstance(field_type, ForeignKeyFieldInstance):
             res.append(
                 SelectItem(
                     **_get_base_attr(field_type, required=False),
-                    source=f'get:/{field_type.model_field_name}-selects',
+                    source=f"get:/{field_type.model_field_name}-selects",
                 )
             )
         else:
@@ -304,4 +299,6 @@ def has_perms(view, codenames: List[str]):
         else:
             return False
     return True
+
+
 # fixme:增加从basemodel获取字段的columns的能力

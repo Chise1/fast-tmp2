@@ -1,6 +1,6 @@
 from typing import List, Union
 
-from fast_tmp.amis.schema.abstract_schema import BaseAmisModel, _Action, ApiUrl
+from fast_tmp.amis.schema.abstract_schema import ApiUrl, BaseAmisModel, _Action
 from fast_tmp.amis.schema.buttons import Operation
 from fast_tmp.amis.schema.enums import TypeEnum
 from fast_tmp.amis.schema.forms import Column

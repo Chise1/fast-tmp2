@@ -14,7 +14,6 @@ from fast_tmp.schemas import PermissionPageType, SiteSchema
 
 
 class AmisAPI(FastAPI):
-
     def __init__(
         self,
         *,
@@ -74,7 +73,7 @@ class AmisAPI(FastAPI):
     ) -> None:
         if isinstance(router, AmisRouter):
             self.site_schema.children.append(router.site_schema)
-            router.site_schema.url = prefix+router.site_schema.url
+            router.site_schema.url = prefix + router.site_schema.url
         self.router.include_router(
             router,
             prefix=prefix,

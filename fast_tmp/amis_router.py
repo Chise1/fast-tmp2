@@ -1,4 +1,5 @@
 from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Type, Union
+
 from fastapi import params, routing
 from fastapi.datastructures import Default, DefaultPlaceholder
 from fastapi.encoders import DictIntStrAny, SetIntStr
@@ -10,6 +11,7 @@ from starlette.responses import JSONResponse, Response
 from starlette.routing import Mount  # noqa
 from starlette.routing import BaseRoute
 from starlette.types import ASGIApp
+
 from fast_tmp.amis.tpl import TPL
 from fast_tmp.schemas import PermissionPageType, SiteSchema
 from fast_tmp.utils.urls import get_route_url
@@ -19,7 +21,8 @@ class AmisRouter(routing.Router):
     site_schema: SiteSchema
     _tpl: TPL
     request_codename: Dict[
-        str, Dict[str, List[str]]] = {}  # 记录接口所需的权限,path:[{methods:[],codenames:[]}]
+        str, Dict[str, List[str]]
+    ] = {}  # 记录接口所需的权限,path:[{methods:[],codenames:[]}]
 
     def __init__(
         self,
@@ -62,8 +65,7 @@ class AmisRouter(routing.Router):
         else:
             if not title:
                 title = prefix[1:].replace("/", "")
-            self.site_schema = SiteSchema(
-                label=title, type=PermissionPageType.page, url=prefix)
+            self.site_schema = SiteSchema(label=title, type=PermissionPageType.page, url=prefix)
         self.prefix = prefix
         self.route_url = get_route_url(prefix)
         self.tags: List[str] = tags or []
@@ -305,8 +307,9 @@ class AmisRouter(routing.Router):
                     response_model_exclude_unset=route.response_model_exclude_unset,
                     response_model_exclude_defaults=route.response_model_exclude_defaults,
                     response_model_exclude_none=route.response_model_exclude_none,
-                    include_in_schema=route.include_in_schema and self.include_in_schema
-                                      and include_in_schema,
+                    include_in_schema=route.include_in_schema
+                    and self.include_in_schema
+                    and include_in_schema,
                     response_class=use_response_class,
                     name=route.name,
                     route_class_override=type(route),

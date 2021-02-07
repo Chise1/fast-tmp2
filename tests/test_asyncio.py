@@ -11,8 +11,11 @@ import pytest
 
 from fast_tmp.models import User
 
+
 async def test():
     pass
+
+
 # @pytest.mark.asyncio
 # async def test_user():
 #     print("test user")

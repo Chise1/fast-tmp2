@@ -38,9 +38,8 @@ TORTOISE_ORM = {
 async def initialize_tests():
     # await Tortoise.init(config=TORTOISE_ORM, _create_db=True)  # 注意，这里的配置是测试数据库
     await Tortoise.init(
-        db_url="sqlite://:memory:", modules={
-            "fast_tmp": ["fast_tmp.models", "aerich.models", "src.models"]
-        }
+        db_url="sqlite://:memory:",
+        modules={"fast_tmp": ["fast_tmp.models", "aerich.models", "src.models"]},
     )
 
     # 创建数据库

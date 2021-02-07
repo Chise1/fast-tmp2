@@ -49,8 +49,6 @@ def create_fast_tmp_app() -> AmisAPI:
     # fast_tmp_app.add_exception_handler(
     #     ErrorException, error_exception_handler
     # )
-    fast_tmp_app.add_exception_handler(
-        RequestValidationError, validation_exception_handler
-    )
+    fast_tmp_app.add_exception_handler(RequestValidationError, validation_exception_handler)
 
     return fast_tmp_app

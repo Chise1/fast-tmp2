@@ -7,10 +7,10 @@
 @Software: PyCharm
 @info    :
 """
-from typing import Optional, List
+from typing import List, Optional
 
 from pydantic.main import BaseModel
-from tortoise.contrib.pydantic import pydantic_queryset_creator, pydantic_model_creator
+from tortoise.contrib.pydantic import pydantic_model_creator, pydantic_queryset_creator
 
 from fast_tmp.models import Group, Permission, User
 
@@ -21,7 +21,7 @@ class LoginR(BaseModel):
 
 
 group_list_schema = pydantic_queryset_creator(Group, exclude=("permissions", "users"))
-group_schema = pydantic_model_creator(Group, name='group_schema', exclude_readonly=True)
+group_schema = pydantic_model_creator(Group, name="group_schema", exclude_readonly=True)
 
 
 class GroupS(group_schema):
@@ -31,18 +31,17 @@ class GroupS(group_schema):
 
 permission_list_schema = pydantic_queryset_creator(Permission, exclude=("groups",))
 permission_schema = pydantic_model_creator(
-    Permission, name="permission_schema",
-    include=("id", "label", "codename"))
+    Permission, name="permission_schema", include=("id", "label", "codename")
+)
 permission_create_schema = pydantic_model_creator(
-    Permission, exclude_readonly=True,
-    name='permission_create_schema')
+    Permission, exclude_readonly=True, name="permission_create_schema"
+)
 user_list_schema = pydantic_model_creator(User, exclude=("groups",))
 user_schema = pydantic_model_creator(
-    User, name='user_schema', include=("id", "username", "password", "is_active", "is_superuser")
+    User, name="user_schema", include=("id", "username", "password", "is_active", "is_superuser")
 )
 user_create_schema = pydantic_model_creator(
-    User, include=("username", "password", "is_active", "is_superuser"),
-    name='user_create_schema'
+    User, include=("username", "password", "is_active", "is_superuser"), name="user_create_schema"
 )
 
 

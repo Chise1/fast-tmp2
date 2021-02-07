@@ -7,5 +7,5 @@
 @Software: PyCharm
 @info    :
 """
-from .auth import get_superuser, get_user_has_perms, get_current_active_user, authenticate_user
-from .pageing import page_depend,PageDepend
+from .auth import authenticate_user, get_current_active_user, get_superuser, get_user_has_perms
+from .pageing import PageDepend, page_depend
