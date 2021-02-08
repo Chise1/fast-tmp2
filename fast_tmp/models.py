@@ -1,10 +1,21 @@
-from typing import List, Type, Union
+from typing import List, Type, Union, Iterable
 
-from pydantic import BaseModel
-from sqlalchemy import Boolean, Column, Integer, String
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, UniqueConstraint, Table
+from sqlalchemy.orm import declarative_base, relationship, backref
 
 Base = declarative_base()
+group_permission = Table(
+    "group_permission",
+    Base.metadata,
+    Column("group_id", Integer, ForeignKey("group.id"), ),
+    Column("permission_id", Integer, ForeignKey("permission.id"), ),
+)
+group_user = Table(
+    "group_user",
+    Base.metadata,
+    Column("group_id", Integer, ForeignKey("group.id"), ),
+    Column("user_id", Integer, ForeignKey("user.id"), ),
+)
 
 
 class User(Base):
@@ -28,109 +39,44 @@ class User(Base):
         """
         pass
 
-    @property
-    async def perms(self) -> List[str]:
-        pass
-
-    async def has_perm(self, perm) -> bool:
+    async def has_perm(self, perm: str) -> bool:
         """
         判定用户是否有权限
         """
         pass
 
-    async def has_perms(self, perms) -> bool:
+    async def has_perms(self, perms: Iterable[str]) -> bool:
         """
         根据permission的codename进行判定
         """
 
-    async def get_perms(self):
+    async def get_perms(self) -> List[str]:
         pass
 
     def __str__(self):
         return self.username
 
 
-# from tortoise import Model, fields
-#
-# from fast_tmp.utils.password import make_password, verify_password
-#
-#
-# class Permission(Model):
-#     label = fields.CharField(max_length=128)
-#     codename = fields.CharField(max_length=128, unique=True)
-#
-#     @classmethod
-#     def make_permission(
-#         cls,
-#         model: Type[BaseModel],
-#     ):
-#         """
-#         生成model对应的权限
-#         """
-#         model_name = model.__name__
-#         Permission.get_or_create(
-#             defaults={
-#                 "label": "can read " + model_name,
-#                 "model": model_name,
-#                 "codename": "can_read_" + model_name,
-#             }
-#         )
-#         Permission.get_or_create(
-#             defaults={
-#                 "label": "can create " + model_name,
-#                 "model": model_name,
-#                 "codename": "can_create_" + model_name,
-#             }
-#         )
-#         Permission.get_or_create(
-#             defaults={
-#                 "label": "can update " + model_name,
-#                 "model": model_name,
-#                 "codename": "can_update_" + model_name,
-#             }
-#         )
-#         Permission.get_or_create(
-#             defaults={
-#                 "label": "can delete " + model_name,
-#                 "model": model_name,
-#                 "codename": "can_delete_" + model_name,
-#             }
-#         )
-#
-#     def __eq__(self, other) -> bool:
-#         if other == self.codename or getattr(other, "codename",
-#                                              None) == self.codename:
-#             return True
-#         return False
-#
-#     def __str__(self):
-#         return self.label
-#
-#     def __repr__(self):
-#         return self.label
-#
-#
+class Group(Base):
+    __tablename__ = 'group'
+    id = Column(Integer, primary_key=True)
 
-#
-#
-# class Group(Model):
-#     label = fields.CharField(max_length=128, unique=True)
-#     permissions = fields.ManyToManyField("fast_tmp.Permission",
-#                                          related_name="groups")
-#     users: fields.ManyToManyRelation[User]
-#
-#     def __str__(self):
-#         return self.label
-#
-#
-# class Config(Model):
-#     name = fields.CharField(max_length=64)
-#     key = fields.CharField(max_length=64, unique=True)
-#     value = fields.JSONField()
-#
-#     @classmethod
-#     async def get_value(cls, key: str):
-#         conf = await cls.filter(key=key).first()
-#         if not conf:
-#             return None
-#         return conf.value
+    name = Column(String(32))
+    permissions = relationship(
+        "Permission", secondary=group_permission,
+        backref=backref("groups", cascade="all, delete-orphan")
+    )
+    users = relationship(
+        "User", secondary=group_user,
+        backref=backref("groups", cascade="all, delete-orphan")
+    )
+
+
+class Permission(Base):
+    __tablename__ = 'permission'
+    id = Column(Integer, primary_key=True)
+    code = Column(String(128), unique=True)
+    name = Column(String(128))
+
+    def __str__(self):
+        return self.name + "-" + self.code

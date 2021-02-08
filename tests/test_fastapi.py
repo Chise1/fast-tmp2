@@ -8,6 +8,7 @@
 @info    :
 """
 from fastapi import APIRouter, FastAPI
+from fastapi.exceptions import HTTPException
 
 app = FastAPI()
 
