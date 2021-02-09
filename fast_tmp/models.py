@@ -4,24 +4,32 @@ from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, UniqueConst
 from sqlalchemy.orm import declarative_base, relationship, backref
 
 Base = declarative_base()
+
 group_permission = Table(
     "group_permission",
     Base.metadata,
-    Column("group_id", Integer, ForeignKey("group.id"), ),
-    Column("permission_id", Integer, ForeignKey("permission.id"), ),
+    Column("group_id", Integer, ForeignKey("group.id")),
+    Column("permission_code", String(128), ForeignKey("permission.code")),
 )
+
+
 group_user = Table(
     "group_user",
     Base.metadata,
-    Column("group_id", Integer, ForeignKey("group.id"), ),
+    Column("group_id", Integer, ForeignKey("group.id")),
     Column("user_id", Integer, ForeignKey("user.id"), ),
 )
 
 
-class User(Base):
+class BaseModel(Base):
+    __abstract__ = True
+    id = Column(Integer, primary_key=True)
+
+
+#
+class User(BaseModel):
     __tablename__ = "user"
 
-    id = Column(Integer, primary_key=True)
     username = Column(String(30))
     password = Column(String(128))
     is_superuser = Column(Boolean(), default=False)
@@ -57,25 +65,22 @@ class User(Base):
         return self.username
 
 
-class Group(Base):
+#
+#
+class Group(BaseModel):
     __tablename__ = 'group'
-    id = Column(Integer, primary_key=True)
-
     name = Column(String(32))
     permissions = relationship(
-        "Permission", secondary=group_permission,
-        backref=backref("groups", cascade="all, delete-orphan")
+        "Permission", secondary="group_permission", backref="groups"
     )
     users = relationship(
-        "User", secondary=group_user,
-        backref=backref("groups", cascade="all, delete-orphan")
+        "User", secondary="group_user", backref="groups"
     )
 
 
 class Permission(Base):
     __tablename__ = 'permission'
-    id = Column(Integer, primary_key=True)
-    code = Column(String(128), unique=True)
+    code = Column(String(128), primary_key=True)
     name = Column(String(128))
 
     def __str__(self):

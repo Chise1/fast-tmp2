@@ -13,7 +13,7 @@ from fast_tmp.conf import settings
 from fast_tmp.depends import authenticate_user, get_current_active_user
 from fast_tmp.func import get_site_from_permissionschema, init_permission
 from fast_tmp.models import Permission, User
-from fast_tmp.responses import LoginError, Success
+from fast_tmp.responses import LoginError
 from fast_tmp.templates_app import templates
 from fast_tmp.utils.token import create_access_token
 

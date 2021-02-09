@@ -2,26 +2,11 @@ import asyncio
 import datetime
 import dotenv
 import typer
-
-from tortoise import Tortoise
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from fast_tmp.conf import settings
 
 app = typer.Typer()
-
-
-@app.command()
-def hello(name: str, aer: str = typer.Option(..., )):
-    typer.echo(f"hello {name}")
-    typer.secho(aer, color='green')
-
-
-@app.command()
-def goodbye(name: str, formal: bool = False):
-    if formal:
-        typer.echo(f"Goodbye Ms. {name}. Have a good day.")
-    else:
-        typer.echo(f"Bye {name}!")
 
 
 @app.command()
@@ -53,13 +38,16 @@ def create_superuser(username: str, password: str):
     """
     from fast_tmp.models import User
     async def create_user(username, password):
-        dotenv.load_dotenv()
-        await Tortoise.init(config=settings.TORTOISE_ORM)
-        user = User(username=username)
-        user.set_password(password)
-        await user.save()
-        await Tortoise.close_connections()
-        typer.echo("创建成功")
+        user = User(
+            # id=1,
+            username=username,
+            password=password
+        )
+        async with AsyncSession(settings.DB_ENGINE) as session:
+            async with session.begin():
+                session.add(user)
+                await session.flush()
+
     asyncio.run(create_user(username, password))
 
 
