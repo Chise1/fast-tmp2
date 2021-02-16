@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
@@ -8,7 +8,7 @@ from fast_tmp.amis.schema.forms.enums import ControlEnum, FormWidgetSize, ItemMo
 
 
 # fixme:未来考虑更多的fields类型字段支持
-class Column(BaseModel):
+class AmisColumn(BaseModel):
     """
     用于列表等的显示
     """
@@ -18,7 +18,7 @@ class Column(BaseModel):
     label: str
 
 
-class Mapping(Column):
+class AmisMapping(AmisColumn):
     """
     专门用来作为枚举显示用的
     """
@@ -27,7 +27,7 @@ class Mapping(Column):
     map: Dict[Union[int, str], str]  # map的值可以是html片段
 
 
-class AbstractControl(Column):
+class AbstractControl(AmisColumn):
     pass
 
 
@@ -71,3 +71,4 @@ class Control(AbstractControl):
     labelClassName: Optional[str]  # label 的类名
     mode: ItemModel = ItemModel.normal
     size: FormWidgetSize = FormWidgetSize.md
+    value: Optional[Any]

@@ -68,7 +68,7 @@ class SelectItemCanModifyItem(SelectItem):
     可以修改选项值的选择器
     """
 
-    creatable: bool = False  # 是否支持新增选项
+    creatable: Optional[bool]  # 是否支持新增选项
     addControls: Tuple[AddControl, ...] = (
         AddControl(type="text", name="label", label="选项标题"),
         AddControl(type="text", name="value", label="选项值"),
@@ -140,8 +140,8 @@ class TextItem(Control):
     type = ControlEnum.text
     body: Optional[Dict[str, Any]]
     trimContents: Optional[bool]  # 是否去除首尾空白文本。
-    # clearable: Optional[bool]  # 是否可清除
-    # resetValue: str = ""  # 清除后设置此配置项给定的值。
+    clearable: Optional[bool]  # 是否可清除
+    resetValue: Optional[str]  # 清除后设置此配置项给定的值。
 
 
 class TimeItem(Control):

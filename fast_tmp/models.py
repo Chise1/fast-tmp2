@@ -1,7 +1,7 @@
-from typing import List, Type, Union, Iterable
+from typing import Iterable, List, Type, Union
 
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, UniqueConstraint, Table
-from sqlalchemy.orm import declarative_base, relationship, backref
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table, UniqueConstraint
+from sqlalchemy.orm import backref, declarative_base, relationship
 
 Base = declarative_base()
 
@@ -12,12 +12,15 @@ group_permission = Table(
     Column("permission_code", String(128), ForeignKey("permission.code")),
 )
 
-
 group_user = Table(
     "group_user",
     Base.metadata,
     Column("group_id", Integer, ForeignKey("group.id")),
-    Column("user_id", Integer, ForeignKey("user.id"), ),
+    Column(
+        "user_id",
+        Integer,
+        ForeignKey("user.id"),
+    ),
 )
 
 
@@ -26,7 +29,6 @@ class BaseModel(Base):
     id = Column(Integer, primary_key=True)
 
 
-#
 class User(BaseModel):
     __tablename__ = "user"
 
@@ -68,18 +70,16 @@ class User(BaseModel):
 #
 #
 class Group(BaseModel):
-    __tablename__ = 'group'
+    __tablename__ = "group"
     name = Column(String(32))
     permissions = relationship(
-        "Permission", secondary="group_permission", backref="groups"
+        "Permission", secondary="group_permission", backref="groups", cascade="all,delete"
     )
-    users = relationship(
-        "User", secondary="group_user", backref="groups"
-    )
+    users = relationship("User", secondary="group_user", backref="groups", cascade="all,delete")
 
 
 class Permission(Base):
-    __tablename__ = 'permission'
+    __tablename__ = "permission"
     code = Column(String(128), primary_key=True)
     name = Column(String(128))
 

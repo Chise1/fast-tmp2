@@ -17,7 +17,7 @@ from fast_tmp.amis.schema.actions import AjaxAction, DialogAction
 from fast_tmp.amis.schema.buttons import Operation
 from fast_tmp.amis.schema.crud import CRUD
 from fast_tmp.amis.schema.enums import ButtonLevelEnum
-from fast_tmp.amis.schema.forms import AbstractControl, Column, Form
+from fast_tmp.amis.schema.forms import AbstractControl, AmisColumn, Form
 from fast_tmp.amis.schema.frame import Dialog
 from fast_tmp.amis.schema.page import Page
 
@@ -153,7 +153,7 @@ class CRUD_TPL(TPL):
     body: List[BaseModel]  # 在crud后面的组件
     page: Page
 
-    def __init__(self, crud_name: str, api: str, columns: List[Column]):
+    def __init__(self, crud_name: str, api: str, columns: List[AmisColumn]):
         self.views = []
         self.operation_actions = []
         self.heads = []
