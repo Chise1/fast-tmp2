@@ -1,22 +1,6 @@
 from typing import Dict, List, Optional, Type
 
-from tortoise import BackwardFKRelation, ForeignKeyFieldInstance, ManyToManyFieldInstance, Model
-from tortoise.fields import (
-    BigIntField,
-    BooleanField,
-    CharField,
-    DateField,
-    DatetimeField,
-    DecimalField,
-    FloatField,
-    IntField,
-    JSONField,
-    SmallIntField,
-    TextField,
-    TimeDeltaField,
-    UUIDField,
-)
-from tortoise.fields.data import CharEnumFieldInstance, IntEnumFieldInstance
+
 
 from fast_tmp.amis.schema.forms import Column, Mapping
 from fast_tmp.amis.schema.forms.enums import FormWidgetSize, ItemModel
