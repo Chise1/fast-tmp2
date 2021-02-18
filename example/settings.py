@@ -16,7 +16,8 @@ import sentry_sdk
 import os
 import dotenv
 from sentry_sdk.integrations.redis import RedisIntegration
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
 
 dotenv.load_dotenv()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -99,4 +100,7 @@ REARQ = {
 
 SERVER_HOST = os.getenv("SERVER_HOST")
 STATIC_ROOT = "static"
-DB_ENGINE = create_async_engine("postgresql+asyncpg://fasttmp:fasttmp@localhost/fasttmp")
+ASYNC_ENGINE = "postgresql+asyncpg://fasttmp:fasttmp@localhost/fasttmp"
+# CAS_LOGIN_URL = "/cas-lo"
+CAS_SESSION_SECRET="!secret"
+CAS_SERVER_URL="http://127.0.0.1:8000/cas"

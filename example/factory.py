@@ -1,11 +1,14 @@
 from starlette.applications import Starlette
+from starlette.middleware.sessions import SessionMiddleware
+
 from example.apps.api.routes.t import t_route
 from fast_tmp.amis_app import AmisAPI
 from fast_tmp.conf import settings
 from starlette.middleware.cors import CORSMiddleware
 from fast_tmp import factory
+from fast_tmp.depends.cas import cas_middleware
 from .apps.api.routes.amis_html import router as amis_test_router
-from src.apps.api import app as example_app
+from example.apps.api import app as example_app
 from fast_tmp.redis import AsyncRedisUtil
 
 
@@ -37,6 +40,7 @@ def create_app() -> AmisAPI:
     )
     # Sentry的插件
     # app.add_middleware(SentryAsgiMiddleware)
-
+    app.middleware("http")(cas_middleware)
+    app.add_middleware(SessionMiddleware, secret_key=settings.CAS_SESSION_SECRET)
     init_app(app)
     return app

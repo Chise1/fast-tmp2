@@ -7,28 +7,33 @@
 @Software: PyCharm
 @info    :
 """
+from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from fast_tmp.amis_router import AmisRouter
 from fast_tmp.conf import settings
-
-engine=settings.DB_ENGINE
-t_route = AmisRouter(title="测试", prefix="/test")
+from fast_tmp.depends.cas import cas_get_user
 from fast_tmp.models import Base, User, Permission, Group
+
+engine = create_async_engine(settings.ASYNC_ENGINE)
+t_route = AmisRouter(title="测试", prefix="/test")
 
 
 @t_route.get("/users")
-async def get_users():
+async def get_users(user=Depends(cas_get_user)):
     # async with engine.begin() as conn:
     #     await conn.run_sync(Base.metadata.drop_all)
     #     await conn.run_sync(Base.metadata.create_all)
+    print(user)
     async with AsyncSession(engine) as session:
         async with session.begin():
             result = await session.execute(
                 select(User)
             )
-            f=result.scalars().first()
-            f.password="zhangsan"
+            f = result.scalars().first()
+            if not f:
+                return
+            f.password = "zhangsan"
             await session.flush()
     return f
 

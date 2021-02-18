@@ -9,9 +9,9 @@
 """
 import pytest
 from httpx import AsyncClient
+from src.main import app
 
 from fast_tmp.models import User
-from src.main import app
 
 
 @pytest.mark.asyncio  # 所有异步都不能少
