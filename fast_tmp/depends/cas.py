@@ -1,11 +1,5 @@
-from typing import Optional
-
 from cas import CASClient
-from fastapi import FastAPI
-
-# from fast_tmp.responses import FastTmpRedirectResponse
 from fastapi.responses import HTMLResponse, RedirectResponse
-from starlette.middleware.sessions import SessionMiddleware
 from starlette.requests import Request
 
 from fast_tmp.conf import settings
@@ -13,16 +7,11 @@ from fast_tmp.responses import FastTmpRedirectResponse
 
 cas_client = CASClient(
     version=3,
-    # service_url="http://127.0.0.1:8002/cas-login",
     service_url=settings.CAS_LOGIN_URL,
     # server_url=settings.CAS_SERVER_URL
     # service_url='http://127.0.0.1:8002/login?next=%2Fprofile',
-    server_url="http://127.0.0.1:8000/cas/",
+    server_url=settings.CAS_SERVER_URL,
 )
-
-
-# app.add_middleware(SessionMiddleware, secret_key=settings.CAS_SECRET,
-#                   session_cookie=settings.CAS_SESSION_COOKIE_NAME)
 
 
 async def cas_get_user(request: Request):
@@ -31,10 +20,8 @@ async def cas_get_user(request: Request):
     """
     user = request.session.get("cas_user", None)
     if not user:
-        print(f"{request.base_url}{settings.CAS_LOGIN_URL}?next={request.url}")
         raise FastTmpRedirectResponse(
             f"{request.base_url}{settings.CAS_LOGIN_URL[1:]}?next={request.url}"
-            # request.url_for(settings.CAS_LOGIN_URL, next=request.url)
         )
     return user
 
