@@ -1,7 +1,13 @@
 from typing import Iterable, List, Union
 
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+
+from fast_tmp.conf import settings
 from fast_tmp.models import User
 from fast_tmp.schemas import PermissionPageType, PermissionSchema, SiteSchema
+
+engine = create_async_engine(settings.ASYNC_ENGINE)
 
 
 def check_perms(user_codename: List[str], codenames: List[str]):
@@ -103,3 +109,19 @@ async def init_permission(node: Union[SiteSchema, PermissionSchema], permissions
     if getattr(node, "children", None):
         for child_node in node.children:
             await init_permission(child_node, permissions)
+
+
+async def get_userinfo(username: str):
+    """
+    把单点登录得到的用户名转为当前的用户
+    同时检查如果在数据库没有该函数则报错
+    """
+    async with AsyncSession(engine) as session:
+        async with session.begin():
+            results = await session.execute(select(User).where(username == username))
+            user = results.scalars().first()
+            if not user:
+                user = User(username=username)
+                session.add(user)
+                await session.flush()
+    return user

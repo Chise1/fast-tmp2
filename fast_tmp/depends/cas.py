@@ -1,3 +1,5 @@
+import importlib
+
 from cas import CASClient
 from fastapi.responses import HTMLResponse, RedirectResponse
 from starlette.requests import Request
@@ -37,7 +39,10 @@ async def cas_middleware(request: Request, call_next):
                 return HTMLResponse('Failed to verify ticket. <a href="/login">Login</a>')
             else:  # Login successfully, redirect according `next` query parameter.
                 response = RedirectResponse(next_url)
-                request.session["cas_user"] = dict(user=user)
+                request.session["cas_user"] = dict(user=user)  # 需要增加检查该用户是否在数据库存在，并创建对应用户的方法
+                module_paths = settings.CAS_CHECK_USER.split(".")
+                x = importlib.import_module(".".join(module_paths[0:-1]))
+                getattr(x, module_paths[-1])(user["user"])
                 return response
         else:
             cas_client.service_url = (

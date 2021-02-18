@@ -33,7 +33,7 @@ class User(BaseModel):
     __tablename__ = "user"
 
     username = Column(String(30))
-    password = Column(String(128))
+    password = Column(String(128), nullable=True)
     is_superuser = Column(Boolean(), default=False)
     is_active = Column(Boolean(), default=True)
 

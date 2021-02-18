@@ -21,3 +21,4 @@ CAS_LOGIN_URL = "/cas-login"
 CAS_LOGOUT_URL = "/cas-logout"
 CAS_LOGOUT_CALLBACK_URL = "/cas-loutout-callback"
 HOME_URL = "/"
+CAS_CHECK_USER = "fast_tmp.func.get_userinfo"  # 检查用户的

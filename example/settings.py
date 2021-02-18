@@ -102,5 +102,5 @@ SERVER_HOST = os.getenv("SERVER_HOST")
 STATIC_ROOT = "static"
 ASYNC_ENGINE = "postgresql+asyncpg://fasttmp:fasttmp@localhost/fasttmp"
 # CAS_LOGIN_URL = "/cas-lo"
-CAS_SESSION_SECRET="!secret"
-CAS_SERVER_URL="http://127.0.0.1:8000/cas"
+CAS_SESSION_SECRET = "!secret"
+CAS_SERVER_URL = "http://127.0.0.1:8000/cas"
