@@ -1,7 +1,10 @@
-from typing import Iterable, List, Type, Union
+from typing import Container, Iterable, List
 
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table, UniqueConstraint
-from sqlalchemy.orm import backref, declarative_base, relationship
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import backref, declarative_base, joinedload, relationship
+
+from fast_tmp.utils.password import make_password, verify_password
 
 Base = declarative_base()
 
@@ -32,7 +35,7 @@ class BaseModel(Base):
 class User(BaseModel):
     __tablename__ = "user"
 
-    username = Column(String(30))
+    username = Column(String(30), unique=True)
     password = Column(String(128), nullable=True)
     is_superuser = Column(Boolean(), default=False)
     is_active = Column(Boolean(), default=True)
@@ -40,35 +43,51 @@ class User(BaseModel):
     def set_password(self, raw_password: str):
         """
         设置密码
+        :param raw_password:
+        :return:
         """
-        pass
+        self.password = make_password(raw_password)
 
     def verify_password(self, raw_password: str) -> bool:
         """
         验证密码
+        :param raw_password:
+        :return:
         """
-        pass
+        return verify_password(raw_password, self.password)
 
-    async def has_perm(self, perm: str) -> bool:
+    # todo:需要测试
+    async def has_perm(self, db_session: AsyncSession, perm: str) -> bool:
         """
         判定用户是否有权限
         """
-        pass
+        results = await db_session.execute(
+            func.count(Group.id)
+            .where(Group.users == self.id)
+            .where(Group.permissions.any(Permission.code == perm))
+        )
+        if results.fetchone()[0]:
+            return True
+        return False
 
-    async def has_perms(self, perms: Iterable[str]) -> bool:
+    # todo:需要测试
+    async def has_perms(self, db_session: AsyncSession, perms: Container[str]) -> bool:
         """
         根据permission的codename进行判定
         """
-
-    async def get_perms(self) -> List[str]:
-        pass
+        results = await db_session.execute(
+            func.count(Group.id)
+            .where(Group.users == self.id)
+            .where(Group.permissions.any(Permission.code == perms))
+        )
+        if results.fetchone()[0]:
+            return True
+        return False
 
     def __str__(self):
         return self.username
 
 
-#
-#
 class Group(BaseModel):
     __tablename__ = "group"
     name = Column(String(32))
@@ -76,6 +95,21 @@ class Group(BaseModel):
         "Permission", secondary="group_permission", backref="groups", cascade="all,delete"
     )
     users = relationship("User", secondary="group_user", backref="groups", cascade="all,delete")
+
+    # todo:等待测试
+    async def get_perms(self, db_session: AsyncSession) -> Container[str]:
+        results = await db_session.execute(
+            select(group_permission).where(group_permission.c.group_id == self.id)
+        )
+        permissions = results.fetchall()
+        print(permissions)
+        return [permission[1] for permission in permissions]
+
+    async def get_users(self, session: AsyncSession) -> Container[User]:
+        results = await session.execute(
+            select(Group).options(joinedload(Group.users)).where(Group.id == self.id)
+        )
+        return results.scalars().first().users
 
 
 class Permission(Base):

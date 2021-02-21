@@ -2,7 +2,7 @@ import importlib
 from typing import Any, List, Optional
 
 from cas import CASClient
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, HTTPException, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
@@ -18,13 +18,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl=settings.FAST_TMP_URL + "/auth/tok
 cas_client = CASClient(
     version=3,
     service_url=settings.CAS_LOGIN_URL,
-    # server_url=settings.CAS_SERVER_URL
-    # service_url='http://127.0.0.1:8002/login?next=%2Fprofile',
     server_url=settings.CAS_SERVER_URL,
 )
 
 
-async def cas_get_user(request: Request) -> str:
+async def cas_get_username(request: Request) -> str:
     """
     获取用户
     """
@@ -33,7 +31,7 @@ async def cas_get_user(request: Request) -> str:
         raise FastTmpRedirectResponse(
             f"{request.base_url}{settings.CAS_LOGIN_URL[1:]}?next={request.url}"
         )
-    return user["username"]
+    return user["user"]
 
 
 async def cas_middleware(request: Request, call_next):
@@ -70,7 +68,7 @@ async def cas_middleware(request: Request, call_next):
         return response
 
 
-async def get_user(username: str = Depends(cas_get_user)) -> Optional[User]:
+async def get_user(username: str = Depends(cas_get_username)) -> Optional[User]:
     user = await User.filter(username=username).first()
     return user
 

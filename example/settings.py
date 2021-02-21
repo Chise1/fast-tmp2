@@ -43,30 +43,6 @@ DB_PORT = os.getenv("DB_PORT", 3306)
 DB_USER = os.getenv("DB_USER", 'example')
 DB_NAME = os.getenv("DB_NAME", 'example2')
 DB_PASSWORD = os.getenv("DB_PASSWORD", 'mnbvcxz123')
-TORTOISE_ORM = {
-    "connections": {
-        "default": {
-            "engine": "tortoise.backends.mysql",
-            "credentials": {
-                "host": DB_HOST,
-                "port": DB_PORT,
-                "user": DB_USER,
-                "password": DB_PASSWORD,
-                "database": DB_NAME,
-                "echo": True,
-                "maxsize": 10,
-            },
-        },
-    },
-    "apps": {
-        "fast_tmp": {
-            "models": ["aerich.models", "fast_tmp.models",
-                       "src.models", ],
-            "default_connection": "default",
-        },
-    },
-}
-
 REDIS = {
     "host": REDIS_HOST,
     "port": REDIS_PORT,
@@ -100,7 +76,7 @@ REARQ = {
 
 SERVER_HOST = os.getenv("SERVER_HOST")
 STATIC_ROOT = "static"
-ASYNC_ENGINE = "postgresql+asyncpg://fasttmp:fasttmp@localhost/fasttmp"
+ASYNC_ENGINE = "postgresql+asyncpg://postgres:mininet@localhost/fasttmp"
 # CAS_LOGIN_URL = "/cas-lo"
 CAS_SESSION_SECRET = "!secret"
 CAS_SERVER_URL = "http://127.0.0.1:8000/cas"

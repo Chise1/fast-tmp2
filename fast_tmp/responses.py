@@ -2,8 +2,8 @@ import typing
 from urllib.parse import quote_plus
 
 from fastapi import HTTPException
-from sqlalchemy.engine import URL
 from starlette.background import BackgroundTask
+from starlette.datastructures import URL
 from starlette.responses import RedirectResponse
 
 

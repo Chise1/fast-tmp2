@@ -2,9 +2,10 @@ import asyncio
 import datetime
 import dotenv
 import typer
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 from fast_tmp.conf import settings
+from fast_tmp.db import get_db_session, SessionLocal
 
 app = typer.Typer()
 
@@ -38,15 +39,16 @@ def create_superuser(username: str, password: str):
     """
     from fast_tmp.models import User
     async def create_user(username, password):
-        user = User(
-            # id=1,
-            username=username,
-            password=password
-        )
-        async with AsyncSession(settings.DB_ENGINE) as session:
+        async with SessionLocal() as session:
             async with session.begin():
+                user = User(
+                    # id=1,
+                    username=username,
+                    password=password
+                )
                 session.add(user)
                 await session.flush()
+                return
 
     asyncio.run(create_user(username, password))
 
