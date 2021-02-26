@@ -9,7 +9,6 @@ from fast_tmp.models import User
 from fast_tmp.utils.token import decode_access_token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=settings.FAST_TMP_URL + "/auth/token")
-app = FastAPI()
 
 
 async def get_user(username: str) -> Optional[User]:
