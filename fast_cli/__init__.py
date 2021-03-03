@@ -1,11 +1,6 @@
 import asyncio
 import datetime
-import dotenv
 import typer
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-
-from fast_tmp.conf import settings
-from fast_tmp.db import get_db_session, SessionLocal
 
 app = typer.Typer()
 
@@ -33,10 +28,11 @@ def access_token():
 
 
 @app.command()
-def create_superuser(username: str, password: str):
+def createsuperuser(username: str, password: str):
     """
     创建超级用户
     """
+    from fast_tmp.db import SessionLocal
     from fast_tmp.models import User
     async def create_user(username, password):
         async with SessionLocal() as session:
@@ -52,6 +48,12 @@ def create_superuser(username: str, password: str):
 
     asyncio.run(create_user(username, password))
 
+@app.command()
+def startapp():
+    import os
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    from cookiecutter.main import cookiecutter
+    cookiecutter(basedir+"/tpl/")
 
 def main():
     app()

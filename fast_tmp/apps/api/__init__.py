@@ -100,7 +100,7 @@ async def index(request: Request, u: L):
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=timedelta(minutes=settings.EXPIRES_DELTA)
     )
-    return Success(data={"access_token": access_token})
+    return {"access_token": access_token}
 
 
 @app.get("/site", summary="获取目录")

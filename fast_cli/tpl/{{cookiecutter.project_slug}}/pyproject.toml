@@ -1,15 +1,9 @@
 [tool.poetry]
-name = "fast-tmp"
-version = "0.2.8"
-description = "为fastapi项目开发做准备"
-authors = ["chise <chise123@live.com>"]
+name = "{{cookiecutter.project_name}}"
+version = "0.1.0"
+description = "{{cookiecutter.description}}"
+authors = []
 license = "Apache-2.0"
-repository = "https://github.com/Chise1/fast-tmp"
-packages = [
-    { include = "fast_tmp" },
-    { include = "fast_cli" }
-]
-include = ["LICENSE", "README.md"]
 
 
 [tool.poetry.dependencies]
@@ -17,7 +11,6 @@ python = "^3.7"
 fastapi = "^0.63.0"
 watchgod = "^0.6"
 uvicorn = "^0.13.3"
-redis = "^3.5.3"
 python-multipart = "^0.0.5"
 python-jose = "^3.2.0"
 passlib = "^1.7.4"
@@ -26,11 +19,11 @@ jinja2 = "^2.11.2"
 typer = "^0.3.2"
 sqlalchemy = "^1.4.0b2"
 pydantic-sqlalchemy = "^0.0.8"
-cookiecutter = "^1.7.2"
+alembic = "^1.5.4"
+python-dotenv = "^0.15.0"
+fast-tmp = "*"
 
 [tool.poetry.dev-dependencies]
-sentry-sdk = "^0.19.5"
-python-dotenv = "^0.15.0"
 flake8 = "*"
 isort = "*"
 black = "^20.8b1"
@@ -40,16 +33,6 @@ pytest-cov = "*"
 pytest-asyncio = "*"
 asynctest = "*"
 bandit = "*"
-#mypy = "*"
-httpx = "^0.16.1"
-requests = "^2.25.1"
-python-cas = "^1.5.0"
-aioredis = "^1.3.1"
-authlib = "^0.15.3"
-itsdangerous = "^1.1.0"
-asyncpg = "^0.22.0"
-alembic = "^1.5.4"
-psycopg2 = "^2.8.6"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -63,8 +46,3 @@ sentry = ["sentry-sdk"]
 url = "https://mirrors.aliyun.com/pypi/simple/"
 name = "aliyun"
 default = true
-
-#启动脚本
-
-[tool.poetry.scripts]
-fast-tmp = "fast_cli:main"

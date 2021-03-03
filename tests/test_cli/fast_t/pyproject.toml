@@ -1,15 +1,10 @@
 [tool.poetry]
-name = "fast-tmp"
-version = "0.2.8"
+name = "fast-t"
+version = "0.1.0"
 description = "为fastapi项目开发做准备"
 authors = ["chise <chise123@live.com>"]
 license = "Apache-2.0"
-repository = "https://github.com/Chise1/fast-tmp"
-packages = [
-    { include = "fast_tmp" },
-    { include = "fast_cli" }
-]
-include = ["LICENSE", "README.md"]
+
 
 
 [tool.poetry.dependencies]
@@ -26,7 +21,7 @@ jinja2 = "^2.11.2"
 typer = "^0.3.2"
 sqlalchemy = "^1.4.0b2"
 pydantic-sqlalchemy = "^0.0.8"
-cookiecutter = "^1.7.2"
+fast-tmp = "^0.2.5"
 
 [tool.poetry.dev-dependencies]
 sentry-sdk = "^0.19.5"
@@ -55,16 +50,8 @@ psycopg2 = "^2.8.6"
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry.extras]
-dbdrivers = ["aioredis"]
-sentry = ["sentry-sdk"]
 
 [[tool.poetry.source]]
 url = "https://mirrors.aliyun.com/pypi/simple/"
 name = "aliyun"
 default = true
-
-#启动脚本
-
-[tool.poetry.scripts]
-fast-tmp = "fast_cli:main"

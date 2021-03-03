@@ -21,7 +21,7 @@ from sqlalchemy.orm import sessionmaker
 
 dotenv.load_dotenv()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATABASE_ENGINE = "postgresql+asyncpg://postgres:mininet@localhost/fasttmp"
+DATABASE_URL = os.getenv("DATABASE_URL")
 DEBUG = os.getenv("DEBUG") == "True"
 PROJECT_CODE = "AUDIT"
 SECRET_KEY = "asdfadagre"
@@ -76,6 +76,7 @@ REARQ = {
 
 SERVER_HOST = os.getenv("SERVER_HOST")
 STATIC_ROOT = "static"
+ASYNC_ENGINE = "postgresql+asyncpg://postgres:mininet@localhost/fasttmp"
 # CAS_LOGIN_URL = "/cas-lo"
 CAS_SESSION_SECRET = "!secret"
 CAS_SERVER_URL = "http://127.0.0.1:8000/cas"
