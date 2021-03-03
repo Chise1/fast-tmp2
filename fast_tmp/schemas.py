@@ -55,3 +55,6 @@ class SiteSchema(PermissionSchema):
 
 
 SiteSchema.update_forward_refs()
+class LoginSchema(BaseModel):
+    username:str
+    password:str

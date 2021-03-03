@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fast_tmp.conf import settings
 from fast_tmp.db import get_db_session
 from fast_tmp.models import User
+from fast_tmp.schemas import LoginSchema
 from fast_tmp.utils.token import decode_access_token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=settings.FAST_TMP_URL + "/auth/token")
@@ -45,14 +46,15 @@ async def get_user(
 
 
 async def authenticate_user(
-    password: str, user: Optional[User] = Depends(get_user)
+    logininfo: LoginSchema, session: AsyncSession = Depends(get_db_session)
 ) -> Optional[User]:
     """
     验证密码
     """
+    user = await get_user(logininfo.username, session)
     if not user:
         return None
-    if not user.verify_password(password):
+    if not user.verify_password(logininfo.password):
         return None
     return user
 
