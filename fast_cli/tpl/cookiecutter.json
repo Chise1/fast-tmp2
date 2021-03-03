@@ -2,7 +2,14 @@
   "project_name": "fast-tmp-example",
   "project_slug": "{{ cookiecutter.project_name|lower|replace(' ', '_')|replace('-', '_') }}",
   "description": "",
-  "db_url": "postgresql://{{cookiecutter.project_slug}}:{{cookiecutter.project_slug}}@localhost/{{cookiecutter.project_slug}}",
+  "database_backend": "postgresql",
+  "database_async_dialect": "asyncpg",
+  "database_sync_dialect": "psycopg2",
+  "database_name": "{{cookiecutter.project_slug}}",
+  "database_user": "{{cookiecutter.project_slug}}",
+  "database_password": "{{cookiecutter.project_slug}}",
+  "database_host": "localhost",
+  "database_port": "5432",
   "_copy_without_render": [
     "*.html"
   ]

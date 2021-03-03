@@ -1,12 +1,3 @@
-# -*- encoding: utf-8 -*-
-"""
-@File    : db.py
-@Time    : 2021/2/17 9:56
-@Author  : chise
-@Email   : chise123@live.com
-@Software: PyCharm
-@info    :
-"""
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -16,7 +7,8 @@ SessionLocal = sessionmaker(
     class_=AsyncSession,
     autocommit=False,
     autoflush=False,
-    bind=create_async_engine(settings.DATABASE_URL, echo=True),
+    future=True,
+    bind=create_async_engine(settings.DATABASE_URL, echo=settings.DEBUG),
 )
 
 
