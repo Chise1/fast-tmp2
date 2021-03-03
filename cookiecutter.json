@@ -1,4 +1,0 @@
-{
-  "project_name": "fast_t",
-    "project_slug": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}"
-}

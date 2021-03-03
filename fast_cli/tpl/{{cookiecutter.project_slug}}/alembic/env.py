@@ -19,6 +19,7 @@ fileConfig(config.config_file_name)
 # target_metadata = mymodel.Base.metadata
 import os
 import sys
+os.environ.setdefault("FASTAPI_SETTINGS_MODULE", '{{cookiecutter.project_slug}}.settings')
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../")
 from {{cookiecutter.project_slug}}.models import Base
