@@ -21,7 +21,7 @@ sqlalchemy = "^1.4.0b2"
 pydantic-sqlalchemy = "^0.0.8"
 alembic = "^1.5.4"
 python-dotenv = "^0.15.0"
-fast-tmp = "*"
+fast-tmp = "^0.3.2"
 
 [tool.poetry.dev-dependencies]
 flake8 = "*"
