@@ -21,7 +21,7 @@ from sqlalchemy.orm import sessionmaker
 
 dotenv.load_dotenv()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATABASE_ENGINE = "postgresql+asyncpg://postgres:mininet@localhost/fasttmp"
+DATABASE_URL = "postgresql+asyncpg://postgres:mininet@localhost/fasttmp"
 DEBUG = os.getenv("DEBUG") == "True"
 PROJECT_CODE = "AUDIT"
 SECRET_KEY = "asdfadagre"

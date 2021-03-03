@@ -1,34 +1,23 @@
-from typing import Any, List, Optional
+from typing import Any, Container, List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from fast_tmp.conf import settings
+from fast_tmp.db import get_db_session
 from fast_tmp.models import User
 from fast_tmp.utils.token import decode_access_token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=settings.FAST_TMP_URL + "/auth/token")
 
 
-async def get_user(username: str) -> Optional[User]:
-    user = await User.filter(username=username).first()
-    return user
-
-
-async def authenticate_user(username: str, password: str) -> Optional[User]:
+async def get_username(token: str = Depends(oauth2_scheme)) -> str:
     """
-    验证密码
+    从token获取username
     """
-    user = await get_user(username)
-    if not user:
-        return None
-    if not user.verify_password(password):
-        return None
-    return user
-
-
-async def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -41,33 +30,76 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    user = await get_user(username=username)
+    return username
+
+
+async def get_user(
+    username: str = Depends(get_username), session: AsyncSession = Depends(get_db_session)
+) -> Optional[User]:
+    """
+    从数据库读取数据
+    """
+    async with session.begin():
+        res = await session.execute(select(User).where(username == username).limit(1))
+        return res.scalar_one_or_none()
+
+
+async def authenticate_user(
+    password: str, user: Optional[User] = Depends(get_user)
+) -> Optional[User]:
+    """
+    验证密码
+    """
+    if not user:
+        return None
+    if not user.verify_password(password):
+        return None
+    return user
+
+
+async def get_current_user(
+    user: Optional[User] = Depends(get_user),
+) -> User:
+    """
+    获取存在的用户
+    """
     if user is None:
-        raise credentials_exception
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     return user
 
 
 async def get_current_active_user(current_user: User = Depends(get_current_user)):
+    """
+    获取活跃的用户
+    """
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
 
 async def get_superuser(current_user: User = Depends(get_current_active_user)):
+    """
+    获取超级用户(该用户必须是活跃的)
+    """
     if not current_user.is_superuser:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     return current_user
 
 
-def get_user_has_perms(perms: List[Any]):
+def get_user_has_perms(perms: Container[str]):  # fixme:需要测试
     """
     判定用户是否具有相关权限
-    :param perms:
-    :return:
     """
 
-    async def user_has_perms(user: User = Depends(get_current_active_user)):
-        if await user.has_perms(perms):
+    async def user_has_perms(
+        user: User = Depends(get_current_active_user),
+        session: AsyncSession = Depends(get_db_session),
+    ):
+        if await user.has_perms(session, perms):
             return user
         else:
             raise HTTPException(

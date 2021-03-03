@@ -5,7 +5,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
 
 from fast_tmp.amis_app import AmisAPI
-# from fast_tmp.apps.api import app as b_app
+from fast_tmp.apps.api import app as b_app
 
 # from fast_tmp.apps.api.routes.group import group_router
 # from fast_tmp.apps.api.routes.permission import permission_router
@@ -37,7 +37,7 @@ def create_fast_tmp_app() -> AmisAPI:
             StaticFiles(directory=os.path.join(settings.BASE_DIR, settings.STATIC_ROOT)),
             name="static",
         )
-    # fast_tmp_app.include_router(b_app)
+    fast_tmp_app.include_router(b_app)
     # fast_tmp_app.include_router(permission_router)
     # fast_tmp_app.include_router(group_router)
     # fast_tmp_app.include_router(user_router)

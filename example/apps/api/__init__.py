@@ -33,8 +33,10 @@
 # app.add_exception_handler(HTTPException, http_exception_handler)
 from fast_tmp.amis_app import AmisAPI
 from fast_tmp.conf import settings
+from example.apps.api.routes.amis_html import router as amis_router
 
-app = AmisAPI(
+amis_app = AmisAPI(
     title="example api",
     debug=settings.DEBUG,
 )
+amis_app.include_router(amis_router)

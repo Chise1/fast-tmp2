@@ -1,14 +1,12 @@
 from starlette.applications import Starlette
 from starlette.middleware.sessions import SessionMiddleware
 
-from example.apps.api.routes.t import t_route
 from fast_tmp.amis_app import AmisAPI
 from fast_tmp.conf import settings
 from starlette.middleware.cors import CORSMiddleware
 from fast_tmp import factory
 from fast_tmp.depends.cas import cas_middleware
-from .apps.api.routes.amis_html import router as amis_test_router
-from example.apps.api import app as example_app
+from example.apps.api import amis_app
 from fast_tmp.redis import AsyncRedisUtil
 
 
@@ -28,9 +26,7 @@ def create_app() -> AmisAPI:
 
     r_app = factory.create_fast_tmp_app()
     app.mount(settings.FAST_TMP_URL, r_app)
-    app.mount("/example", example_app)
-    app.include_router(amis_test_router)
-    app.include_router(t_route)
+    app.mount("/amis", amis_app)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],

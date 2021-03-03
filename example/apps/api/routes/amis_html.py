@@ -35,7 +35,7 @@ router.registe_tpl(tpl)
 router.site_schema.icon = 'fa fa-file'
 
 engine = create_async_engine(
-    settings.ASYNC_ENGINE, echo=True,
+    settings.DATABASE_URL, echo=True,
 )
 
 

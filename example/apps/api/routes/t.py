@@ -19,7 +19,7 @@ from fast_tmp.db import get_db_session
 from fast_tmp.models import User, Permission, Group, group_user, \
     group_permission
 
-engine = create_async_engine(settings.ASYNC_ENGINE)
+engine = create_async_engine(settings.DATABASE_URL)
 t_route = AmisRouter(title="测试", prefix="/test")
 
 

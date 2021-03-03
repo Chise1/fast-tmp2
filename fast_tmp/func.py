@@ -7,7 +7,7 @@ from fast_tmp.conf import settings
 from fast_tmp.models import User
 from fast_tmp.schemas import PermissionPageType, PermissionSchema, SiteSchema
 
-engine = create_async_engine(settings.ASYNC_ENGINE)
+engine = create_async_engine(settings.DATABASE_URL)
 
 
 def check_perms(user_codename: List[str], codenames: List[str]):
