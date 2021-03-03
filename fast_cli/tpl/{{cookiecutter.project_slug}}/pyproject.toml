@@ -40,6 +40,6 @@ build-backend = "poetry.core.masonry.api"
 
 # 谨慎使用，会导致包更新不及时
 [[tool.poetry.source]]
-url = "https://mirrors.aliyun.com/pypi/simple/"
-name = "aliyun"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+name = "tuna"
 default = true

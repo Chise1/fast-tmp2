@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fast-tmp"
-version = "0.3.0"
+version = "0.3.1"
 description = "为fastapi项目开发做准备"
 authors = ["chise <chise123@live.com>"]
 license = "Apache-2.0"
@@ -60,8 +60,8 @@ dbdrivers = ["aioredis"]
 sentry = ["sentry-sdk"]
 
 [[tool.poetry.source]]
-url = "https://mirrors.aliyun.com/pypi/simple/"
-name = "aliyun"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+name = "tuna"
 default = true
 
 #启动脚本

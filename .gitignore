@@ -131,7 +131,5 @@ dmypy.json
 migrations/
 aerich.ini
 pip_outline/
-alembic.ini
-alembic/
 *.rdb
 static/

@@ -16,7 +16,7 @@ SessionLocal = sessionmaker(
     class_=AsyncSession,
     autocommit=False,
     autoflush=False,
-    bind=create_async_engine(settings.ASYNC_ENGINE, echo=True),
+    bind=create_async_engine(settings.DATABASE_URL, echo=True),
 )
 
 
