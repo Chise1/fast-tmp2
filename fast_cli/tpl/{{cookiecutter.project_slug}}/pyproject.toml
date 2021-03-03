@@ -38,10 +38,7 @@ bandit = "*"
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry.extras]
-dbdrivers = ["aioredis"]
-sentry = ["sentry-sdk"]
-
+# 谨慎使用，会导致包更新不及时
 [[tool.poetry.source]]
 url = "https://mirrors.aliyun.com/pypi/simple/"
 name = "aliyun"
