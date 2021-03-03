@@ -133,3 +133,4 @@ aerich.ini
 pip_outline/
 *.rdb
 static/
+tests/test_cli/
