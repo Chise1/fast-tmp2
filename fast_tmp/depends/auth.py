@@ -42,13 +42,27 @@ async def get_user(
     return ret
 
 
+async def _get_user(
+    session: AsyncSession,
+    username: str = Depends(get_username),
+) -> Optional[User]:
+    """
+    从数据库读取数据
+    """
+    res = await session.execute(select(User).where(User.username == username).limit(1))
+    return res.scalar_one_or_none()
+
+
 async def authenticate_user(
     logininfo: LoginSchema, session: AsyncSession = Depends(get_db_session)
 ) -> Optional[User]:
     """
     验证密码
     """
-    user = await get_user(logininfo.username, session)
+    user = await _get_user(
+        session,
+        logininfo.username,
+    )
     if not user:
         return None
     if not user.verify_password(logininfo.password):

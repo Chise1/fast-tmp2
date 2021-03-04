@@ -43,20 +43,14 @@
                 url: "/fast/auth/index",
                 data: {
                     "username": document.getElementById("username").value,
-                    "password":
-                    document.getElementById("password").value
+                    "password": document.getElementById("password").value
                 },
                 headers: {'Content-Type': 'application/json'}
             }
         ).then(function (response) {
             data = response.data
-            console.log(data);
-            if (data.status !== 0) {
-                window.alert(data.msg)
-            } else {
-                document.getElementById('login').remove();
-                main(data.data.access_token);
-            }
+            document.getElementById('login').remove();
+            main(data.access_token)
         }).catch(function (error) {
             console.log(error);
         });

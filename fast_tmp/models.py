@@ -84,6 +84,42 @@ class User(BaseModel):
             return True
         return False
 
+    async def perms(
+        self,
+        session: AsyncSession,
+    ) -> Container[str]:
+        """
+        获取用户的所有权限
+        """
+        query = (
+            select(Group)
+            .options(joinedload(Group.permissions))
+            .join(
+                User,
+            )
+            .where(User.id == self.id)
+        )
+        print(query)
+        groups = (
+            (
+                await session.execute(
+                    select(Group)
+                    .options(joinedload(Group.permissions))
+                    .join(
+                        User,
+                    )
+                    .where(User.id == self.id)
+                )
+            )
+            .scalars()
+            .all()
+        )
+        permissions = []
+        for group in groups:
+            for p in group.permissions:
+                permissions.append(p.code)
+        return permissions
+
     def __str__(self):
         return self.username
 
@@ -91,7 +127,7 @@ class User(BaseModel):
 class Group(BaseModel):
     __tablename__ = "group"
     name = Column(String(32))
-    permissions = relationship(
+    permissions: "Permission" = relationship(
         "Permission", secondary="group_permission", backref="groups", cascade="all,delete"
     )
     users = relationship("User", secondary="group_user", backref="groups", cascade="all,delete")

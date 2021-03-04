@@ -4,12 +4,15 @@ from fastapi import Depends, Form, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 from starlette.requests import Request
 
 from fast_tmp.amis_router import AmisRouter
 from fast_tmp.apps.api.schemas import LoginR
 from fast_tmp.conf import settings
+from fast_tmp.db import get_db_session
 from fast_tmp.depends import authenticate_user, get_current_active_user
 from fast_tmp.func import get_site_from_permissionschema, init_permission
 from fast_tmp.models import Permission, User
@@ -103,7 +106,9 @@ async def index(user: User = Depends(authenticate_user)):
 
 
 @app.get("/site", summary="获取目录")
-async def get_site(user: User = Depends(get_current_active_user)):
+async def get_site(
+    user: User = Depends(get_current_active_user), session: AsyncSession = Depends(get_db_session)
+):
     """
     获取左侧导航栏
     :param user:
@@ -111,15 +116,19 @@ async def get_site(user: User = Depends(get_current_active_user)):
     """
     global INIT_PERMISSION
     app = settings.app
+    async with session.begin():
+        # 初始化permission
+        if not INIT_PERMISSION:
+            permissions = (await session.execute(select(Permission))).scalars().all()
+            await init_permission(
+                app.site_schema, [permission.code for permission in permissions], session
+            )
+            INIT_PERMISSION = True
 
-    # 初始化permission
-    if not INIT_PERMISSION:
-        await init_permission(app.site_schema, list(await Permission.all()))
-        INIT_PERMISSION = True
-    permissions = await user.perms
-    site = get_site_from_permissionschema(app.site_schema, permissions, "", user.is_superuser)
+        permissions = await user.perms(session)
+        site = get_site_from_permissionschema(app.site_schema, permissions, "", user.is_superuser)
 
-    if site:
-        return {"pages": [site]}
-    else:
-        return {"pages": []}
+        if site:
+            return {"pages": [site]}
+        else:
+            return {"pages": []}

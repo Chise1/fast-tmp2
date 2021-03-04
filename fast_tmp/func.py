@@ -1,10 +1,10 @@
-from typing import Iterable, List, Union
+from typing import Container, Iterable, List, Union
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 from fast_tmp.conf import settings
-from fast_tmp.models import User
+from fast_tmp.models import Permission, User
 from fast_tmp.schemas import PermissionPageType, PermissionSchema, SiteSchema
 
 engine = create_async_engine(settings.DATABASE_URL)
@@ -82,33 +82,31 @@ def get_site_from_permissionschema(
         return None
 
 
-async def create_perm(codename, label, permissions):
-    """
-
-    :param codename:
-    :param label:
-    :param permissions:
-    :return:
-    """
-    raise Exception("尚未实现")
-    # for permission in permissions:
-    #     if permission.codename == codename:
-    #         return
-    # else:
-    #     p = await Permission.get_or_create(codename=codename, defaults={"label": label})
-    #     permissions.append(p)
+async def create_perm(codename, label, permissions: List[str], session: AsyncSession):
+    """"""
+    for permission in permissions:
+        if permission == codename:
+            return
+    else:
+        # fixme:增加一个报错拦截
+        p = Permission(code=codename, name=label)
+        session.add(p)
+        await session.commit()
+        permissions.append(p.code)
 
 
-async def init_permission(node: Union[SiteSchema, PermissionSchema], permissions):
+async def init_permission(
+    node: Union[SiteSchema, PermissionSchema], permissions: List[str], session: AsyncSession
+):
     if node.codename:
         if not isinstance(node.codename, Iterable):
-            await create_perm(node.codename, node.label, permissions)
+            await create_perm(node.codename, node.label, permissions, session)
         else:
             for codename in node.codename:
-                await create_perm(codename, codename, permissions)
+                await create_perm(codename, codename, permissions, session)
     if getattr(node, "children", None):
         for child_node in node.children:
-            await init_permission(child_node, permissions)
+            await init_permission(child_node, permissions, session)
 
 
 async def get_userinfo(username: str):
