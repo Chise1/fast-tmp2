@@ -8,6 +8,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
 from starlette.requests import Request
 
+from fast_tmp.apps.exceptions import credentials_exception
 from fast_tmp.conf import settings
 from fast_tmp.models import User
 from fast_tmp.responses import FastTmpRedirectResponse
@@ -74,11 +75,6 @@ async def get_user(username: str = Depends(cas_get_username)) -> Optional[User]:
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
     try:
         payload = decode_access_token(token)
         username: str = payload.get("sub")

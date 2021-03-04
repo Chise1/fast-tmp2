@@ -89,7 +89,7 @@ class L(BaseModel):
 
 
 @app.post("/index", summary="登录")
-async def index(user:User=Depends( authenticate_user)):
+async def index(user: User = Depends(authenticate_user)):
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

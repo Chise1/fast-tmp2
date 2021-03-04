@@ -3,7 +3,7 @@ import sys
 
 from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
-
+from fast_tmp.conf import settings
 from fast_tmp.amis_app import AmisAPI
 from fast_tmp.apps.api import app as b_app
 
@@ -27,16 +27,11 @@ def create_fast_tmp_app() -> AmisAPI:
         title="fast_tmp_bk",
         debug=settings.DEBUG,
     )
-    if settings.DEBUG == "True":
-        fast_tmp_app.mount(
-            "/static", StaticFiles(directory=os.path.join(DIR, "static")), name="static"
-        )
-    else:
-        fast_tmp_app.mount(
-            "/static",
-            StaticFiles(directory=os.path.join(settings.BASE_DIR, settings.STATIC_ROOT)),
-            name="static",
-        )
+    fast_tmp_app.mount(
+        settings.STATIC_URL,
+        StaticFiles(directory=os.path.join(settings.BASE_DIR, settings.STATIC_ROOT)),
+        name="static",
+    )
     fast_tmp_app.include_router(b_app)
     # fast_tmp_app.include_router(permission_router)
     # fast_tmp_app.include_router(group_router)

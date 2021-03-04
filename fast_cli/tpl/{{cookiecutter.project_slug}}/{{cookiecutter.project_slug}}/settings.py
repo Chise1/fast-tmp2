@@ -17,7 +17,7 @@ DATABASE_URL = os.getenv(
 SERVER_HOST = os.getenv("SERVER_HOST", '127.0.0.1')  # 服务器运行的IP或者域名
 # 存储静态文件的地方，主要是配合amis
 STATIC_ROOT = "static"
-
+STATIC_URL = '/static'
 # redis配置
 # REDIS_HOST = os.getenv("REDIS_HOST", "127.0.0.1")
 # REDIS_PORT = os.getenv("REDIS_PORT", 6379)

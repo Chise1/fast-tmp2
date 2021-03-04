@@ -6,6 +6,7 @@ from jose import JWTError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from fast_tmp.apps.exceptions import credentials_exception
 from fast_tmp.conf import settings
 from fast_tmp.db import get_db_session
 from fast_tmp.models import User
@@ -19,11 +20,6 @@ async def get_username(token: str = Depends(oauth2_scheme)) -> str:
     """
     从token获取username
     """
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
     try:
         payload = decode_access_token(token)
         username: str = payload.get("sub")
@@ -41,8 +37,9 @@ async def get_user(
     从数据库读取数据
     """
     async with session.begin():
-        res = await session.execute(select(User).where(username == username).limit(1))
-        return res.scalar_one_or_none()
+        res = await session.execute(select(User).where(User.username == username).limit(1))
+        ret = res.scalar_one_or_none()
+    return ret
 
 
 async def authenticate_user(
