@@ -32,13 +32,14 @@ def createsuperuser(username: str, password: str):
     """
     创建超级用户
     """
+    from sqlalchemy.ext.asyncio import AsyncSession
     import os
     project_slug = os.path.split(os.getcwd())[1]
     os.environ.setdefault('FASTAPI_SETTINGS_MODULE', project_slug + ".settings")
-    from fast_tmp.db import SessionLocal
     from fast_tmp.models import User
+    from fast_tmp.db import engine
     async def create_user(username, password):
-        async with SessionLocal() as session:
+        async with AsyncSession(engine) as session:
             async with session.begin():
                 user = User(
                     username=username, is_superuser=True
@@ -46,9 +47,10 @@ def createsuperuser(username: str, password: str):
                 user.set_password(password)
                 session.add(user)
                 await session.flush()
+            await session.close()
 
     loop = asyncio.get_event_loop()
-    asyncio.run_coroutine_threadsafe(create_user(username, password), loop)
+    loop.run_until_complete(create_user(username, password))
     print(f"创建{username}成功")
 
     @app.command()

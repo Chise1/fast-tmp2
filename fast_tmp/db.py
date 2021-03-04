@@ -3,12 +3,13 @@ from sqlalchemy.orm import sessionmaker
 
 from fast_tmp.conf import settings
 
+engine = create_async_engine(settings.DATABASE_URL, echo=settings.DEBUG)
 SessionLocal = sessionmaker(
     class_=AsyncSession,
     autocommit=False,
     autoflush=False,
     future=True,
-    bind=create_async_engine(settings.DATABASE_URL, echo=settings.DEBUG),
+    bind=engine,
 )
 
 
