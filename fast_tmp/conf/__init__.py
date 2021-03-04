@@ -25,7 +25,6 @@ class Settings:
                 raise ImportError(
                     "未找到settings.py"
                     f"你必须设置环境变量{FASTAPI_VARIABLE}=你的settings.py的位置"
-                    "或存在src/settings.py"
                 )
             else:
                 settings_module = "src.settings"

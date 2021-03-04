@@ -32,13 +32,15 @@ def createsuperuser(username: str, password: str):
     """
     创建超级用户
     """
+    import os
+    project_slug = os.path.split(os.getcwd())
+    os.environ.setdefault('FASTAPI_SETTINGS_MODULE', project_slug + ".settings")
     from fast_tmp.db import SessionLocal
     from fast_tmp.models import User
     async def create_user(username, password):
         async with SessionLocal() as session:
             async with session.begin():
                 user = User(
-                    # id=1,
                     username=username,
                     password=password
                 )
@@ -48,12 +50,16 @@ def createsuperuser(username: str, password: str):
 
     asyncio.run(create_user(username, password))
 
+
 @app.command()
 def startapp():
+    import sys
+    print(sys.path[0])
     import os
     basedir = os.path.abspath(os.path.dirname(__file__))
     from cookiecutter.main import cookiecutter
-    cookiecutter(basedir+"/tpl/")
+    cookiecutter(basedir + "/tpl/")
+
 
 def main():
     app()
