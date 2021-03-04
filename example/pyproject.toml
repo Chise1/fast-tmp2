@@ -21,8 +21,9 @@ sqlalchemy = "^1.4.0b2"
 pydantic-sqlalchemy = "^0.0.8"
 alembic = "^1.5.4"
 python-dotenv = "^0.15.0"
-fast-tmp = "^0.3.2"
+fast-tmp = {path ="D:/project/fast-tmp"}
 asyncpg = "^0.22.0"
+psycopg2 = "^2.8.6"
 
 [tool.poetry.dev-dependencies]
 flake8 = "*"
