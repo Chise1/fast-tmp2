@@ -27,11 +27,17 @@ def create_fast_tmp_app() -> AmisAPI:
         title="fast_tmp_bk",
         debug=settings.DEBUG,
     )
-    fast_tmp_app.mount(
-        settings.STATIC_URL,
-        StaticFiles(directory=os.path.join(settings.BASE_DIR, settings.STATIC_ROOT)),
-        name="static",
-    )
+    if settings.DEBUG == "True":
+        fast_tmp_app.mount(
+            "/static", StaticFiles(directory=os.path.join(DIR, "static")), name="static"
+        )
+    else:
+        # fixme:非调试模式下不应该有改接口
+        fast_tmp_app.mount(
+            "/static",
+            StaticFiles(directory=os.path.join(settings.BASE_DIR, settings.STATIC_ROOT)),
+            name="static",
+        )
     fast_tmp_app.include_router(b_app)
     # fast_tmp_app.include_router(permission_router)
     # fast_tmp_app.include_router(group_router)

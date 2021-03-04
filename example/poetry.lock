@@ -331,7 +331,7 @@ reference = "tuna"
 
 [[package]]
 name = "fast-tmp"
-version = "0.3.2"
+version = "0.3.3"
 description = "为fastapi项目开发做准备"
 category = "main"
 optional = false
