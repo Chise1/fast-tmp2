@@ -34,10 +34,6 @@ router.registe_tpl(tpl)
 
 router.site_schema.icon = 'fa fa-file'
 
-engine = create_async_engine(
-    settings.DATABASE_URL, echo=True,
-)
-
 
 @router.get("/message", response_model=ResMessageList, )
 async def get_message(db_session: AsyncSession = Depends(get_db_session)):

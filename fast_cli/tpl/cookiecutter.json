@@ -2,13 +2,13 @@
   "project_name": "fast-tmp-example",
   "project_slug": "{{ cookiecutter.project_name|lower|replace(' ', '_')|replace('-', '_') }}",
   "description": "",
-  "database_backend": "postgresql",
-  "database_dialect": "psycopg2",
+  "database_backend": "mysql",
+  "database_dialect": "mysqldb",
   "database_name": "{{cookiecutter.project_slug}}",
   "database_user": "{{cookiecutter.project_slug}}",
   "database_password": "{{cookiecutter.project_slug}}",
   "database_host": "localhost",
-  "database_port": "5432",
+  "database_port": "3306",
   "_copy_without_render": [
     "*.html"
   ]
