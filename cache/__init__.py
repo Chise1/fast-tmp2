@@ -16,7 +16,8 @@ async def close():
 
 async def init():
     global redis_con
-    redis_con = await aioredis.create_redis_pool((settings.REDIS_HOST, settings.REDIS_PORT), db=settings.REDIS_DB,
+    redis_con = await aioredis.create_redis_pool(
+        (settings.REDIS_HOST, settings.REDIS_PORT), db=settings.REDIS_DB,
                                                  password=settings.REDIS_PASSWORD
                                                  )
 def get_client():

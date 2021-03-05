@@ -1,16 +1,16 @@
 from datetime import timedelta
-
-from fastapi import Depends, Form, HTTPException
+from fastapi import Depends, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 from starlette import status
 from starlette.requests import Request
 
 from fast_tmp.amis_router import AmisRouter
 from fast_tmp.apps.api.schemas import LoginR
+from fast_tmp.apps.exceptions import credentials_exception
 from fast_tmp.conf import settings
 from fast_tmp.db import get_db_session
 from fast_tmp.depends import authenticate_user, get_current_active_user
@@ -19,6 +19,7 @@ from fast_tmp.models import Permission, User
 from fast_tmp.responses import LoginError
 from fast_tmp.templates_app import templates
 from fast_tmp.utils.token import create_access_token
+from typing import Optional
 
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.EXPIRES_DELTA
 app = AmisRouter(title="fast_tmp", prefix="/auth", tags=["auth"])
@@ -27,17 +28,16 @@ INIT_PERMISSION = False
 
 
 @app.post("/token", response_class=JSONResponse)
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    session: Session = Depends(get_db_session)
+):
     """
     仅用于docs页面测试返回用
     """
-    user = await authenticate_user(form_data.username, form_data.password)
+    user = authenticate_user(form_data, session)
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise credentials_exception
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username, "id": user.pk}, expires_delta=access_token_expires
@@ -46,11 +46,10 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 
 @app.post("/get-token")
-async def login(form_data: LoginR):
+def login(user: Optional[User] = Depends(authenticate_user)):
     """
     标准的请求接口
     """
-    user = await authenticate_user(form_data.username, form_data.password)
     if not user:
         raise LoginError()
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -60,24 +59,24 @@ async def login(form_data: LoginR):
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-async def get_pages(user: User):
-    global INIT_PERMISSION
-    app = settings.app
-
-    # 初始化permission
-    if not INIT_PERMISSION:
-        await init_permission(app.site_schema, list(await Permission.all()))
-        INIT_PERMISSION = True
-    permissions = await user.perms
-    site = get_site_from_permissionschema(app.site_schema, permissions, "", user.is_superuser)
-    if site:
-        return [site]
-    else:
-        return []
+# def get_pages(user: User):#fixme:需要修复
+#     global INIT_PERMISSION
+#     app = settings.app
+#
+#     # 初始化permission
+#     if not INIT_PERMISSION:
+#         await init_permission(app.site_schema, list(await Permission.all()))
+#         INIT_PERMISSION = True
+#     permissions = user.perms
+#     site = get_site_from_permissionschema(app.site_schema, permissions, "", user.is_superuser)
+#     if site:
+#         return [site]
+#     else:
+#         return []
 
 
 @app.get("/index", summary="主页面")
-async def index(request: Request):
+def index(request: Request):
     return templates.TemplateResponse(
         "gh-pages/index.html",
         {
@@ -92,7 +91,7 @@ class L(BaseModel):
 
 
 @app.post("/index", summary="登录")
-async def index(user: User = Depends(authenticate_user)):
+def index(user: Optional[User] = Depends(authenticate_user)):
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -106,8 +105,8 @@ async def index(user: User = Depends(authenticate_user)):
 
 
 @app.get("/site", summary="获取目录")
-async def get_site(
-    user: User = Depends(get_current_active_user), session: AsyncSession = Depends(get_db_session)
+def get_site(
+    user: User = Depends(get_current_active_user), session: Session = Depends(get_db_session)
 ):
     """
     获取左侧导航栏
@@ -116,19 +115,16 @@ async def get_site(
     """
     global INIT_PERMISSION
     app = settings.app
-    async with session.begin():
-        # 初始化permission
-        if not INIT_PERMISSION:
-            permissions = (await session.execute(select(Permission))).scalars().all()
-            await init_permission(
-                app.site_schema, [permission.code for permission in permissions], session
-            )
-            INIT_PERMISSION = True
-
-        permissions = await user.perms(session)
-        site = get_site_from_permissionschema(app.site_schema, permissions, "", user.is_superuser)
-
-        if site:
-            return {"pages": [site]}
-        else:
-            return {"pages": []}
+    # 初始化permission
+    if not INIT_PERMISSION:
+        permissions = session.execute(select(Permission)).scalars().all()
+        init_permission(
+            app.site_schema, [permission.code for permission in permissions], session
+        )
+        INIT_PERMISSION = True
+    permissions = user.perms(session)
+    site = get_site_from_permissionschema(app.site_schema, permissions, "", user.is_superuser)
+    if site:
+        return {"pages": [site]}
+    else:
+        return {"pages": []}

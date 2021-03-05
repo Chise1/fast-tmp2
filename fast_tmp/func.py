@@ -1,13 +1,11 @@
-from typing import Container, Iterable, List, Union
+from typing import Iterable, List, Union
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import Session
 
 from fast_tmp.conf import settings
 from fast_tmp.models import Permission, User
 from fast_tmp.schemas import PermissionPageType, PermissionSchema, SiteSchema
-
-engine = create_async_engine(settings.DATABASE_URL)
 
 
 def check_perms(user_codename: List[str], codenames: List[str]):
@@ -82,8 +80,7 @@ def get_site_from_permissionschema(
         return None
 
 
-async def create_perm(codename, label, permissions: List[str], session: AsyncSession):
-    """"""
+def create_perm(codename, label, permissions: List[str], session: Session):
     for permission in permissions:
         if permission == codename:
             return
@@ -91,35 +88,33 @@ async def create_perm(codename, label, permissions: List[str], session: AsyncSes
         # fixme:增加一个报错拦截
         p = Permission(code=codename, name=label)
         session.add(p)
-        await session.commit()
+        session.commit()
         permissions.append(p.code)
 
 
-async def init_permission(
-    node: Union[SiteSchema, PermissionSchema], permissions: List[str], session: AsyncSession
+def init_permission(
+    node: Union[SiteSchema, PermissionSchema], permissions: List[str], session: Session
 ):
     if node.codename:
         if not isinstance(node.codename, Iterable):
-            await create_perm(node.codename, node.label, permissions, session)
+            create_perm(node.codename, node.label, permissions, session)
         else:
             for codename in node.codename:
-                await create_perm(codename, codename, permissions, session)
+                create_perm(codename, codename, permissions, session)
     if getattr(node, "children", None):
         for child_node in node.children:
-            await init_permission(child_node, permissions, session)
+            init_permission(child_node, permissions, session)
 
 
-async def get_userinfo(username: str):
+def get_userinfo(username: str, session: Session):
     """
     把单点登录得到的用户名转为当前的用户
     同时检查如果在数据库没有该函数则报错
     """
-    async with AsyncSession(engine) as session:
-        async with session.begin():
-            results = await session.execute(select(User).where(username == username))
-            user = results.scalars().first()
-            if not user:
-                user = User(username=username)
-                session.add(user)
-                await session.flush()
+    results = session.execute(select(User).where(username == username))
+    user = results.scalars().first()
+    if not user:
+        user = User(username=username)
+        session.add(user)
+        session.commit()
     return user

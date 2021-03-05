@@ -1,11 +1,9 @@
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
-
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
 from fast_tmp.conf import settings
 
-engine = create_async_engine(settings.DATABASE_URL, echo=settings.DEBUG)
+engine = create_engine(settings.DATABASE_URL, echo=settings.DEBUG)
 SessionLocal = sessionmaker(
-    class_=AsyncSession,
     autocommit=False,
     autoflush=False,
     future=True,
@@ -13,6 +11,6 @@ SessionLocal = sessionmaker(
 )
 
 
-async def get_db_session() -> AsyncSession:
+async def get_db_session() -> Session:
     async with SessionLocal() as session:
         yield session

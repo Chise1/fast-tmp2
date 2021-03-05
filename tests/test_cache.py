@@ -1,5 +1,3 @@
-import asyncio
-
 from cache import close, get_client, init
 
 

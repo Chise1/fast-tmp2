@@ -1,8 +1,7 @@
 from typing import Container, Iterable, List
 
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table, func, select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import backref, declarative_base, joinedload, relationship
+from sqlalchemy.orm import backref, declarative_base, joinedload, relationship, Session
 
 from fast_tmp.utils.password import make_password, verify_password
 
@@ -57,63 +56,42 @@ class User(BaseModel):
         return verify_password(raw_password, self.password)
 
     # todo:需要测试
-    async def has_perm(self, db_session: AsyncSession, perm: str) -> bool:
+    def has_perm(self, db_session: Session, perm: str) -> bool:
         """
         判定用户是否有权限
         """
-        results = await db_session.execute(
+        results = db_session.execute(
             func.count(Group.id)
-            .where(Group.users == self.id)
-            .where(Group.permissions.any(Permission.code == perm))
+                .where(Group.users == self.id)
+                .where(Group.permissions.any(Permission.code == perm))
         )
         if results.fetchone()[0]:
             return True
         return False
 
     # todo:需要测试
-    async def has_perms(self, db_session: AsyncSession, perms: Container[str]) -> bool:
+    def has_perms(self, db_session: Session, perms: Container[str]) -> bool:
         """
         根据permission的codename进行判定
         """
-        results = await db_session.execute(
+        results = db_session.execute(
             func.count(Group.id)
-            .where(Group.users == self.id)
-            .where(Group.permissions.any(Permission.code == perms))
+                .where(Group.users == self.id)
+                .where(Group.permissions.any(Permission.code == perms))
         )
         if results.fetchone()[0]:
             return True
         return False
 
-    async def perms(
-        self,
-        session: AsyncSession,
-    ) -> Container[str]:
+    def perms(self, session: Session) -> List[str]:
         """
         获取用户的所有权限
         """
-        query = (
+        groups = session.execute(
             select(Group)
-            .options(joinedload(Group.permissions))
-            .join(
-                User,
-            )
-            .where(User.id == self.id)
-        )
-        print(query)
-        groups = (
-            (
-                await session.execute(
-                    select(Group)
-                    .options(joinedload(Group.permissions))
-                    .join(
-                        User,
-                    )
-                    .where(User.id == self.id)
-                )
-            )
-            .scalars()
-            .all()
-        )
+                .options(joinedload(Group.permissions))
+                .join(User).where(User.id == self.id)
+        ).scalars().all()
         permissions = []
         for group in groups:
             for p in group.permissions:
@@ -133,16 +111,15 @@ class Group(BaseModel):
     users = relationship("User", secondary="group_user", backref="groups", cascade="all,delete")
 
     # todo:等待测试
-    async def get_perms(self, db_session: AsyncSession) -> Container[str]:
-        results = await db_session.execute(
+    def get_perms(self, db_session: Session) -> List[str]:
+        permissions = db_session.execute(
             select(group_permission).where(group_permission.c.group_id == self.id)
-        )
-        permissions = results.fetchall()
-        print(permissions)
+        ).fetchall()
+        print(permissions)  # fixme:删掉
         return [permission[1] for permission in permissions]
 
-    async def get_users(self, session: AsyncSession) -> Container[User]:
-        results = await session.execute(
+    def get_users(self, session: Session) -> List[User]:
+        results = session.execute(
             select(Group).options(joinedload(Group.users)).where(Group.id == self.id)
         )
         return results.scalars().first().users
