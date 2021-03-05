@@ -36,19 +36,15 @@ router.site_schema.icon = 'fa fa-file'
 
 
 @router.get("/message", response_model=ResMessageList, )
-async def get_message(db_session: AsyncSession = Depends(get_db_session)):
-    async with db_session.begin():
-        total = (await db_session.execute(func.count(Message.id))).first()[0]
-        items = await db_session.execute(select(Message).join(Message.message_user))
-        items = items.scalars().all()
-        ist = [message_schema.from_orm(item) for item in items]
-        it2 = await db_session.execute(select(Message).options(joinedload(Message.message_user)))
-        print(it2.scalars().all())
-
-        return {
-            "total": total,
-            "items": ist,
-        }
+def get_message(db_session: AsyncSession = Depends(get_db_session)):
+    total = db_session.execute(func.count(Message.id)).first()[0]
+    items = db_session.execute(select(Message).join(Message.message_user)).scalars().all()
+    ist = [message_schema.from_orm(item) for item in items]
+    it2 = db_session.execute(select(Message).options(joinedload(Message.message_user)))
+    return {
+        "total": total,
+        "items": ist,
+    }
 
 
 @router.post(
