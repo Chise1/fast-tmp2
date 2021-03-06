@@ -7,7 +7,7 @@
 @Software: PyCharm
 @info    :工具包
 """
-from typing import List
+from typing import List, Optional
 
 from fastapi import Depends
 from sqlalchemy import func, select
@@ -20,7 +20,12 @@ from fast_tmp.models import AbstractModel
 
 
 def create_list_route(
-    route: AmisRouter, path: str, model: AbstractModel, schema: message_schema, codenames: List[str]
+    route: AmisRouter,
+    path: str,
+    model: AbstractModel,
+    schema: message_schema,
+    codenames: Optional[List[str]] = None,
+    filters: Optional[List[str]] = None,
 ):
     """
     创建list的路由

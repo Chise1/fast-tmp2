@@ -184,7 +184,7 @@ class AmisRouter(routing.Router):
             else:
                 self.site_schema.request_codename[path] = {method.lower(): codenames}
         path = path.replace("$", "")
-        if codenames:
+        if codenames:  # fixme:增加只有用户的权限
             if dependencies:
                 dependencies.append(get_user_has_perms(codenames))
             else:
