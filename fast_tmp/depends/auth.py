@@ -45,10 +45,7 @@ def authenticate_user(
     """
     验证密码
     """
-    user = get_user(
-        logininfo.username,
-        session
-    )
+    user = get_user(logininfo.username, session)
     if not user:
         return None
     if not user.verify_password(logininfo.password):
