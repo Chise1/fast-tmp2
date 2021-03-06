@@ -21,7 +21,7 @@ class Settings:
         if not settings_module:
             work_path = os.getcwd()
             path_list = os.path.split(work_path)
-            if not os.path.isfile(os.path.join("src", "settings.py")):
+            if not os.path.isfile(os.path.join("src", "../../example/settings.py")):
                 raise ImportError("未找到settings.py" f"你必须设置环境变量{FASTAPI_VARIABLE}=你的settings.py的位置")
             else:
                 settings_module = "src.settings"

@@ -109,6 +109,7 @@ class TPL:
         x = self._get_widget_dict(
             [self.json_view], user_codenames, is_superuser, server_url, request_codename
         )
+        print(x)
         if x:
             body.append(x)
 
@@ -220,6 +221,7 @@ class CRUD_TPL(TPL):
         )
 
     def add_create_button(self, api: str, controls: List[AbstractControl]):
+
         self.heads.append(
             DialogAction(
                 label="新增",

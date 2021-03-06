@@ -19,10 +19,10 @@ fileConfig(config.config_file_name)
 # target_metadata = mymodel.Base.metadata
 import os
 import sys
+os.environ.setdefault("FASTAPI_SETTINGS_MODULE", 'example.settings')
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../")
-from fast_tmp.models import Base
-from example.models import BaseModel
+from example.models import Base
 
 target_metadata = Base.metadata
 

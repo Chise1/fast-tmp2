@@ -1,8 +1,8 @@
 import os
 import sys
 
-from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.sessions import SessionMiddleware
 
 from fast_tmp.amis_app import AmisAPI
 from fast_tmp.apps.api import app as b_app
@@ -51,5 +51,6 @@ def create_fast_tmp_app() -> AmisAPI:
     #     ErrorException, error_exception_handler
     # )
     # fast_tmp_app.add_exception_handler(RequestValidationError, validation_exception_handler)
+    fast_tmp_app.add_middleware(SessionMiddleware, secret_key="!secret")
 
     return fast_tmp_app

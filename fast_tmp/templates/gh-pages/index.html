@@ -36,6 +36,13 @@
 </div>
 <div id="root" class="app-wrapper"></div>
 <script>
+    {% if access_token %}
+    function start() {
+    document.getElementById('login').remove();
+    main('{{access_token}}')
+    }
+    start()
+    {% else %}
     function login() {
         axios(
             {
@@ -55,7 +62,7 @@
             console.log(error);
         });
     }
-
+    {% endif %}
     function main(access_token) {
         console.log(access_token)
         let amis = amisRequire("amis/embed");

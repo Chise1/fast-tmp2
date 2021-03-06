@@ -1,7 +1,7 @@
 from typing import Container, Iterable, List
 
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table, func, select
-from sqlalchemy.orm import backref, declarative_base, joinedload, relationship, Session
+from sqlalchemy.orm import Session, backref, declarative_base, joinedload, relationship
 
 from fast_tmp.utils.password import make_password, verify_password
 
@@ -62,8 +62,8 @@ class User(BaseModel):
         """
         results = db_session.execute(
             func.count(Group.id)
-                .where(Group.users == self.id)
-                .where(Group.permissions.any(Permission.code == perm))
+            .where(Group.users == self.id)
+            .where(Group.permissions.any(Permission.code == perm))
         )
         if results.fetchone()[0]:
             return True
@@ -76,8 +76,8 @@ class User(BaseModel):
         """
         results = db_session.execute(
             func.count(Group.id)
-                .where(Group.users == self.id)
-                .where(Group.permissions.any(Permission.code == perms))
+            .where(Group.users == self.id)
+            .where(Group.permissions.any(Permission.code == perms))
         )
         if results.fetchone()[0]:
             return True
@@ -87,11 +87,16 @@ class User(BaseModel):
         """
         获取用户的所有权限
         """
-        groups = session.execute(
-            select(Group)
+        groups = (
+            session.execute(
+                select(Group)
                 .options(joinedload(Group.permissions))
-                .join(User).where(User.id == self.id)
-        ).scalars().all()
+                .join(Group.users)
+                .filter(User.id == self.id)
+            )
+            .scalars()
+            .all()
+        )
         permissions = []
         for group in groups:
             for p in group.permissions:

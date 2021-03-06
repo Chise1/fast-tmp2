@@ -1,4 +1,6 @@
 from datetime import timedelta
+from typing import Optional
+
 from fastapi import Depends, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
@@ -19,7 +21,6 @@ from fast_tmp.models import Permission, User
 from fast_tmp.responses import LoginError
 from fast_tmp.templates_app import templates
 from fast_tmp.utils.token import create_access_token
-from typing import Optional
 
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.EXPIRES_DELTA
 app = AmisRouter(title="fast_tmp", prefix="/auth", tags=["auth"])
@@ -29,8 +30,7 @@ INIT_PERMISSION = False
 
 @app.post("/token", response_class=JSONResponse)
 def login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    session: Session = Depends(get_db_session)
+    form_data: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(get_db_session)
 ):
     """
     仅用于docs页面测试返回用
@@ -59,29 +59,11 @@ def login(user: Optional[User] = Depends(authenticate_user)):
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-# def get_pages(user: User):#fixme:需要修复
-#     global INIT_PERMISSION
-#     app = settings.app
-#
-#     # 初始化permission
-#     if not INIT_PERMISSION:
-#         await init_permission(app.site_schema, list(await Permission.all()))
-#         INIT_PERMISSION = True
-#     permissions = user.perms
-#     site = get_site_from_permissionschema(app.site_schema, permissions, "", user.is_superuser)
-#     if site:
-#         return [site]
-#     else:
-#         return []
-
-
 @app.get("/index", summary="主页面")
 def index(request: Request):
     return templates.TemplateResponse(
         "gh-pages/index.html",
-        {
-            "request": request,
-        },
+        {"request": request, "access_token": request.session.get("access_token", None)},
     )
 
 
@@ -91,7 +73,7 @@ class L(BaseModel):
 
 
 @app.post("/index", summary="登录")
-def index(user: Optional[User] = Depends(authenticate_user)):
+def index(request: Request, user: Optional[User] = Depends(authenticate_user)):
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -101,6 +83,7 @@ def index(user: Optional[User] = Depends(authenticate_user)):
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=timedelta(minutes=settings.EXPIRES_DELTA)
     )
+    request.session["access_token"] = access_token
     return {"access_token": access_token}
 
 
@@ -118,9 +101,7 @@ def get_site(
     # 初始化permission
     if not INIT_PERMISSION:
         permissions = session.execute(select(Permission)).scalars().all()
-        init_permission(
-            app.site_schema, [permission.code for permission in permissions], session
-        )
+        init_permission(app.site_schema, [permission.code for permission in permissions], session)
         INIT_PERMISSION = True
     permissions = user.perms(session)
     site = get_site_from_permissionschema(app.site_schema, permissions, "", user.is_superuser)

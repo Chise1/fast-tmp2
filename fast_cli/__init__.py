@@ -38,32 +38,29 @@ def createsuperuser(username: str, password: str):
     os.environ.setdefault('FASTAPI_SETTINGS_MODULE', project_slug + ".settings")
     from fast_tmp.models import User
     from fast_tmp.db import engine
-    async def create_user(username, password):
-        async with AsyncSession(engine) as session:
-            async with session.begin():
-                user = User(
-                    username=username, is_superuser=True
-                )
-                user.set_password(password)
-                session.add(user)
-                await session.flush()
-            await session.close()
-
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(create_user(username, password))
+    from sqlalchemy.orm import Session
+    with Session(engine) as session:
+        user = User(
+            username=username, is_superuser=True)
+        user.set_password(password)
+        session.add(user)
+        session.commit()
     print(f"创建{username}成功")
 
-    @app.command()
-    def startapp():
-        import sys
-        print(sys.path[0])
-        import os
-        basedir = os.path.abspath(os.path.dirname(__file__))
-        from cookiecutter.main import cookiecutter
-        cookiecutter(basedir + "/tpl/")
 
-    def main():
-        app()
+@app.command()
+def startapp():
+    import sys
+    print(sys.path[0])
+    import os
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    from cookiecutter.main import cookiecutter
+    cookiecutter(basedir + "/tpl/")
 
-    if __name__ == "__main__":
-        main()
+
+def main():
+    app()
+
+
+if __name__ == "__main__":
+    main()
