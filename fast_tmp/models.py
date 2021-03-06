@@ -26,12 +26,12 @@ group_user = Table(
 )
 
 
-class BaseModel(Base):
+class AbstractModel(Base):
     __abstract__ = True
     id = Column(Integer, primary_key=True)
 
 
-class User(BaseModel):
+class User(AbstractModel):
     __tablename__ = "user"
 
     username = Column(String(30), unique=True)
@@ -107,7 +107,7 @@ class User(BaseModel):
         return self.username
 
 
-class Group(BaseModel):
+class Group(AbstractModel):
     __tablename__ = "group"
     name = Column(String(32))
     permissions: "Permission" = relationship(

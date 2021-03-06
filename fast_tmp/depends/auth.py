@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Callable, List, Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -82,7 +82,7 @@ def get_superuser(current_user: User = Depends(get_current_active_user)):
     return current_user
 
 
-def get_user_has_perms(perms: List[str]):  # fixme:需要测试
+def get_user_has_perms(perms: List[str]) -> Callable:  # fixme:需要测试
     """
     判定用户是否具有相关权限
     """
@@ -90,7 +90,7 @@ def get_user_has_perms(perms: List[str]):  # fixme:需要测试
     def user_has_perms(
         user: User = Depends(get_current_active_user),
         session: Session = Depends(get_db_session),
-    ):
+    ) -> User:
         if user.has_perms(session, perms):
             return user
         else:

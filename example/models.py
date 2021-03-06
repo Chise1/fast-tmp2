@@ -2,10 +2,10 @@ from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
 # 如果要配置另外的数据库，还不太懂咋设计
-from fast_tmp.models import Base, BaseModel
+from fast_tmp.models import AbstractModel, Base
 
 
-class MessageUser(BaseModel):
+class MessageUser(AbstractModel):
     __tablename__ = "message_user"
     nickname = Column(String(32))
 
@@ -19,7 +19,7 @@ class ExampleEnum(enum.Enum):
     three = 3
 
 
-class Message(BaseModel):
+class Message(AbstractModel):
     __tablename__ = "message"
     info = Column(String(32))
     enum = Column(Enum(ExampleEnum))

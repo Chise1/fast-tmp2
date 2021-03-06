@@ -13,6 +13,7 @@ from starlette.routing import BaseRoute
 from starlette.types import ASGIApp
 
 from fast_tmp.amis.tpl import TPL
+from fast_tmp.depends import get_user_has_perms
 from fast_tmp.schemas import PermissionPageType, SiteSchema
 from fast_tmp.utils.urls import get_route_url
 
@@ -183,6 +184,11 @@ class AmisRouter(routing.Router):
             else:
                 self.site_schema.request_codename[path] = {method.lower(): codenames}
         path = path.replace("$", "")
+        if codenames:
+            if dependencies:
+                dependencies.append(get_user_has_perms(codenames))
+            else:
+                dependencies = [params.Depends(get_user_has_perms(codenames))]
 
         def decorator(func: DecoratedCallable) -> DecoratedCallable:
             self.add_api_route(

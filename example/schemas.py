@@ -1,5 +1,5 @@
 # 这里主要保存根据model生成的schema
-from typing import List
+from typing import Any, List
 
 from pydantic import BaseModel
 from pydantic_sqlalchemy import sqlalchemy_to_pydantic
