@@ -184,7 +184,7 @@ class AmisRouter(routing.Router):
             else:
                 self.site_schema.request_codename[path] = {method.lower(): codenames}
         path = path.replace("$", "")
-        if codenames:  # fixme:增加只有用户的权限
+        if codenames:  # fixme:增加只有用户的权限,需要和获取用户进行区分
             if dependencies:
                 dependencies.append(get_user_has_perms(codenames))
             else:
@@ -314,8 +314,8 @@ class AmisRouter(routing.Router):
                     response_model_exclude_defaults=route.response_model_exclude_defaults,
                     response_model_exclude_none=route.response_model_exclude_none,
                     include_in_schema=route.include_in_schema
-                    and self.include_in_schema
-                    and include_in_schema,
+                                      and self.include_in_schema
+                                      and include_in_schema,
                     response_class=use_response_class,
                     name=route.name,
                     route_class_override=type(route),
