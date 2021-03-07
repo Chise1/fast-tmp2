@@ -314,8 +314,8 @@ class AmisRouter(routing.Router):
                     response_model_exclude_defaults=route.response_model_exclude_defaults,
                     response_model_exclude_none=route.response_model_exclude_none,
                     include_in_schema=route.include_in_schema
-                                      and self.include_in_schema
-                                      and include_in_schema,
+                    and self.include_in_schema
+                    and include_in_schema,
                     response_class=use_response_class,
                     name=route.name,
                     route_class_override=type(route),

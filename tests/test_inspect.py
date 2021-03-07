@@ -20,20 +20,15 @@ def add_filter(func, filters: List[str]):
     res = []
     # signature=inspect.Signature()
     for k, v in signature.parameters.items():
-        if k == 'kwargs':
+        if k == "kwargs":
             continue
         res.append(v)
     for filter_ in filters:
         res.append(
-            inspect.Parameter(
-                filter_, kind=inspect.Parameter.KEYWORD_ONLY,
-                annotation=str
-            )
+            inspect.Parameter(filter_, kind=inspect.Parameter.KEYWORD_ONLY, annotation=str)
         )  # fixme:之后支持根据字段类型进行自定义
-    func.__signature__ = inspect.Signature(
-        parameters=res, __validate_parameters__=False
-    )
+    func.__signature__ = inspect.Signature(parameters=res, __validate_parameters__=False)
 
 
-add_filter(a, ['chise'])
+add_filter(a, ["chise"])
 print(inspect.signature(a))

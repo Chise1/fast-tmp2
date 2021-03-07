@@ -56,8 +56,8 @@ def get_message(page: int = 0, perPage: int = 10, db_session: Session = Depends(
         db_session.execute(
             select(Message).join(Message.message_user).limit(perPage).offset(perPage * (page - 1))
         )
-            .scalars()
-            .all()
+        .scalars()
+        .all()
     )
     ist = [message_schema.from_orm(item) for item in items]
     # it2 = db_session.execute(select(Message).options(joinedload(Message.message_user)))
@@ -68,13 +68,7 @@ def get_message(page: int = 0, perPage: int = 10, db_session: Session = Depends(
 
 
 create_list_route(
-    router,
-    "/message1",
-    Message,
-    message_schema,
-    [],
-    filters=['id'],
-    searchs=['info']
+    router, "/message1", Message, message_schema, [], filters=["id"], searchs=["info"]
 )
 create_list_route(
     router,
