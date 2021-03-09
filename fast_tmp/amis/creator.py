@@ -10,6 +10,7 @@
 import inspect
 from typing import List, Optional
 
+import sqlalchemy
 from fastapi import Depends
 from sqlalchemy import and_, delete, func, insert, or_, select, update
 from sqlalchemy.orm import Session
@@ -17,13 +18,12 @@ from sqlalchemy.orm import Session
 from example.schemas import message_schema
 from fast_tmp.amis_router import AmisRouter
 from fast_tmp.db import get_db_session
-from fast_tmp.models import AbstractModel
+from fast_tmp.models import AbstractModel, Base
 
 
 def add_filter(func, filters: List[str] = None):
     signature = inspect.signature(func)
     res = []
-    # signature=inspect.Signature()
     for k, v in signature.parameters.items():
         if k == "kwargs":
             continue
@@ -59,17 +59,16 @@ def create_list_route(
         session: Session = Depends(get_db_session),
         **kwargs,
     ):
-        # total = session.execute(func.count(model.id)).first()[0]
         total_query = session.query(func.count(model.id))
         query = select(model).limit(perPage).offset((page - 1) * perPage)
+        search_query = None
+        filter_query = None
         if search:  # fixme:等待测试
             search_query = or_(getattr(model, i).like(f"%{search}%") for i in searchs)
-        else:
-            search_query = None
         if kwargs:
-            filter_query = and_(getattr(model, k) == v for k, v in kwargs.items())
-        else:
-            filter_query = None
+            filter_query = and_(
+                getattr(model, k) == v for k, v in kwargs.items() if v
+            )  # fixme:注意解决专门过滤值为空的问题
         if search_query is not None and filter_query is not None:
             query = query.where(and_(search_query, filter_query))
             total_query = total_query.where(and_(search_query, filter_query))
@@ -147,3 +146,33 @@ def create_put_route(
         session.commit()
 
     route.put(path + "/${id}", codenames=codenames)(model_put)
+
+
+def create_enum_route(
+    route: AmisRouter,
+    path: str,
+    model: AbstractModel,
+    label_name: str = None,
+    codenames: Optional[List[str]] = None,
+):
+    """
+    针对字段专门创建枚举路由
+    """
+
+    def column_get(
+        column: str,
+        session: Session = Depends(get_db_session),
+    ):
+        # for i in Base.registry.mappers:
+        #     i.mapped_table.name==getattr(model,column).
+        select_model = getattr(model, column).comparator.mapper.class_
+        if label_name:
+            results = session.execute(
+                select(select_model.id, getattr(select_model, label_name))
+            ).all()  # fixme；先不考虑返回字段的枚举值
+            return [{"value": result[0], "label": result[1]} for result in results]
+        else:
+            results = session.execute(select(select_model.id)).all()  # fixme；先不考虑返回字段的枚举值
+            return [{"value": result, "label": result} for result in results]
+
+    route.get(path, codenames=codenames)(column_get)

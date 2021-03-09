@@ -17,11 +17,10 @@ from sqlalchemy.orm import Session, joinedload
 
 from example.models import Message, MessageUser
 from example.schemas import ResMessageList, message_schema, user_schema
-from fast_tmp.amis.creator import create_list_route
+from fast_tmp.amis.creator import create_enum_route, create_list_route
 from fast_tmp.amis.tpl import CRUD_TPL
 from fast_tmp.amis.utils import get_columns_from_model, get_controls_from_model
 from fast_tmp.amis_router import AmisRouter
-from fast_tmp.conf import settings
 from fast_tmp.db import get_db_session
 from fast_tmp.models import User
 
@@ -50,7 +49,7 @@ router.site_schema.icon = "fa fa-file"
     "/message",
     response_model=ResMessageList,
 )
-def get_message(page: int = 0, perPage: int = 10, db_session: Session = Depends(get_db_session)):
+def get_message(page: int = 1, perPage: int = 10, db_session: Session = Depends(get_db_session)):
     total = db_session.execute(func.count(Message.id)).first()[0]
     items = (
         db_session.execute(
@@ -114,3 +113,6 @@ async def get_one_message(id: int, db_session: AsyncSession = Depends(get_db_ses
 )
 async def delete_message(id: int):
     await Message.filter(id=id).delete()
+
+
+create_enum_route(route=router, path="/message_user_id", model=Message, label_name="nickname")
