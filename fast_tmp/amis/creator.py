@@ -10,15 +10,14 @@
 import inspect
 from typing import List, Optional
 
-import sqlalchemy
 from fastapi import Depends
-from sqlalchemy import and_, delete, func, insert, or_, select, update
+from pydantic import BaseModel
+from sqlalchemy import and_, delete, func, or_, select, update
 from sqlalchemy.orm import Session
 
-from example.schemas import message_schema
 from fast_tmp.amis_router import AmisRouter
 from fast_tmp.db import get_db_session
-from fast_tmp.models import AbstractModel, Base
+from fast_tmp.models import AbstractModel
 
 
 def add_filter(func, filters: List[str] = None):
@@ -43,7 +42,7 @@ def create_list_route(
     route: AmisRouter,
     path: str,
     model: AbstractModel,
-    schema: message_schema,
+    schema: BaseModel,
     codenames: Optional[List[str]] = None,
     filters: Optional[List[str]] = None,
     searchs: Optional[List[str]] = None,
@@ -112,7 +111,7 @@ def create_post_route(
     route: AmisRouter,
     path: str,
     model: AbstractModel,
-    schema: message_schema,  # 不要有id
+    schema: BaseModel,  # 不要有id
     codenames: Optional[List[str]] = None,
 ):
     def model_post(
@@ -120,7 +119,7 @@ def create_post_route(
         session: Session = Depends(get_db_session),
     ):
         m = model(**info.dict())
-        session.execute(insert(m))
+        session.add(m)
         session.commit()
 
     route.post(
@@ -134,7 +133,7 @@ def create_put_route(
     route: AmisRouter,
     path: str,
     model: AbstractModel,
-    schema: message_schema,  # 不要有id
+    schema: BaseModel,  # 不要有id
     codenames: Optional[List[str]] = None,
 ):
     def model_put(
@@ -150,8 +149,8 @@ def create_put_route(
 
 def create_enum_route(
     route: AmisRouter,
-    path: str,
     model: AbstractModel,
+    path: str = "/enum-selects",
     label_name: str = None,
     codenames: Optional[List[str]] = None,
 ):
@@ -163,13 +162,11 @@ def create_enum_route(
         column: str,
         session: Session = Depends(get_db_session),
     ):
-        # for i in Base.registry.mappers:
-        #     i.mapped_table.name==getattr(model,column).
         select_model = getattr(model, column).comparator.mapper.class_
         if label_name:
             results = session.execute(
                 select(select_model.id, getattr(select_model, label_name))
-            ).all()  # fixme；先不考虑返回字段的枚举值
+            ).all()
             return [{"value": result[0], "label": result[1]} for result in results]
         else:
             results = session.execute(select(select_model.id)).all()  # fixme；先不考虑返回字段的枚举值

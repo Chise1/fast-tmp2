@@ -167,32 +167,15 @@ class CRUD_TPL(TPL):
         self.name = crud_name
         self.page.title = crud_name
 
-    # def add_action(self, action: Actions_P):
-    #     self.body.append(action)
-    #
     def add_action_in_column(self, action: _Action):
         self.operation_actions.append(action)
 
-    # def add_delete_many_button(self, ):
-    #     """
-    #     批量删除
-    #     :return:
-    #     """
-    #     pass
-    #
-    # def add_update_many_button(self, ):
-    #     """
-    #     批量更新
-    #     :return:
-    #     """
-    #     pass
-    #
     def add_delete_button(
         self,
         api: str,
     ):
         """
-        注意：api要携带${id}，而不是python可识别的{id}
+        注意：api要携带${id}，而不是fastapi可识别的{id}
         """
         action = AjaxAction(
             api=api,

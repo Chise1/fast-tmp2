@@ -56,7 +56,7 @@ def _create_control(column) -> Control:
         # 存在外键
         return SelectItem(
             **_get_base_attr(column),
-            source=f"get:/{column.key}-selects",
+            source=f"get:/enum-selects?column={column.key}",
             multiple=True,
             extractValue=True,
             joinValues=False,
@@ -192,15 +192,16 @@ def get_controls_from_model(
             #     python_type = column.type.python_type
             # assert python_type, f"Could not infer python_type for {column}"
         elif isinstance(attr, RelationshipProperty):
-            res.append(
-                SelectItem(
-                    **_get_base_attr(attr),
-                    source=f"get:/{attr.key}-selects",
-                    multiple=True,
-                    extractValue=True,
-                    joinValues=False,
-                )
-            )
+            continue  # fixme:先不考虑relactionship的字段
+            # res.append(
+            #     SelectItem(
+            #         **_get_base_attr(attr),
+            #         source=f"get:/{attr.key}-selects",
+            #         multiple=True,
+            #         extractValue=True,
+            #         joinValues=False,
+            #     )
+            # )
     return res
 
 

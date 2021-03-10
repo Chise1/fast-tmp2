@@ -67,6 +67,7 @@ class AmisRouter(routing.Router):
             if not title:
                 title = prefix[1:].replace("/", "")
             self.site_schema = SiteSchema(label=title, type=PermissionPageType.page, url=prefix)
+        self.title = title
         self.prefix = prefix
         self.route_url = get_route_url(prefix)
         self.tags: List[str] = tags or []
