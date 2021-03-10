@@ -62,7 +62,7 @@ def create_list_route(
         query = select(model).limit(perPage).offset((page - 1) * perPage)
         search_query = None
         filter_query = None
-        if search:  # fixme:等待测试
+        if search and searchs:  # fixme:等待测试
             search_query = or_(getattr(model, i).like(f"%{search}%") for i in searchs)
         if kwargs:
             filter_query = and_(
@@ -84,6 +84,8 @@ def create_list_route(
     add_filter(model_list, filters)
     route.get(path, codenames=codenames)(model_list)
 
+
+# todo:增加一个retrieve的接口，
 
 # fixme:等待测试
 def create_delete_route(
@@ -162,7 +164,11 @@ def create_enum_route(
         column: str,
         session: Session = Depends(get_db_session),
     ):
-        select_model = getattr(model, column).comparator.mapper.class_
+        if column[-3:] == "_id":
+            select_model = getattr(model, column[0:-3]).comparator.mapper.class_
+        else:
+            select_model = getattr(model, column).comparator.mapper.class_
+
         if label_name:
             results = session.execute(
                 select(select_model.id, getattr(select_model, label_name))

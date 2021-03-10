@@ -1,6 +1,7 @@
 from typing import Container, Iterable, List
 
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table, func, select
+from sqlalchemy.event import contains
 from sqlalchemy.orm import Session, backref, declarative_base, joinedload, relationship
 
 from fast_tmp.utils.password import make_password, verify_password
@@ -56,30 +57,34 @@ class User(AbstractModel):
         return verify_password(raw_password, self.password)
 
     # todo:需要测试
-    def has_perm(self, db_session: Session, perm: str) -> bool:
+    def has_perm(self, session: Session, perm: str) -> bool:
         """
         判定用户是否有权限
         """
-        results = db_session.execute(
-            func.count(Group.id)
-            .where(Group.users == self.id)
-            .where(Group.permissions.any(Permission.code == perm))
-        )
-        if results.fetchone()[0]:
+        if self.is_superuser:
+            return True
+        results = session.execute(
+            select(Group.id)
+            .join(Group.users.and_(User.id == self.id))
+            .join(Group.permissions.and_(Permission.code == perm))
+        ).all()
+        if len(results) > 0:
             return True
         return False
 
     # todo:需要测试
-    def has_perms(self, db_session: Session, perms: Container[str]) -> bool:
+    def has_perms(self, session: Session, perms: Container[str]) -> bool:
         """
         根据permission的codename进行判定
         """
-        results = db_session.execute(
-            func.count(Group.id)
-            .where(Group.users == self.id)
-            .where(Group.permissions.any(Permission.code == perms))
-        )
-        if results.fetchone()[0]:
+        if self.is_superuser:
+            return True
+        results = session.execute(
+            select(Group.id)
+            .join(Group.users.and_(User.id == self.id))
+            .join(Group.permissions.and_(Permission.code.in_(perms)))
+        ).all()
+        if len(results) > 0:
             return True
         return False
 

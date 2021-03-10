@@ -31,7 +31,7 @@ def _get_base_attr(column: SqlColumn, **kwargs) -> dict:
     res = column.info.get("amis", {})
     default = getattr(column, "default", None)
     if default is not None:
-        res["value"] = column.default
+        res["value"] = column.default.arg  # todo:注意这个默认是是否正确
     res["name"] = column.key
     res["label"] = column.info.get("verbose_name", column.key)
     res["description"] = column.info.get(
@@ -93,13 +93,21 @@ def _create_control(column) -> Control:
         )
     # elif isinstance(column.type, Float):
     #     pass
-    # elif isinstance(column.type, DECIMAL):
+    # elif isinstance(column.type, DECIMAL):#fixme:需要完成该字段
     #     pass
     # elif isinstance(column.type, ARRAY):
     #     pass
-    elif isinstance(column.type, Boolean):  # 如果有默认值则渲染为switch，否则渲染为下拉
+    elif isinstance(column.type, Boolean):
         if column.default is not None:
-            return SwitchItem(type="switch", **_get_base_attr(column), value=column.defualt)
+            return SwitchItem(**_get_base_attr(column))  # fixme:默认值是否生效
+        else:
+            return SelectItem(
+                options=[
+                    SelectOption(label="True", value=True),
+                    SelectOption(label="False", value=False),
+                ],
+                **_get_base_attr(column),
+            )
     # elif isinstance(column.type, VARBINARY):
     #     pass
     # elif isinstance(column.type, LargeBinary):

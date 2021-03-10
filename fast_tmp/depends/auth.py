@@ -6,7 +6,7 @@ from jose import JWTError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from fast_tmp.apps.exceptions import credentials_exception
+from fast_tmp.apps.exceptions import credentials_exception, no_permission_exception
 from fast_tmp.conf import settings
 from fast_tmp.db import get_db_session
 from fast_tmp.models import User
@@ -78,7 +78,7 @@ def get_superuser(current_user: User = Depends(get_current_active_user)):
     获取超级用户(该用户必须是活跃的)
     """
     if not current_user.is_superuser:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+        raise no_permission_exception
     return current_user
 
 
@@ -94,6 +94,6 @@ def get_user_has_perms(perms: List[str]) -> Callable:  # fixme:需要测试
         if user.has_perms(session, perms):
             return user
         else:
-            raise credentials_exception
+            raise no_permission_exception
 
     return user_has_perms
