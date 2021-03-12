@@ -66,9 +66,17 @@ def create_list_route(
         if search and searchs:  # fixme:等待测试
             search_query = or_(getattr(model, i).like(f"%{search}%") for i in searchs)
         if kwargs:
-            filter_query = and_(
-                getattr(model, k) == v for k, v in kwargs.items() if v
-            )  # fixme:注意解决专门过滤值为空的问题
+            s = []
+            for k, v in kwargs.items():
+                if v:
+                    if v == "null_":
+                        s.append(getattr(model, k) == None)
+                    else:
+                        s.append(getattr(model, k) == v)
+                else:
+                    pass
+            if s:
+                and_(*s)  # fixme:注意为空问题
         if search_query is not None and filter_query is not None:
             query = query.where(and_(search_query, filter_query))
             total_query = total_query.where(and_(search_query, filter_query))
