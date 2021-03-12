@@ -95,6 +95,19 @@ def create_list_route(
 
 
 # todo:增加一个retrieve的接口，
+def create_retrieve_route(
+    route: AmisRouter,
+    path: str,
+    model: AbstractModel,
+    schema: BaseModel,
+    codenames: Optional[List[str]] = None,
+):
+    def model_retrieve(id: int, session: Session = Depends(get_db_session)):
+        instance = session.execute(select(model).where(model.id == id)).scalars().fetchone()
+        return schema.from_orm(instance).dict()
+
+    route.get(path + "/${id}", codenames=codenames)(model_retrieve)
+
 
 # fixme:等待测试
 def create_delete_route(
