@@ -14,6 +14,7 @@ from fastapi import Depends
 from pydantic import BaseModel
 from sqlalchemy import and_, delete, func, or_, select, update
 from sqlalchemy.orm import Session
+from starlette import status
 
 from fast_tmp.amis_router import AmisRouter
 from fast_tmp.db import get_db_session
@@ -104,8 +105,11 @@ def create_delete_route(
     ):
         session.execute(delete(model).where(model.id == id))
         session.commit()
+        return {  # fixme:amis不支持标准restful协议造成的
+            "status": 0,
+        }
 
-    route.delete(path + "/${id}", codenames=codenames)(model_delete)
+    route.delete(path + "/${id}", codenames=codenames, status_code=status.HTTP_200_OK)(model_delete)
 
 
 # fixme:等待测试
@@ -123,6 +127,7 @@ def create_post_route(
         m = model(**info.dict())
         session.add(m)
         session.commit()
+        return {"status": 0}
 
     route.post(
         path,
@@ -145,6 +150,7 @@ def create_put_route(
     ):
         session.execute(update(model).where(model.id == id).values(**info.dict()))
         session.commit()
+        return {"status": 0}
 
     route.put(path + "/${id}", codenames=codenames)(model_put)
 

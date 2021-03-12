@@ -20,7 +20,7 @@ from fast_tmp.func import get_site_from_permissionschema, init_permission
 from fast_tmp.models import Permission, User
 from fast_tmp.responses import LoginError
 from fast_tmp.templates_app import templates
-from fast_tmp.utils.token import create_access_token
+from fast_tmp.utils.token import create_access_token, decode_access_token
 
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.EXPIRES_DELTA
 app = AmisRouter(title="fast_tmp", prefix="/auth", tags=["auth"])
@@ -61,9 +61,15 @@ def login(user: Optional[User] = Depends(authenticate_user)):
 
 @app.get("/index", summary="主页面")
 def index(request: Request):
+    if access_token := request.session.get("access_token", None):
+        try:
+            decode_access_token(access_token)
+        except:
+            request.session.pop("access_token")
+            access_token = None
     return templates.TemplateResponse(
         "gh-pages/index.html",
-        {"request": request, "access_token": request.session.get("access_token", None)},
+        {"request": request, "access_token": access_token},
     )
 
 

@@ -126,28 +126,30 @@
             app,
             {},
             {
-                watchRouteChange: (fn) => {
+                watchRouteChange: fn => {
                     window.addEventListener("hashchange", fn);
                     return () => {
                         window.removeEventListener("hashchange", fn);
                     };
                 },
-                jumpTo: (to) => {
+                jumpTo: to => {
                     location.hash = to;
                 },
                 updateLocation: (to, replace) => {
                 },
                 responseAdpater(api, response, query, request) {//增加一个登陆弹框
-                    // if (response.data.status===401){
-                    //
-                    // }
-                    console.log(response)
                     return response;
                 },
                 fetcher: ({url, method, data, config, headers}) => {
                     config = config || {};
                     config.headers = headers || {};
                     config.headers["Authorization"] = "Bearer " + access_token
+                    let success=config.onSuccess
+                    console.log(success)
+                    console.log(config)
+                    // config.onSuccess=function (){
+                    //
+                    // }
                     if (config.cancelExecutor) {
                         config.cancelToken = new axios.CancelToken(config.cancelExecutor);
                     }
@@ -195,6 +197,7 @@
                     }
                     return pathname === link;
                 },
+                theme:'default'
             }
         );
     }
