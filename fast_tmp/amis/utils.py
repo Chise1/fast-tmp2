@@ -132,17 +132,14 @@ def _create_control(column) -> Control:
     # elif isinstance(column.type, JSON):
     #     pass
     elif isinstance(column.type, Enum):
-        options=[
-                SelectOption(label=column.type.enum_class.__members__[value].value, value=value)
-                for value in column.type.enum_class.__members__
-            ]
+        options = [
+            SelectOption(label=column.type.enum_class.__members__[value].value, value=value)
+            for value in column.type.enum_class.__members__
+        ]
         if column.nullable:
-            options.append(
-                SelectOption(label='空', value='null_')
-            )
+            options.append(SelectOption(label="空", value="null_"))
         return SelectItem(
-            options=options
-            **_get_base_attr(column),
+            options=options ** _get_base_attr(column),
         )
     elif isinstance(column.type, sqlalchemy.Text):
         return TextItem(

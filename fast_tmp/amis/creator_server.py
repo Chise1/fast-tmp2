@@ -16,7 +16,7 @@ from fast_tmp.amis.creator import (
     create_enum_route,
     create_list_route,
     create_post_route,
-    create_put_route,
+    create_put_route, create_retrieve_route,
 )
 from fast_tmp.amis.tpl import CRUD_TPL
 from fast_tmp.amis.utils import get_columns_from_model, get_controls_from_model
@@ -51,6 +51,13 @@ class CRUD_Server:
             [model.__name__ + "_list"],
             filters,
             searchs,
+        )
+        create_retrieve_route(
+            router,
+            "/" + base_path,
+            model,
+            sqlalchemy_to_pydantic(model, pydantic_name=model.__name__ + "retrieve"),
+            [model.__name__ + "_retrieve"],
         )
         tpl.add_create_button(
             f"post:/{base_path}",
