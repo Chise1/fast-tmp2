@@ -27,7 +27,7 @@ import typing
 from urllib.parse import quote_plus
 
 from starlette.background import BackgroundTask
-from starlette.datastructures import URL, MutableHeaders, Secret
+from starlette.datastructures import URL
 
 
 class FastTmpRedirectResponse(RedirectResponse, HTTPException):

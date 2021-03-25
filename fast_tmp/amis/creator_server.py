@@ -1,12 +1,3 @@
-# -*- encoding: utf-8 -*-
-"""
-@File    : creator_server.py
-@Time    : 2021/1/18 15:43
-@Author  : chise
-@Email   : chise123@live.com
-@Software: PyCharm
-@info    :
-"""
 from typing import Container, Optional
 
 from pydantic_sqlalchemy import sqlalchemy_to_pydantic
@@ -16,7 +7,8 @@ from fast_tmp.amis.creator import (
     create_enum_route,
     create_list_route,
     create_post_route,
-    create_put_route, create_retrieve_route,
+    create_put_route,
+    create_retrieve_route,
 )
 from fast_tmp.amis.tpl import CRUD_TPL
 from fast_tmp.amis.utils import get_columns_from_model, get_controls_from_model
